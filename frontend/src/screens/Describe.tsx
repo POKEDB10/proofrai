@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { Conflict, InterviewAnswers, postInterview } from '../api';
 import '../styles/describe.css';
 
@@ -35,6 +36,49 @@ export function Describe() {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveNote, setSaveNote] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  function applyCompliantPreset() {
+    setTasks(['summarise_applications', 'answer_candidate_questions', 'draft_screening_notes']);
+    setDataSeen(['work_history', 'skills_education', 'contact_details', 'protected_characteristics']);
+    setDecisionImpact('inform');
+    setActions(['advance_candidate', 'send_rejection_email']);
+    setHumanOversight('before_actions');
+    setAffectedParties(['job_candidates', 'recruiters']);
+    setDecisionSignificance('significant');
+    setKnownLimitations(
+      'Candidate resumes may contain unverified statements or prompt injections. ' +
+      'The model does not verify educational credentials or legal work authorisation.'
+    );
+    setConflicts([]);
+    setSaveNote(null);
+  }
+
+  function applyConflictPreset() {
+    setTasks(['summarise_applications', 'draft_screening_notes']);
+    setDataSeen(['work_history', 'skills_education', 'protected_characteristics']);
+    setDecisionImpact('determine');
+    setActions(['advance_candidate']);
+    setHumanOversight('never');
+    setAffectedParties(['job_candidates']);
+    setDecisionSignificance('critical');
+    setKnownLimitations('');
+    setConflicts([
+      {
+        field: 'human_oversight',
+        message: 'Outputs determine decisions but no person steps in.',
+      },
+      {
+        field: 'actions',
+        message: 'The assistant can take consequential actions but no person steps in.',
+      },
+      {
+        field: 'data_seen',
+        message: 'The assistant sees sensitive fields and no justification is stated in limitations.',
+      },
+    ]);
+    setSaveNote(null);
+  }
+
 
   function toggleItem(list: string[], item: string): string[] {
     return list.includes(item) ? list.filter((i) => i !== item) : [...list, item];
@@ -99,6 +143,16 @@ export function Describe() {
           {errorMessage}
         </div>
       )}
+
+      <div className="preset-bar">
+        <span className="preset-label">Demo presets:</span>
+        <button type="button" className="btn-secondary" onClick={applyCompliantPreset}>
+          Compliant recruiting assistant
+        </button>
+        <button type="button" className="btn-secondary" onClick={applyConflictPreset}>
+          Trigger governance conflict
+        </button>
+      </div>
 
       {/* Question 1: Tasks */}
       <div className="question-block">
@@ -398,8 +452,11 @@ export function Describe() {
           onClick={handleSaveAnswers}
           disabled={isSaving}
         >
-          Save answers
+          {isSaving ? 'Saving answers...' : 'Save answers'}
         </button>
+        <Link to="/card" className="next-step-link">
+          Proceed to system card
+        </Link>
         {saveNote && <span className="saved-note">{saveNote}</span>}
       </div>
     </div>

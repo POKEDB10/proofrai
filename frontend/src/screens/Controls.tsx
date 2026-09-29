@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import type { KeyboardEvent, MouseEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { Control, getControls, updateControlStatus } from '../api';
 import '../styles/controls.css';
 
@@ -14,9 +15,9 @@ const RISK_SHORT_LABELS: Record<string, string> = {
   'CTL-01': 'Disclosure',
   'CTL-02': 'Injection',
   'CTL-03': 'Data leakage',
-  'CTL-04': 'Unauthorised actions',
-  'CTL-05': 'High-impact actions',
-  'CTL-06': 'Ungrounded claims',
+  'CTL-04': 'Grounding',
+  'CTL-05': 'Tool gating',
+  'CTL-06': 'Discrimination',
 };
 
 export function Controls() {
@@ -67,8 +68,18 @@ export function Controls() {
     });
   }
 
-  function handleGoToTest() {
-    window.location.href = '/test';
+  async function handleApproveAll() {
+    try {
+      for (const c of controls) {
+        if (c.status !== 'approved') {
+          await updateControlStatus(c.id, 'approved');
+        }
+      }
+      await loadData();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Approval failed';
+      setErrorMessage(`Failed to approve controls: ${msg}`);
+    }
   }
 
   const approvedCount = controls.filter((c) => c.status === 'approved').length;
@@ -76,9 +87,16 @@ export function Controls() {
   return (
     <div className="page-container controls-screen">
       <header className="controls-header">
-        <h1 className="page-title">Controls</h1>
-        <div className="controls-approved-summary">
-          {approvedCount} of {controls.length} approved
+        <div>
+          <h1 className="page-title">Controls</h1>
+          <div className="controls-approved-summary">
+            {approvedCount} of {controls.length} approved
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+          <button type="button" className="btn-secondary" onClick={handleApproveAll}>
+            Approve all
+          </button>
         </div>
       </header>
 
@@ -185,9 +203,9 @@ export function Controls() {
 
       <footer className="controls-footer">
         <span className="controls-note">Only approved controls run.</span>
-        <button type="button" onClick={handleGoToTest}>
-          Go to test
-        </button>
+        <Link to="/test" className="btn-primary">
+          Proceed to test run
+        </Link>
       </footer>
     </div>
   );

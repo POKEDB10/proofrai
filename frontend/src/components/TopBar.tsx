@@ -7,7 +7,7 @@ interface TopBarProps {
 
 export function TopBar({
   runId,
-  targetModel = 'gemini-2.5-flash',
+  targetModel = 'gemini-3.5-flash-lite',
 }: TopBarProps) {
   const displayRunId =
     runId ||
@@ -17,7 +17,9 @@ export function TopBar({
   return (
     <header className="topbar">
       <div className="topbar-left">
-        <span className="topbar-wordmark">ProofRAI</span>
+        <NavLink to="/" className="topbar-wordmark" style={{ textDecoration: 'none' }}>
+          ProofRAI
+        </NavLink>
         <nav className="topbar-nav">
           <NavLink
             to="/"

@@ -24,7 +24,8 @@ a {
   outline-offset: 2px;
 }
 
-button {
+button,
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +37,67 @@ button {
   border-radius: var(--radius-control);
   font-family: var(--font-sans);
   font-size: var(--text-body);
+  text-decoration: none;
   cursor: pointer;
+}
+
+button:disabled,
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 12px;
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  font-family: var(--font-sans);
+  font-size: var(--text-table);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  border-color: var(--ink);
+}
+
+.next-step-link {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  font-size: var(--text-table);
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.next-step-link:hover {
+  color: var(--ink-2);
+}
+
+.preset-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--surface);
+  border: 1px solid var(--rule-soft);
+}
+
+.preset-label {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-right: var(--space-1);
 }
 
 input[type="text"],

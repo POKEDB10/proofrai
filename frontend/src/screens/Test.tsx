@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import {
   CaseResult,
   CheckResult,
@@ -304,6 +305,9 @@ export function Test() {
         </div>
         <div className="test-actions">
           {isRunning && <span className="running-indicator">{runningProgress}</span>}
+          <Link to="/evidence" className="btn-secondary">
+            View evidence
+          </Link>
           <button type="button" onClick={handleRunSuite} disabled={isRunning}>
             Run suite
           </button>
@@ -812,6 +816,12 @@ export function Test() {
             })}
           </tbody>
         </table>
+      </div>
+
+      <div style={{ marginTop: 'var(--space-4)', display: 'flex', justifyContent: 'flex-end' }}>
+        <Link to="/evidence" className="next-step-link">
+          Proceed to evidence record
+        </Link>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
 import {
   confirmSystemCard,
   getSystemCard,
@@ -183,7 +184,7 @@ export function Card() {
               onClick={handleConfirmCard}
               disabled={isConfirming}
             >
-              Confirm card
+              {isConfirming ? 'Confirming...' : 'Confirm card'}
             </button>
             <button
               type="button"
@@ -191,8 +192,11 @@ export function Card() {
               onClick={handleRegenerateDrafts}
               disabled={isRegenerating}
             >
-              Regenerate drafts
+              {isRegenerating ? 'Regenerating...' : 'Regenerate drafts'}
             </button>
+            <Link to="/controls" className="next-step-link">
+              Proceed to controls
+            </Link>
             {feedbackNote && <span style={{ color: 'var(--pass)', fontWeight: 600, fontSize: 'var(--text-table)' }}>{feedbackNote}</span>}
           </div>
         </div>
