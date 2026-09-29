@@ -70,6 +70,17 @@
   margin-bottom: var(--space-4);
 }
 
+.queue-table-container th:nth-child(1),
+.queue-table-container td:nth-child(1) {
+  width: 140px;
+}
+
+.queue-table-container th:nth-child(2),
+.queue-table-container td:nth-child(2) {
+  width: 220px;
+}
+
+
 .queue-row {
   cursor: pointer;
 }
