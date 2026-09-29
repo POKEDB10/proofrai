@@ -393,6 +393,8 @@ export function Test() {
                   y={4}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -403,6 +405,8 @@ export function Test() {
                     y={4}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -440,6 +444,8 @@ export function Test() {
                   y={4}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -450,6 +456,8 @@ export function Test() {
                     y={4}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -487,6 +495,8 @@ export function Test() {
                   y={28}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -497,6 +507,8 @@ export function Test() {
                     y={28}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -536,6 +548,8 @@ export function Test() {
                   y={28}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -546,6 +560,8 @@ export function Test() {
                     y={28}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}

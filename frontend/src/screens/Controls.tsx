@@ -161,7 +161,22 @@ export function Controls() {
                           onChange={() => handleToggleStatus(ctl.id, ctl.status)}
                         />
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)' }}>{ctl.id}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            aria-hidden="true"
+                          >
+                            <path d={isExpanded ? 'M4 10l4-4 4 4' : 'M4 6l4 4 4-4'} />
+                          </svg>
+                          {ctl.id}
+                        </span>
+                      </td>
                       <td>{ctl.title}</td>
                       <td>{actsAt}</td>
                       <td>{addresses}</td>

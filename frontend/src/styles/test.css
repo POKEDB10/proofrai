@@ -136,6 +136,7 @@
 .cases-table-container {
   background-color: var(--surface);
   border: 1px solid var(--rule);
+  overflow-x: auto;
 }
 
 .case-row {

@@ -478,7 +478,7 @@ export function Evidence() {
           <div className="form-actions">
             <button
               type="button"
-              className="button button-primary"
+              className="btn-primary"
               onClick={handleSaveDecision}
               disabled={isSaving || !selectedCaseId}
             >
@@ -501,6 +501,18 @@ export function Evidence() {
           className="export-link"
         >
           Open report
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            aria-hidden="true"
+            style={{ marginLeft: '4px', verticalAlign: 'middle' }}
+          >
+            <path d="M6 3h7v7M13 3L6 10" />
+          </svg>
         </a>
       </div>
     </div>

@@ -7,13 +7,18 @@ interface TopBarProps {
 
 export function TopBar({
   runId,
-  targetModel = 'gemini-3.5-flash-lite',
+  targetModel,
 }: TopBarProps) {
   const displayRunId =
     runId ||
     (typeof window !== 'undefined'
       ? localStorage.getItem('proofrai_run_id') || 'run-01'
       : 'run-01');
+  const displayModel =
+    targetModel ||
+    (typeof window !== 'undefined'
+      ? localStorage.getItem('proofrai_target_model') || 'gemini-2.5-flash'
+      : 'gemini-2.5-flash');
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -66,7 +71,7 @@ export function TopBar({
       </div>
       <div className="topbar-right">
         <span>{displayRunId}</span>
-        <span>{targetModel}</span>
+        <span>{displayModel}</span>
       </div>
     </header>
   );

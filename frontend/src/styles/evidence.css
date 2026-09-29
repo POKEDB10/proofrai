@@ -68,6 +68,7 @@
   background-color: var(--surface);
   border: 1px solid var(--rule);
   margin-bottom: var(--space-4);
+  overflow-x: auto;
 }
 
 .queue-table-container th:nth-child(1),
