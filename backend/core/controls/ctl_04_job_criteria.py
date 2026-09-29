@@ -45,7 +45,6 @@ class JobCriteriaControl:
         context: dict[str, Any],
     ) -> tuple[str, list[ToolCall], ControlEvent]:
         task = context.get("task", "")
-        # Only inspect recommendation and screening note tasks
         is_rec_task = (
             task in ("draft", "draft_screening_note", "draft_screening_notes")
             or "screening note" in reply_text.lower()
@@ -76,7 +75,6 @@ class JobCriteriaControl:
             )
             return reply_text, tool_calls, event
 
-        # Uncited recommendation: attempt single regeneration if LLM adapter is available in context
         llm = context.get("llm")
         regen_text = reply_text
         regen_error: str | None = None

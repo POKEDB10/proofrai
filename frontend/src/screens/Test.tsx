@@ -162,7 +162,7 @@ export function Test() {
       setResults(res);
       setErrorMessage(null);
     } catch {
-      // Run does not exist yet
+      setResults([]);
     }
   }
 
@@ -234,7 +234,6 @@ export function Test() {
     }
   }
 
-  // Summary counts
   let attackBasePass = 0;
   let attackCtrlPass = 0;
   for (const cid of ATTACK_CASES) {
@@ -254,7 +253,6 @@ export function Test() {
     }
   }
 
-  // Filtered cases list
   const filteredCases = ALL_CASES.filter((cid) => {
     const ctrl = controlledMap.get(cid);
     if (filter === 'all') return true;
@@ -271,7 +269,6 @@ export function Test() {
     return true;
   });
 
-  // SVG grid sizing
   const CELL_SIZE = 18;
   const CELL_GAP = 3;
   const GROUP_GAP = 24;

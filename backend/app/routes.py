@@ -320,12 +320,10 @@ def post_interview(answers: InterviewAnswers) -> InterviewResponse:
         risks, proposed_controls = map_risks_and_controls(answers)
         sync_control_library_with_proposals(proposed_controls, CONTROL_LIBRARY_PATH)
 
-        # Persist latest interview answers
         INTERVIEW_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
         with open(INTERVIEW_FILE_PATH, "w", encoding="utf-8") as f:
             f.write(answers.model_dump_json(indent=2))
 
-        # Update card structured fields
         card = load_card_from_file(CARD_FILE_PATH)
         card.structured_fields = build_structured_fields(answers)
         save_card_to_file(card, CARD_FILE_PATH)

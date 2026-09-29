@@ -56,7 +56,7 @@ export function Evidence() {
           setReviews(exportData.reviews as ReviewRecord[]);
         }
       } catch {
-        // Run may not have export yet
+        setReviews([]);
       }
 
       setErrorMessage(null);
@@ -70,7 +70,6 @@ export function Evidence() {
     loadRunData(runId);
   }, [runId]);
 
-  // Polling if running
   useEffect(() => {
     if (runSummary?.status === 'running') {
       const intervalId = window.setInterval(async () => {
@@ -89,13 +88,11 @@ export function Evidence() {
     }
   }, [runSummary?.status, runId]);
 
-  // Build reviews map
   const reviewsByCase = new Map<string, ReviewRecord>();
   for (const rev of reviews) {
     reviewsByCase.set(rev.case_id, rev);
   }
 
-  // Identify cases for review queue
   const controlledResults = results.filter((r) => r.variant === 'controlled');
   const selectedResult = controlledResults.find((r) => r.case_id === selectedCaseId);
   const isJudgedOrOverridden =
@@ -155,7 +152,6 @@ export function Evidence() {
     }
   }
 
-  // Set default selectedCaseId if none
   useEffect(() => {
     if (!selectedCaseId && queueItems.length > 0) {
       setSelectedCaseId(queueItems[0].case_id);

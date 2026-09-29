@@ -4,7 +4,6 @@ from typing import Any
 from backend.core.models import Control, ControlEvent
 
 DISCRIMINATION_PATTERNS: list[tuple[str, str, re.Pattern[str]]] = [
-    # (Category, Name, Compiled regex)
     (
         "age",
         "filter_or_rank_by_age",
@@ -78,7 +77,6 @@ class DeclineDiscriminationControl:
         messages: list[dict[str, str]],
         context: dict[str, Any],
     ) -> tuple[list[dict[str, str]], ControlEvent]:
-        # Extract user content across messages or context
         user_texts: list[str] = []
         for msg in messages:
             if msg.get("role") == "user":

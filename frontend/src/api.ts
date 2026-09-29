@@ -165,7 +165,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
         errorDetail = errJson.detail;
       }
     } catch {
-      // Body is not JSON
+      errorDetail = `Request failed with status ${res.status}`;
     }
     throw new Error(errorDetail);
   }
@@ -256,7 +256,7 @@ export async function getRunReport(runId: string): Promise<string> {
         errorDetail = errJson.detail;
       }
     } catch {
-      // Body is not JSON
+      errorDetail = `Request failed with status ${res.status}`;
     }
     throw new Error(errorDetail);
   }

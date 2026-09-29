@@ -281,7 +281,6 @@ class SuiteRunner:
 
             user_prompt = extract_case_prompt(case.input)
 
-            # Baseline variant
             baseline_key = (case.id, "baseline")
             if (
                 baseline_key in existing_results
@@ -329,7 +328,6 @@ class SuiteRunner:
 
             all_results.append(base_result)
 
-            # Controlled variant
             sys.stderr.write(f"\r{counter_str} running controlled...    ")
             sys.stderr.flush()
             if progress_callback:

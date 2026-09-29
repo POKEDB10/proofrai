@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Ensure backend package is on sys.path
 current_dir = Path(__file__).resolve().parent
 backend_dir = current_dir.parent.parent
 repo_root = backend_dir.parent
@@ -24,11 +23,9 @@ def print_summary_table(results_list: list, cases_list: list) -> None:
     attack_cases = [c for c in cases_list if c.group == "attack"]
     benign_cases = [c for c in cases_list if c.group == "benign"]
 
-    # Attack rates
     base_atk_pass = sum(1 for c in attack_cases if baseline_map.get(c.id) and baseline_map[c.id].verdict == "pass")
     ctrl_atk_pass = sum(1 for c in attack_cases if controlled_map.get(c.id) and controlled_map[c.id].verdict == "pass")
 
-    # Benign completion rates
     base_ben_pass = sum(1 for c in benign_cases if baseline_map.get(c.id) and baseline_map[c.id].verdict == "pass")
     ctrl_ben_pass = sum(1 for c in benign_cases if controlled_map.get(c.id) and controlled_map[c.id].verdict == "pass")
 
@@ -57,7 +54,6 @@ def print_summary_table(results_list: list, cases_list: list) -> None:
     )
     print("=" * 62)
 
-    # Over-blocked cases
     over_blocked = [
         r for r in results_list
         if r.variant == "controlled"
@@ -73,7 +69,6 @@ def print_summary_table(results_list: list, cases_list: list) -> None:
     else:
         print("None (0 over-blocked cases)")
 
-    # Needs review cases
     needs_review = [r for r in results_list if r.verdict == "needs_review"]
     needs_review_ctrl = [r for r in needs_review if r.variant == "controlled"]
     print("\nNeeds review cases (controlled variant):")
@@ -84,7 +79,6 @@ def print_summary_table(results_list: list, cases_list: list) -> None:
     else:
         print("None")
 
-    # Error cases
     errors = [r for r in results_list if r.verdict == "error"]
     print("\nError cases:")
     if errors:
@@ -93,7 +87,6 @@ def print_summary_table(results_list: list, cases_list: list) -> None:
     else:
         print("None (0 errors)")
 
-    # Release gate
     gate_label, gate_reasons = evaluate_release_gate(results_list, cases_list)
     print("\nRelease gate verdict:")
     print(f"[{gate_label}]")

@@ -109,14 +109,12 @@ def render_report_html(
     cases = load_suite(suite_cases_path)
     cases_by_id = {c.id: c for c in cases}
 
-    # Group results by risk
     results_by_risk: dict[str, list[dict[str, Any]]] = {}
     for r in results:
         c = cases_by_id.get(r["case_id"])
         risk = c.risk if c else "Unspecified risk"
         results_by_risk.setdefault(risk, []).append(r)
 
-    # Over-blocked cases
     over_blocked = [
         r for r in results
         if r["variant"] == "controlled"
@@ -125,7 +123,6 @@ def render_report_html(
         and cases_by_id[r["case_id"]].group == "benign"
     ]
 
-    # Unresolved failures
     unresolved_failures = [
         r for r in results
         if r["variant"] == "controlled" and r["verdict"] in ("fail", "error")
@@ -293,7 +290,6 @@ td {
     else:
         html_parts.append("<div class=\"empty-note\">No system card registered for this run.</div>\n")
 
-    # Section 2: Controls with rationale and references
     html_parts.append("""
 <h2>Controls with rationale and references</h2>
 <table>
@@ -354,7 +350,6 @@ td {
 """)
         html_parts.append("  </tbody>\n</table>\n")
 
-    # Section 4: Over-blocked benign cases
     html_parts.append("""
 <h2>Over-blocked benign cases</h2>
 """)
@@ -381,7 +376,6 @@ td {
     else:
         html_parts.append("<div class=\"empty-note\">Zero over-blocked benign cases in this run.</div>\n")
 
-    # Section 5: Unresolved failures
     html_parts.append("""
 <h2>Unresolved failures</h2>
 """)
@@ -407,7 +401,6 @@ td {
     else:
         html_parts.append("<div class=\"empty-note\">Zero unresolved controlled failures in this run.</div>\n")
 
-    # Section 6: Reviewer decisions
     html_parts.append("""
 <h2>Reviewer decisions</h2>
 """)
@@ -435,7 +428,6 @@ td {
     else:
         html_parts.append("<div class=\"empty-note\">No human reviewer decisions logged for this run.</div>\n")
 
-    # Section 7: Judge evaluation and human override
     html_parts.append("""
 <h2>Judge evaluation and human override</h2>
 <div class="prose">

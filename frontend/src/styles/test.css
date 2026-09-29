@@ -221,8 +221,8 @@
 
 .response-box {
   background-color: var(--surface);
-  border: 1px solid var(--rule-soft);
-  padding: var(--space-3);
+  border: 0;
+  padding: var(--space-2) 0;
   font-family: var(--font-mono);
   font-size: var(--text-table);
   line-height: 1.4;
