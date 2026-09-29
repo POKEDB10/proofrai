@@ -333,3 +333,101 @@ export async function confirmSystemCard(
   return handleResponse<SystemCardData>(res);
 }
 
+export interface ControlImpact {
+  control_id: string;
+  title: string;
+  risk: string;
+  enforcement_point: string;
+  status: string;
+  attacks_mitigated: string[];
+  attacks_resisted: string[];
+  benign_overblocked: string[];
+  events_count: number;
+  causal_chain: string;
+  impact_summary: string;
+}
+
+export interface Recommendation {
+  id: string;
+  title: string;
+  vulnerability: string;
+  recommended_control_id: string | null;
+  suggested_action: string;
+  action_type: 'approve_control' | 'review_overblock' | 'review_queue' | 'maintain_status';
+  status: 'action_required' | 'informational' | 'optimal';
+  severity: 'high' | 'medium' | 'low';
+}
+
+export interface ExplainConcept {
+  id: string;
+  title: string;
+  what_is_this: string;
+  why_it_matters: string;
+  example: string;
+  related_control_id: string | null;
+  related_risk: string;
+}
+
+export interface SinglePromptTestRequest {
+  task?: string;
+  message: string;
+  candidate_id?: string | null;
+  no_cache?: boolean;
+}
+
+export interface SinglePromptTestResponse {
+  case_id: string;
+  baseline: CaseResult;
+  controlled: CaseResult;
+}
+
+export interface SyntheticAttackCaseItem {
+  case: Case;
+  baseline_result: CaseResult | null;
+  controlled_result: CaseResult | null;
+}
+
+export interface GenerateSyntheticAttacksRequest {
+  category?: string | null;
+  evaluate_now?: boolean;
+  no_cache?: boolean;
+}
+
+export interface GenerateSyntheticAttacksResponse {
+  cases: SyntheticAttackCaseItem[];
+}
+
+export async function getRunImpact(runId: string): Promise<ControlImpact[]> {
+  const res = await fetch(`${API_BASE}/runs/${runId}/impact`);
+  return handleResponse<ControlImpact[]>(res);
+}
+
+export async function getRunRecommendations(runId: string): Promise<Recommendation[]> {
+  const res = await fetch(`${API_BASE}/runs/${runId}/recommendations`);
+  return handleResponse<Recommendation[]>(res);
+}
+
+export async function getExplainConcepts(): Promise<ExplainConcept[]> {
+  const res = await fetch(`${API_BASE}/explain`);
+  return handleResponse<ExplainConcept[]>(res);
+}
+
+export async function testSinglePrompt(req: SinglePromptTestRequest): Promise<SinglePromptTestResponse> {
+  const res = await fetch(`${API_BASE}/test/prompt`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req),
+  });
+  return handleResponse<SinglePromptTestResponse>(res);
+}
+
+export async function generateSyntheticAttacks(req: GenerateSyntheticAttacksRequest): Promise<GenerateSyntheticAttacksResponse> {
+  const res = await fetch(`${API_BASE}/suite/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req),
+  });
+  return handleResponse<GenerateSyntheticAttacksResponse>(res);
+}
+
+

@@ -5,12 +5,15 @@ import {
   CaseResult,
   getRun,
   getRunExport,
+  getRunRecommendations,
   getRunReportUrl,
   getRunResults,
   overrideCaseVerdict,
   postRunReview,
+  Recommendation,
   ReviewRecord,
   RunSummary,
+  updateControlStatus,
 } from '../api';
 import '../styles/evidence.css';
 
@@ -35,6 +38,7 @@ export function Evidence() {
   const [runSummary, setRunSummary] = useState<RunSummary | null>(null);
   const [results, setResults] = useState<CaseResult[]>([]);
   const [reviews, setReviews] = useState<ReviewRecord[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [selectedCaseId, setSelectedCaseId] = useState<string>('');
   const [decision, setDecision] = useState<'accept' | 'reject' | 'needs_work'>('accept');
   const [overrideVerdict, setOverrideVerdict] = useState<'none' | 'pass' | 'fail'>('none');
@@ -60,10 +64,27 @@ export function Evidence() {
         setReviews([]);
       }
 
+      try {
+        const recs = await getRunRecommendations(id);
+        setRecommendations(recs);
+      } catch {
+        setRecommendations([]);
+      }
+
       setErrorMessage(null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown load error';
       setErrorMessage(`The run could not be loaded: ${msg}. Check that the run ID exists.`);
+    }
+  }
+
+  async function handleApproveRecommendedControl(controlId: string) {
+    try {
+      await updateControlStatus(controlId, 'approved');
+      await loadRunData(runId);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Approval failed';
+      setErrorMessage(`Failed to approve control: ${msg}`);
     }
   }
 
@@ -295,6 +316,35 @@ export function Evidence() {
             </ul>
           </div>
         )}
+      </section>
+
+      {/* Automated Recommendations Section */}
+      <section className="evidence-section">
+        <h2 className="section-title">Automated recommendations</h2>
+        <div className="recommendations-list">
+          {recommendations.length > 0 ? (
+            recommendations.map((rec) => (
+              <div key={rec.id} className="recommendation-card">
+                <div className="recommendation-content">
+                  <div className="recommendation-title">{rec.title}</div>
+                  <div className="recommendation-detail">{rec.vulnerability}</div>
+                  <div className="recommendation-action-text">{rec.suggested_action}</div>
+                </div>
+                {rec.action_type === 'approve_control' && rec.recommended_control_id && (
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => handleApproveRecommendedControl(rec.recommended_control_id!)}
+                  >
+                    Approve {rec.recommended_control_id}
+                  </button>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="empty-state">No automated recommendations evaluated yet.</div>
+          )}
+        </div>
       </section>
 
       {/* Review Queue Table */}

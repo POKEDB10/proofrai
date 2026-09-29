@@ -171,3 +171,45 @@
   font-family: var(--font-sans);
   font-size: var(--text-table);
 }
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.recommendation-card {
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.recommendation-content {
+  flex: 1;
+}
+
+.recommendation-title {
+  font-size: var(--text-table);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+
+.recommendation-detail {
+  font-size: var(--text-table);
+  color: var(--ink-2);
+  margin-bottom: var(--space-1);
+  line-height: 1.4;
+}
+
+.recommendation-action-text {
+  font-size: var(--text-table);
+  color: var(--ink);
+  font-weight: 600;
+}
+

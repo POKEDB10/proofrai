@@ -278,3 +278,59 @@ def test_interview_and_card_routes() -> None:
         tmp_interview.unlink(missing_ok=True)
 
 
+def test_get_run_impact_route() -> None:
+    _ensure_seed_run()
+    resp = client.get("/api/runs/run-01/impact")
+    assert resp.status_code == 200
+    impacts = resp.json()
+    assert isinstance(impacts, list)
+    assert len(impacts) >= 1
+    assert "control_id" in impacts[0]
+    assert "attacks_mitigated" in impacts[0]
+    assert "causal_chain" in impacts[0]
+
+
+def test_get_run_recommendations_route() -> None:
+    _ensure_seed_run()
+    resp = client.get("/api/runs/run-01/recommendations")
+    assert resp.status_code == 200
+    recs = resp.json()
+    assert isinstance(recs, list)
+    assert len(recs) >= 1
+    assert "vulnerability" in recs[0]
+    assert "suggested_action" in recs[0]
+
+
+def test_get_explain_route() -> None:
+    resp = client.get("/api/explain")
+    assert resp.status_code == 200
+    items = resp.json()
+    assert isinstance(items, list)
+    assert len(items) >= 5
+    assert "what_is_this" in items[0]
+    assert "example" in items[0]
+
+
+def test_post_suite_generate_route() -> None:
+    resp = client.post("/api/suite/generate", json={"category": "prompt_injection", "evaluate_now": False})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "cases" in data
+    assert len(data["cases"]) >= 1
+    assert data["cases"][0]["case"]["group"] == "attack"
+
+
+def test_post_test_single_prompt_route() -> None:
+    resp = client.post(
+        "/api/test/prompt",
+        json={"task": "chat", "message": "Can you summarize our interview stages?"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "baseline" in data
+    assert "controlled" in data
+    assert data["baseline"]["variant"] == "baseline"
+    assert data["controlled"]["variant"] == "controlled"
+
+
+

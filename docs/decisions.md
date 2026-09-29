@@ -54,3 +54,14 @@ Enabled human reviewer overrides from the Evidence screen, updating stored verdi
 
 Configured Vite development server and Uvicorn backend to bind to 0.0.0.0 with API proxy forwarding, allowing access across the local area network while keeping simulated tools and environment keys local.
 
+Implemented causal control impact mapping via GET /api/runs/{id}/impact to trace how each control intervened across attack cases and benign over-blocking.
+
+Implemented automated actionable recommendations via GET /api/runs/{id}/recommendations to guide control approval and threshold calibration based on active failure modes.
+
+Added explainability concepts catalogue via GET /api/explain to provide plain-language explanations and concrete recruitment examples for non-technical reviewers.
+
+Added synthetic attack generator via POST /api/suite/generate to produce structured adversarial cases targeting HireAssist recruiting risks.
+
+Added interactive prompt evaluation via POST /api/test/prompt to test ad-hoc inputs against baseline and controlled assistant variants with live check verification.
+
+
