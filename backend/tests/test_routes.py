@@ -149,3 +149,79 @@ def test_get_run_report_route() -> None:
     assert "<!DOCTYPE html>" in html_text
     assert "ProofRAI Assurance Report" in html_text
     assert "What this run does not show" in html_text
+
+
+def test_interview_and_card_routes() -> None:
+    tmp_path = Path("backend/data/control_library_test_interview.yaml")
+    shutil.copyfile("backend/data/control_library.yaml", tmp_path)
+    tmp_card = Path("backend/data/card_test.json")
+    tmp_interview = Path("backend/data/interview_test.json")
+
+    orig_path = routes_module.CONTROL_LIBRARY_PATH
+    orig_card = routes_module.CARD_FILE_PATH
+    orig_interview = routes_module.INTERVIEW_FILE_PATH
+
+    routes_module.CONTROL_LIBRARY_PATH = tmp_path
+    routes_module.CARD_FILE_PATH = tmp_card
+    routes_module.INTERVIEW_FILE_PATH = tmp_interview
+
+    try:
+        # 1. Post compliant interview answers
+        interview_payload = {
+            "tasks": ["summarise_applications", "draft_screening_notes"],
+            "data_seen": ["contact_details", "work_history"],
+            "decision_impact": "inform",
+            "actions": ["none"],
+            "human_oversight": "before_actions",
+            "affected_parties": ["job_candidates", "recruiters"],
+            "decision_significance": "significant",
+            "known_limitations": "Model outputs require human recruiter validation.",
+        }
+        resp = client.post("/api/interview", json=interview_payload)
+        assert resp.status_code == 200
+        res_data = resp.json()
+        assert res_data["status"] == "ok"
+        assert len(res_data["conflicts"]) == 0
+        assert "CTL-02" in res_data["proposed_controls"]
+        assert "CTL-04" not in res_data["proposed_controls"]
+
+        # 2. Trigger conflict: determination with no oversight
+        conflict_payload = dict(interview_payload)
+        conflict_payload["decision_impact"] = "determine"
+        conflict_payload["human_oversight"] = "never"
+        c_resp = client.post("/api/interview", json=conflict_payload)
+        assert c_resp.status_code == 200
+        c_data = c_resp.json()
+        assert len(c_data["conflicts"]) >= 1
+        assert any("outputs determine outcomes" in c["message"] for c in c_data["conflicts"])
+
+        # 3. GET /api/card
+        card_resp = client.get("/api/card")
+        assert card_resp.status_code == 200
+        card_data = card_resp.json()
+        assert "title" in card_data
+        assert "structured_fields" in card_data
+        assert "intended_use" in card_data
+        assert "known_limits" in card_data
+
+        # 4. POST /api/card/confirm
+        confirm_payload = {
+            "confirmed_by": "Compliance Officer",
+            "intended_use": "Verified intended use text for recruiting team.",
+            "known_limits": "Verified constraints and boundaries.",
+        }
+        conf_resp = client.post("/api/card/confirm", json=confirm_payload)
+        assert conf_resp.status_code == 200
+        conf_data = conf_resp.json()
+        assert conf_data["status"] == "confirmed"
+        assert conf_data["confirmed_by"] == "Compliance Officer"
+        assert conf_data["confirmed_at"] is not None
+    finally:
+        routes_module.CONTROL_LIBRARY_PATH = orig_path
+        routes_module.CARD_FILE_PATH = orig_card
+        routes_module.INTERVIEW_FILE_PATH = orig_interview
+        tmp_path.unlink(missing_ok=True)
+        tmp_card.unlink(missing_ok=True)
+        tmp_interview.unlink(missing_ok=True)
+
+

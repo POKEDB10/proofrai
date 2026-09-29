@@ -233,3 +233,76 @@ export async function getRunReport(runId: string): Promise<string> {
   }
   return res.text();
 }
+
+export interface InterviewAnswers {
+  tasks: string[];
+  data_seen: string[];
+  decision_impact: 'inform' | 'determine' | 'neither';
+  actions: string[];
+  human_oversight: 'never' | 'before_actions' | 'always';
+  affected_parties: string[];
+  decision_significance: 'non_significant' | 'significant' | 'critical';
+  known_limitations: string;
+}
+
+export interface Conflict {
+  field: string;
+  message: string;
+}
+
+export interface InterviewResponse {
+  status: string;
+  conflicts: Conflict[];
+  identified_risks: string[];
+  proposed_controls: string[];
+}
+
+export interface SystemCardData {
+  title: string;
+  structured_fields: Record<string, string>;
+  intended_use: string;
+  known_limits: string;
+  status: 'draft' | 'confirmed';
+  confirmed_by: string | null;
+  confirmed_at: string | null;
+}
+
+export async function postInterview(answers: InterviewAnswers): Promise<InterviewResponse> {
+  const res = await fetch(`${API_BASE}/interview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(answers),
+  });
+  return handleResponse<InterviewResponse>(res);
+}
+
+export async function getSystemCard(): Promise<SystemCardData> {
+  const res = await fetch(`${API_BASE}/card`);
+  return handleResponse<SystemCardData>(res);
+}
+
+export async function postCardDrafts(): Promise<SystemCardData> {
+  const res = await fetch(`${API_BASE}/card/drafts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return handleResponse<SystemCardData>(res);
+}
+
+export async function confirmSystemCard(
+  confirmedBy: string,
+  intendedUse: string,
+  knownLimits: string
+): Promise<SystemCardData> {
+  const res = await fetch(`${API_BASE}/card/confirm`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      confirmed_by: confirmedBy,
+      intended_use: intendedUse,
+      known_limits: knownLimits,
+    }),
+  });
+  return handleResponse<SystemCardData>(res);
+}
+

@@ -1,3 +1,79 @@
 .describe-screen {
   max-width: 640px;
 }
+
+.describe-intro {
+  font-size: var(--text-body);
+  color: var(--ink-2);
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
+}
+
+.question-block {
+  margin-bottom: var(--space-4);
+}
+
+.question-title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-2);
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.options-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.option-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-table);
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.describe-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-table);
+  line-height: 1.4;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  background-color: var(--surface);
+  color: var(--ink);
+  resize: vertical;
+}
+
+.conflict-flag {
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-2);
+  font-size: var(--text-table);
+  color: var(--review);
+}
+
+.describe-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+}
+
+.saved-note {
+  font-size: var(--text-table);
+  color: var(--pass);
+  font-weight: 600;
+}

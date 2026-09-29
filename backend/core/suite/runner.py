@@ -187,15 +187,7 @@ class SuiteRunner:
             self.db_path = Path(db_path)
 
         all_controls = controls or load_control_library()
-        implemented_ids = {"CTL-01", "CTL-02", "CTL-03", "CTL-05"}
-        self.approved_controls: list[Control] = []
-        for c in all_controls:
-            if c.id in implemented_ids:
-                c_copy = c.model_copy()
-                c_copy.status = "approved"
-                self.approved_controls.append(c_copy)
-            else:
-                self.approved_controls.append(c.model_copy())
+        self.approved_controls: list[Control] = [c.model_copy() for c in all_controls]
 
     def run_suite(
         self,

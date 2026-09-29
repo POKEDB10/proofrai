@@ -39,6 +39,7 @@ declare module 'react' {
 
   export interface MouseEvent {
     preventDefault(): void;
+    stopPropagation(): void;
   }
 
   export interface ChangeEvent<T = HTMLInputElement> {

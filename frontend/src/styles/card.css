@@ -1,3 +1,116 @@
 .card-screen {
-  max-width: 800px;
+  max-width: 760px;
+}
+
+.card-document {
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  padding: var(--space-5);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.card-doc-title {
+  font-size: var(--text-section);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.structured-list {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  row-gap: var(--space-2);
+  column-gap: var(--space-4);
+  font-size: var(--text-table);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.structured-key {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+.structured-value {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.card-status-line {
+  font-size: var(--text-table);
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: var(--space-3);
+}
+
+.card-status-line.confirmed {
+  color: var(--pass);
+}
+
+.card-textarea-block {
+  margin-bottom: var(--space-4);
+}
+
+.card-textarea-label {
+  display: block;
+  font-size: var(--text-table);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+
+.card-textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-table);
+  line-height: 1.5;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  background-color: var(--surface);
+  color: var(--ink);
+  resize: vertical;
+}
+
+.confirm-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.reviewer-input {
+  height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  background-color: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-table);
+  width: 240px;
+}
+
+.card-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.card-text-link {
+  color: var(--ink);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  height: auto;
+  font-family: var(--font-sans);
+  font-size: var(--text-table);
 }

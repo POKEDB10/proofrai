@@ -14,6 +14,25 @@ from backend.app.state import (
     get_run_summary,
 )
 from backend.core.controls.loader import load_control_library
+from backend.core.intake.card import (
+    CARD_FILE_PATH,
+    build_structured_fields,
+    confirm_card_in_file,
+    draft_card_paragraphs,
+    load_card_from_file,
+    save_card_to_file,
+)
+from backend.core.intake.conflicts import evaluate_conflicts
+from backend.core.intake.risks import (
+    map_risks_and_controls,
+    sync_control_library_with_proposals,
+)
+from backend.core.intake.schema import (
+    ConfirmCardRequest,
+    InterviewAnswers,
+    InterviewResponse,
+    SystemCardData,
+)
 from backend.core.ledger.database import (
     DEFAULT_LEDGER_PATH,
     get_db,
@@ -28,6 +47,7 @@ from backend.core.suite.loader import load_suite
 router = APIRouter(prefix="/api")
 control_file_lock = threading.Lock()
 CONTROL_LIBRARY_PATH = Path("backend/data/control_library.yaml")
+INTERVIEW_FILE_PATH = Path("backend/data/interview.json")
 
 
 class UpdateControlStatusRequest(BaseModel):
@@ -222,3 +242,69 @@ def get_run_report(run_id: str) -> Response:
     html_content = render_report_html(conn, run_id)
     conn.close()
     return Response(content=html_content, media_type="text/html; charset=utf-8")
+
+
+@router.post("/interview", response_model=InterviewResponse)
+def post_interview(answers: InterviewAnswers) -> InterviewResponse:
+    with control_file_lock:
+        conflicts = evaluate_conflicts(answers)
+        risks, proposed_controls = map_risks_and_controls(answers)
+        sync_control_library_with_proposals(proposed_controls, CONTROL_LIBRARY_PATH)
+
+        # Persist latest interview answers
+        INTERVIEW_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with open(INTERVIEW_FILE_PATH, "w", encoding="utf-8") as f:
+            f.write(answers.model_dump_json(indent=2))
+
+        # Update card structured fields
+        card = load_card_from_file(CARD_FILE_PATH)
+        card.structured_fields = build_structured_fields(answers)
+        save_card_to_file(card, CARD_FILE_PATH)
+
+        return InterviewResponse(
+            status="ok",
+            conflicts=conflicts,
+            identified_risks=risks,
+            proposed_controls=proposed_controls,
+        )
+
+
+@router.get("/card", response_model=SystemCardData)
+def get_card() -> SystemCardData:
+    return load_card_from_file(CARD_FILE_PATH)
+
+
+@router.post("/card/drafts", response_model=SystemCardData)
+def post_card_drafts() -> SystemCardData:
+    if INTERVIEW_FILE_PATH.is_file():
+        with open(INTERVIEW_FILE_PATH, encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        answers = InterviewAnswers.model_validate(data)
+    else:
+        answers = InterviewAnswers()
+
+    intended, limits = draft_card_paragraphs(answers)
+    card = load_card_from_file(CARD_FILE_PATH)
+    card.structured_fields = build_structured_fields(answers)
+    card.intended_use = intended
+    card.known_limits = limits
+    card.status = "draft"
+    card.confirmed_by = None
+    card.confirmed_at = None
+    save_card_to_file(card, CARD_FILE_PATH)
+    return card
+
+
+@router.post("/card/confirm", response_model=SystemCardData)
+def post_card_confirm(body: ConfirmCardRequest) -> SystemCardData:
+    if not body.confirmed_by.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Reviewer name is required to confirm card. Fix: provide non-empty confirmed_by string.",
+        )
+    return confirm_card_in_file(
+        confirmed_by=body.confirmed_by,
+        intended_use=body.intended_use,
+        known_limits=body.known_limits,
+        file_path=CARD_FILE_PATH,
+    )

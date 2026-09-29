@@ -33,3 +33,11 @@ Rendered results plate as a unified inline SVG with 18px cell dimensions, 3px gr
 Filtered review queue table to display cases requiring judge evaluation, cases resulting in execution errors, over-blocked benign runs, or existing reviewer decisions.
 
 Persisted reviewer decisions through POST /api/runs/{id}/reviews with immediate display under the release gate section without altering computed gate verdicts.
+
+Constructed system card structured fields exclusively from validated interview answers, disallowing model generation for structured fields.
+
+Drafted intended use and known limits paragraphs with the configured model, marking the card as unconfirmed draft until confirmed with reviewer name and timestamp.
+
+Displayed conflict indicators inline below causing questions using a review-coloured square and bold text instead of callout containers.
+
+Configured controls screen with checkbox toggles where unchecking marks a control rejected, preventing its execution in the suite runner pipeline.
