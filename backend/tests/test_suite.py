@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from backend.core.ledger.database import get_db, save_result
 from backend.core.models import Case, CaseResult
 from backend.core.suite.loader import load_suite
 from backend.core.suite.runner import SuiteRunner
@@ -54,8 +55,8 @@ def test_malformed_suite_file_rejected() -> None:
 
 def test_runner_resumability() -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
-        runner = SuiteRunner(runs_dir=tmpdir)
-        run_file = Path(tmpdir) / "test_run.jsonl"
+        db_path = Path(tmpdir) / "test_ledger.db"
+        runner = SuiteRunner(db_path=db_path)
 
         mock_case = Case(
             id="B-TEST-01",
@@ -79,11 +80,12 @@ def test_runner_resumability() -> None:
             verdict="pass",
             verdict_source="deterministic",
         )
-        with open(run_file, "w", encoding="utf-8") as f:
-            f.write(pre_seeded.model_dump_json() + "\n")
+        conn = get_db(db_path)
+        save_result(conn, "run-01", pre_seeded)
+        conn.close()
 
         # Run with mock case
-        results = runner.run_suite([mock_case], run_file_name="test_run.jsonl")
+        results = runner.run_suite([mock_case], run_id="run-01")
         assert len(results) == 2
 
         base = next(r for r in results if r.variant == "baseline")

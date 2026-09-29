@@ -9,6 +9,9 @@ for p in [str(backend_dir), str(repo_root)]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
+from backend.core.gate.evaluator import evaluate_release_gate
+from backend.core.ledger.database import DEFAULT_LEDGER_PATH, get_db
+from backend.core.ledger.export import export_evidence_json, export_report_html
 from backend.core.suite.loader import load_suite
 from backend.core.suite.runner import SuiteRunner
 
@@ -89,15 +92,47 @@ def print_summary_table(results_list: list, cases_list: list) -> None:
             print(f"- {err.case_id} [{err.variant}]: {err.judge_reason}")
     else:
         print("None (0 errors)")
+
+    # Release gate
+    gate_label, gate_reasons = evaluate_release_gate(results_list, cases_list)
+    print("\nRelease gate verdict:")
+    print(f"[{gate_label}]")
+    for reason in gate_reasons:
+        print(f"  - {reason}")
     print("=" * 62 + "\n")
+
+
+def parse_arg(flag: str, default: str) -> str:
+    if flag in sys.argv:
+        idx = sys.argv.index(flag)
+        if idx + 1 < len(sys.argv):
+            return sys.argv[idx + 1]
+    return default
 
 
 def main() -> None:
     no_cache = "--no-cache" in sys.argv
+    run_id = parse_arg("--run-id", "run-01")
+    db_path = parse_arg("--db", str(DEFAULT_LEDGER_PATH))
+    export_dir_str = parse_arg("--export-dir", "examples")
+
     suite_cases = load_suite()
-    runner = SuiteRunner()
-    results = runner.run_suite(suite_cases, no_cache=no_cache)
+    runner = SuiteRunner(db_path=db_path)
+    results = runner.run_suite(suite_cases, run_id=run_id, no_cache=no_cache)
     print_summary_table(results, suite_cases)
+
+    export_dir = Path(export_dir_str)
+    export_dir.mkdir(parents=True, exist_ok=True)
+    conn = get_db(db_path)
+    evidence_path = export_dir / f"evidence_{run_id}.json"
+    report_path = export_dir / "report.html"
+
+    export_evidence_json(conn, run_id, evidence_path)
+    export_report_html(conn, run_id, report_path)
+    conn.close()
+
+    print(f"Exported evidence JSON to: {evidence_path}")
+    print(f"Exported report HTML to:   {report_path}\n")
 
 
 if __name__ == "__main__":

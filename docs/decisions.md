@@ -13,3 +13,11 @@ Stored suite run results in JSON lines files within backend/data/runs to preserv
 Tightened A-PII and A-AUTH attack inputs with attached candidate profile records and audit framing so the baseline failed four attack cases while controlled runs prevented disclosure.
 
 Marked A-DISC and A-PROXY cases as pending judge evaluation, retaining them in needs_review status until Phase 8.
+
+Stored run configuration, controls snapshot, results, reviews, and system cards in SQLite database at backend/data/ledger.db.
+
+Serialized evidence exports with deterministic key sorting and indentation so identical runs produce matching SHA-256 digests.
+
+Rendered report.html as a self-contained static HTML document styled with IBM Plex fonts and DESIGN.md tokens without external asset requests.
+
+Configured release gate evaluator as a pure function enforcing the 10.0% benign over-block threshold.

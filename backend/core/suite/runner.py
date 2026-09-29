@@ -1,8 +1,13 @@
+import hashlib
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import yaml
+
+from backend.app.settings import get_settings
 from backend.core.checks.evaluators import (
     canary_absent,
     field_values_absent,
@@ -13,6 +18,15 @@ from backend.core.checks.evaluators import (
 )
 from backend.core.controls.loader import load_control_library
 from backend.core.controls.pipeline import ControlPipeline
+from backend.core.ledger.database import (
+    DEFAULT_LEDGER_PATH,
+    get_db,
+    load_results_for_run,
+    load_run,
+    save_controls_snapshot,
+    save_result,
+    save_run,
+)
 from backend.core.models import (
     Case,
     CaseResult,
@@ -25,8 +39,6 @@ from backend.core.models import (
     VerdictSource,
 )
 from backend.core.target.assistant import HireAssist, TargetExecution
-
-DEFAULT_RUNS_DIR = Path("backend/data/runs")
 
 
 def evaluate_check(
@@ -165,10 +177,13 @@ class SuiteRunner:
     def __init__(
         self,
         controls: list[Control] | None = None,
-        runs_dir: Path | str = DEFAULT_RUNS_DIR,
+        db_path: Path | str = DEFAULT_LEDGER_PATH,
+        runs_dir: Path | str | None = None,
     ) -> None:
-        self.runs_dir = Path(runs_dir)
-        self.runs_dir.mkdir(parents=True, exist_ok=True)
+        if runs_dir is not None:
+            self.db_path = Path(runs_dir) / "ledger.db"
+        else:
+            self.db_path = Path(db_path)
 
         all_controls = controls or load_control_library()
         implemented_ids = {"CTL-01", "CTL-02", "CTL-03", "CTL-05"}
@@ -184,22 +199,41 @@ class SuiteRunner:
     def run_suite(
         self,
         cases: list[Case],
-        run_file_name: str = "latest.jsonl",
+        run_id: str = "run-01",
         no_cache: bool = False,
+        run_file_name: str | None = None,
     ) -> list[CaseResult]:
-        run_path = self.runs_dir / run_file_name
+        if run_file_name is not None and run_id == "run-01":
+            run_id = Path(run_file_name).stem
 
-        existing_results: dict[tuple[str, str], CaseResult] = {}
-        if run_path.is_file():
-            with open(run_path, encoding="utf-8") as f:
-                for line in f:
-                    line_str = line.strip()
-                    if line_str:
-                        try:
-                            parsed = CaseResult.model_validate_json(line_str)
-                            existing_results[(parsed.case_id, parsed.variant)] = parsed
-                        except (ValueError, TypeError, KeyError):
-                            continue
+        conn = get_db(self.db_path)
+        existing_run = load_run(conn, run_id)
+        settings = get_settings()
+
+        controls_data = [c.model_dump() for c in self.approved_controls]
+        controls_yaml = yaml.dump(controls_data, sort_keys=True)
+        control_config_hash = hashlib.sha256(controls_yaml.encode("utf-8")).hexdigest()[:12]
+        created_at = datetime.now(timezone.utc).isoformat()
+
+        if not existing_run:
+            save_run(
+                conn=conn,
+                run_id=run_id,
+                provider=settings.provider,
+                target_model=settings.target_model,
+                judge_model=settings.judge_model,
+                temperature=0.0,
+                suite_version="v1",
+                control_config_hash=control_config_hash,
+                controls_yaml=controls_yaml,
+                created_at=created_at,
+            )
+            save_controls_snapshot(conn, run_id, self.approved_controls)
+
+        db_results = load_results_for_run(conn, run_id)
+        existing_results: dict[tuple[str, str], CaseResult] = {
+            (r.case_id, r.variant): r for r in db_results
+        }
 
         all_results: list[CaseResult] = []
         total_cases = len(cases)
@@ -248,8 +282,7 @@ class SuiteRunner:
                     judge_reason=j_reason,
                     blocked_by=blocked_by,
                 )
-                with open(run_path, "a", encoding="utf-8") as f:
-                    f.write(base_result.model_dump_json() + "\n")
+                save_result(conn, run_id, base_result)
                 existing_results[baseline_key] = base_result
 
             all_results.append(base_result)
@@ -293,16 +326,13 @@ class SuiteRunner:
                     judge_reason=j_reason,
                     blocked_by=blocked_by,
                 )
-                with open(run_path, "a", encoding="utf-8") as f:
-                    f.write(ctrl_result.model_dump_json() + "\n")
+                save_result(conn, run_id, ctrl_result)
                 existing_results[controlled_key] = ctrl_result
 
             all_results.append(ctrl_result)
 
         sys.stderr.write(f"\rCompleted run of {total_cases} cases.             \n")
         sys.stderr.flush()
-
-        with open(run_path, "w", encoding="utf-8") as f:
-            f.writelines(r.model_dump_json() + "\n" for r in all_results)
+        conn.close()
 
         return all_results
