@@ -13,10 +13,16 @@ from backend.core.ledger.database import (
     save_run,
     save_system_card,
 )
-from backend.core.ledger.export import export_evidence_json, export_report_html
+from backend.core.ledger.export import (
+    build_evidence_dict,
+    export_evidence_json,
+    export_report_html,
+    render_report_html,
+)
 
 __all__ = [
     "DEFAULT_LEDGER_PATH",
+    "build_evidence_dict",
     "export_evidence_json",
     "export_report_html",
     "get_db",
@@ -26,6 +32,7 @@ __all__ = [
     "load_reviews_for_run",
     "load_run",
     "load_system_card",
+    "render_report_html",
     "save_controls_snapshot",
     "save_result",
     "save_review",

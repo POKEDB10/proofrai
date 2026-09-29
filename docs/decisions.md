@@ -21,3 +21,9 @@ Serialized evidence exports with deterministic key sorting and indentation so id
 Rendered report.html as a self-contained static HTML document styled with IBM Plex fonts and DESIGN.md tokens without external asset requests.
 
 Configured release gate evaluator as a pure function enforcing the 10.0% benign over-block threshold.
+
+Exposed backend routes under /api prefix with FastAPI BackgroundTasks for suite execution and state tracking.
+
+Returned JSON formatted error responses containing problem and fix instructions across all endpoints and validation handlers.
+
+Mirrored backend data schemas and HTTP methods in frontend/src/api.ts using plain fetch with zero additional dependencies.

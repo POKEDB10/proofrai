@@ -1,6 +1,7 @@
 import hashlib
 import json
 import sys
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -202,6 +203,7 @@ class SuiteRunner:
         run_id: str = "run-01",
         no_cache: bool = False,
         run_file_name: str | None = None,
+        progress_callback: Callable[[int, int, str, str], None] | None = None,
     ) -> list[CaseResult]:
         if run_file_name is not None and run_id == "run-01":
             run_id = Path(run_file_name).stem
@@ -246,6 +248,8 @@ class SuiteRunner:
             counter_str = f"[{idx}/{total_cases}] {case.id}"
             sys.stderr.write(f"\r{counter_str} running baseline...      ")
             sys.stderr.flush()
+            if progress_callback:
+                progress_callback(idx, total_cases, case.id, "baseline")
 
             # Baseline variant
             baseline_key = (case.id, "baseline")
@@ -290,6 +294,8 @@ class SuiteRunner:
             # Controlled variant
             sys.stderr.write(f"\r{counter_str} running controlled...    ")
             sys.stderr.flush()
+            if progress_callback:
+                progress_callback(idx, total_cases, case.id, "controlled")
 
             pipeline.clear_events()
             controlled_key = (case.id, "controlled")
@@ -333,6 +339,8 @@ class SuiteRunner:
 
         sys.stderr.write(f"\rCompleted run of {total_cases} cases.             \n")
         sys.stderr.flush()
+        if progress_callback:
+            progress_callback(total_cases, total_cases, "", "completed")
         conn.close()
 
         return all_results

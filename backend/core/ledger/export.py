@@ -94,10 +94,9 @@ def export_evidence_json(
     return serialized
 
 
-def export_report_html(
+def render_report_html(
     conn: sqlite3.Connection,
     run_id: str,
-    output_path: Path | str,
     suite_cases_path: Path | str = "backend/data/suite.yaml",
 ) -> str:
     evidence = build_evidence_dict(conn, run_id, suite_cases_path)
@@ -458,7 +457,16 @@ td {
 </html>
 """)
 
-    content = "".join(html_parts)
+    return "".join(html_parts)
+
+
+def export_report_html(
+    conn: sqlite3.Connection,
+    run_id: str,
+    output_path: Path | str,
+    suite_cases_path: Path | str = "backend/data/suite.yaml",
+) -> str:
+    content = render_report_html(conn, run_id, suite_cases_path)
     out_file = Path(output_path)
     out_file.parent.mkdir(parents=True, exist_ok=True)
     with open(out_file, "w", encoding="utf-8") as f:
