@@ -6,8 +6,59 @@ from fastapi.testclient import TestClient
 
 import backend.app.routes as routes_module
 from backend.app.main import app
+from backend.core.ledger.database import (
+    DEFAULT_LEDGER_PATH,
+    get_db,
+    load_run,
+    save_result,
+    save_run,
+)
+from backend.core.models import CaseResult
+from backend.core.suite.loader import load_suite
 
 client = TestClient(app)
+
+
+def _ensure_seed_run() -> None:
+    conn = get_db(DEFAULT_LEDGER_PATH)
+    if not load_run(conn, "run-01"):
+        cases = load_suite()
+        save_run(
+            conn=conn,
+            run_id="run-01",
+            provider="gemini",
+            target_model="gemini-3.5-flash-lite",
+            judge_model="gemini-3.5-flash",
+            temperature=0.0,
+            suite_version="v1",
+            control_config_hash="seed123456",
+            controls_yaml="title: seed",
+            created_at="2026-09-29T10:00:00Z",
+        )
+        for c in cases:
+            base_res = CaseResult(
+                case_id=c.id,
+                variant="baseline",
+                output_text="Candidate evaluation text",
+                tool_calls=[],
+                events=[],
+                checks=[],
+                verdict="pass",
+                verdict_source="deterministic",
+            )
+            ctrl_res = CaseResult(
+                case_id=c.id,
+                variant="controlled",
+                output_text="Refusal text",
+                tool_calls=[],
+                events=[],
+                checks=[],
+                verdict="pass",
+                verdict_source="deterministic",
+            )
+            save_result(conn, "run-01", base_res)
+            save_result(conn, "run-01", ctrl_res)
+    conn.close()
 
 
 def test_get_controls_route() -> None:
@@ -31,21 +82,18 @@ def test_patch_control_route() -> None:
     routes_module.CONTROL_LIBRARY_PATH = tmp_path
 
     try:
-        # 1. Successful patch
         resp = client.patch("/api/controls/CTL-01", json={"status": "approved"})
         assert resp.status_code == 200
         updated = resp.json()
         assert updated["id"] == "CTL-01"
         assert updated["status"] == "approved"
 
-        # 2. Invalid status
         bad_resp = client.patch("/api/controls/CTL-01", json={"status": "enabled"})
         assert bad_resp.status_code == 400
         err = bad_resp.json()
         assert "detail" in err
         assert "Fix:" in err["detail"]
 
-        # 3. Non-existent control
         not_found = client.patch("/api/controls/CTL-999", json={"status": "approved"})
         assert not_found.status_code == 404
         err = not_found.json()
@@ -57,7 +105,7 @@ def test_patch_control_route() -> None:
 
 
 def test_runs_lifecycle_routes() -> None:
-    # 1. Existing run summary
+    _ensure_seed_run()
     resp = client.get("/api/runs/run-01")
     assert resp.status_code == 200
     summary = resp.json()
@@ -83,11 +131,12 @@ def test_runs_lifecycle_routes() -> None:
 
 
 def test_get_run_results_route() -> None:
+    _ensure_seed_run()
     resp = client.get("/api/runs/run-01/results")
     assert resp.status_code == 200
     results = resp.json()
     assert isinstance(results, list)
-    assert len(results) == 60  # 30 baseline + 30 controlled
+    assert len(results) == 60
     sample = results[0]
     assert "case_id" in sample
     assert "variant" in sample
@@ -99,7 +148,7 @@ def test_get_run_results_route() -> None:
 
 
 def test_post_run_review_and_export_route() -> None:
-    # 1. Post review
+    _ensure_seed_run()
     review_data = {
         "case_id": "A-DISC-01",
         "decision": "needs_work",
@@ -112,7 +161,6 @@ def test_post_run_review_and_export_route() -> None:
     assert res_json["status"] == "saved"
     assert res_json["decision"] == "needs_work"
 
-    # 2. Invalid review decision
     bad_decision = client.post(
         "/api/runs/run-01/reviews",
         json={"case_id": "A-DISC-01", "decision": "invalid", "comment": "test"},
@@ -120,7 +168,6 @@ def test_post_run_review_and_export_route() -> None:
     assert bad_decision.status_code == 400
     assert "Fix:" in bad_decision.json()["detail"]
 
-    # 3. Invalid case id
     bad_case = client.post(
         "/api/runs/run-01/reviews",
         json={"case_id": "INVALID-CASE", "decision": "accept", "comment": "test"},
@@ -128,7 +175,6 @@ def test_post_run_review_and_export_route() -> None:
     assert bad_case.status_code == 404
     assert "Fix:" in bad_case.json()["detail"]
 
-    # 4. Verify review appears in export
     export_resp = client.get("/api/runs/run-01/export")
     assert export_resp.status_code == 200
     evidence = export_resp.json()
@@ -142,6 +188,7 @@ def test_post_run_review_and_export_route() -> None:
 
 
 def test_get_run_report_route() -> None:
+    _ensure_seed_run()
     resp = client.get("/api/runs/run-01/report")
     assert resp.status_code == 200
     assert "text/html" in resp.headers["content-type"]
