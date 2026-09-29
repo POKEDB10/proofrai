@@ -51,3 +51,6 @@ Implemented rubric-based single-answer evaluation using the configured judge mod
 Enforced model separation between target and judge models to avoid self-evaluation bias.
 
 Enabled human reviewer overrides from the Evidence screen, updating stored verdicts and tracking reviewer identity while preserving the original judge verdict and rationale.
+
+Configured Vite development server and Uvicorn backend to bind to 0.0.0.0 with API proxy forwarding, allowing access across the local area network while keeping simulated tools and environment keys local.
+
