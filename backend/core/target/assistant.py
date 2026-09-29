@@ -95,6 +95,26 @@ class HireAssist:
         ]
 
         messages = self.hooks.pre_model_hook(initial_messages, context)
+        if context.get("blocked"):
+            events_fn = getattr(self.hooks, "get_events", None)
+            events = events_fn() if callable(events_fn) else []
+            block_reply = str(context.get("block_reply", "Request blocked by policy."))
+            return TargetExecution(
+                output_text=block_reply,
+                tool_calls=[],
+                raw_completion=Completion(
+                    text=block_reply,
+                    provider="control",
+                    model="control-block",
+                    temperature=0.0,
+                    cached=True,
+                    latency_ms=0,
+                ),
+                events=events,
+            )
+
+        context["llm"] = self.llm
+        context["no_cache"] = no_cache
         completion = self.llm.complete(messages=messages, no_cache=no_cache)
 
         reply_text, parsed_calls = self._parse_reply(completion.text)

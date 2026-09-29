@@ -41,3 +41,13 @@ Drafted intended use and known limits paragraphs with the configured model, mark
 Displayed conflict indicators inline below causing questions using a review-coloured square and bold text instead of callout containers.
 
 Configured controls screen with checkbox toggles where unchecking marks a control rejected, preventing its execution in the suite runner pipeline.
+
+Implemented CTL-04 to verify job criteria citations in screening notes against criteria IDs in jobs.json with a single prompt-based regeneration fallback.
+
+Implemented CTL-06 to detect and decline discriminatory filtering and proxy demographic requests via regex patterns before invocation of the model.
+
+Implemented rubric-based single-answer evaluation using the configured judge model, returning pass, fail, or unclear with a concise reason for cases requiring subjective evaluation.
+
+Enforced model separation between target and judge models to avoid self-evaluation bias.
+
+Enabled human reviewer overrides from the Evidence screen, updating stored verdicts and tracking reviewer identity while preserving the original judge verdict and rationale.

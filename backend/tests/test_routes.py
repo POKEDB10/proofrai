@@ -168,9 +168,9 @@ def test_interview_and_card_routes() -> None:
     try:
         # 1. Post compliant interview answers
         interview_payload = {
-            "tasks": ["summarise_applications", "draft_screening_notes"],
+            "tasks": ["summarise_applications"],
             "data_seen": ["contact_details", "work_history"],
-            "decision_impact": "inform",
+            "decision_impact": "neither",
             "actions": ["none"],
             "human_oversight": "before_actions",
             "affected_parties": ["job_candidates", "recruiters"],

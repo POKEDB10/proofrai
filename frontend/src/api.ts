@@ -16,7 +16,7 @@ export interface ToolCall {
 }
 
 export type ControlStage = 'pre_model' | 'prompt' | 'post_model' | 'tool_gate';
-export type ControlAction = 'pass' | 'modify' | 'block' | 'queue';
+export type ControlAction = 'pass' | 'modify' | 'block' | 'queue' | 'flag';
 
 export interface ControlEvent {
   control_id: string;
@@ -125,6 +125,23 @@ export interface ReviewRequest {
   decision: 'accept' | 'reject' | 'needs_work';
   comment: string;
   reviewer?: string;
+  override_verdict?: 'pass' | 'fail' | 'needs_review';
+}
+
+export interface OverrideRequest {
+  case_id: string;
+  verdict: 'pass' | 'fail' | 'needs_review';
+  comment: string;
+  reviewer?: string;
+}
+
+export interface OverrideResponse {
+  status: string;
+  run_id: string;
+  case_id: string;
+  verdict: Verdict;
+  verdict_source: VerdictSource;
+  judge_reason?: string;
 }
 
 export interface ReviewRecord {
@@ -204,6 +221,18 @@ export async function postRunReview(
     body: JSON.stringify(review),
   });
   return handleResponse<ReviewRecord>(res);
+}
+
+export async function overrideCaseVerdict(
+  runId: string,
+  override: OverrideRequest
+): Promise<OverrideResponse> {
+  const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/override`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(override),
+  });
+  return handleResponse<OverrideResponse>(res);
 }
 
 export async function getRunExport(

@@ -19,6 +19,7 @@ from backend.core.checks.evaluators import (
 )
 from backend.core.controls.loader import load_control_library
 from backend.core.controls.pipeline import ControlPipeline
+from backend.core.judge.rubric import JudgeEvaluator
 from backend.core.ledger.database import (
     DEFAULT_LEDGER_PATH,
     get_db,
@@ -144,16 +145,42 @@ def execute_case_variant(
         return None, str(exc)
 
 
+def extract_case_prompt(case_input: str | dict[str, Any]) -> str:
+    if isinstance(case_input, dict):
+        if "message" in case_input:
+            return str(case_input["message"])
+        if "question" in case_input:
+            return str(case_input["question"])
+        return json.dumps(case_input, ensure_ascii=False)
+    return str(case_input)
+
+
 def determine_verdict(
     case: Case,
     checks: list[CheckResult],
     events: list[ControlEvent],
     error_msg: str | None = None,
+    output_text: str = "",
+    user_prompt: str = "",
+    judge_evaluator: JudgeEvaluator | None = None,
+    no_cache: bool = False,
 ) -> tuple[Verdict, VerdictSource, str | None, list[str] | None]:
     if error_msg is not None:
         return "error", "deterministic", f"Execution error: {error_msg}", None
 
-    if case.judge == "pending":
+    if case.judge:
+        if judge_evaluator is not None:
+            j_verdict, j_reason = judge_evaluator.evaluate(
+                case=case,
+                output_text=output_text,
+                user_prompt=user_prompt,
+                no_cache=no_cache,
+            )
+            if j_verdict == "pass":
+                return "pass", "judge", j_reason, None
+            if j_verdict == "fail":
+                return "fail", "judge", j_reason, None
+            return "needs_review", "judge", j_reason, None
         return "needs_review", "judge", "Judge evaluation pending", None
 
     has_ambiguity = any("ambiguous" in c.detail for c in checks)
@@ -186,8 +213,17 @@ class SuiteRunner:
         else:
             self.db_path = Path(db_path)
 
-        all_controls = controls or load_control_library()
-        self.approved_controls: list[Control] = [c.model_copy() for c in all_controls]
+        if controls is not None:
+            self.approved_controls = [c.model_copy() for c in controls]
+        else:
+            self.approved_controls = [
+                c.model_copy(update={"status": "approved"})
+                for c in load_control_library()
+            ]
+        try:
+            self.judge_evaluator: JudgeEvaluator | None = JudgeEvaluator()
+        except (ValueError, RuntimeError):
+            self.judge_evaluator = None
 
     def run_suite(
         self,
@@ -243,11 +279,14 @@ class SuiteRunner:
             if progress_callback:
                 progress_callback(idx, total_cases, case.id, "baseline")
 
+            user_prompt = extract_case_prompt(case.input)
+
             # Baseline variant
             baseline_key = (case.id, "baseline")
             if (
                 baseline_key in existing_results
                 and existing_results[baseline_key].verdict != "error"
+                and existing_results[baseline_key].judge_reason != "Judge evaluation pending"
                 and not no_cache
             ):
                 base_result = existing_results[baseline_key]
@@ -264,7 +303,14 @@ class SuiteRunner:
                     for spec in case.checks
                 ]
                 v, v_source, j_reason, blocked_by = determine_verdict(
-                    case, checks, events, err
+                    case=case,
+                    checks=checks,
+                    events=events,
+                    error_msg=err,
+                    output_text=output_text,
+                    user_prompt=user_prompt,
+                    judge_evaluator=self.judge_evaluator,
+                    no_cache=no_cache,
                 )
                 base_result = CaseResult(
                     case_id=case.id,
@@ -294,6 +340,7 @@ class SuiteRunner:
             if (
                 controlled_key in existing_results
                 and existing_results[controlled_key].verdict != "error"
+                and existing_results[controlled_key].judge_reason != "Judge evaluation pending"
                 and not no_cache
             ):
                 ctrl_result = existing_results[controlled_key]
@@ -310,7 +357,14 @@ class SuiteRunner:
                     for spec in case.checks
                 ]
                 v, v_source, j_reason, blocked_by = determine_verdict(
-                    case, checks, events, err
+                    case=case,
+                    checks=checks,
+                    events=events,
+                    error_msg=err,
+                    output_text=output_text,
+                    user_prompt=user_prompt,
+                    judge_evaluator=self.judge_evaluator,
+                    no_cache=no_cache,
                 )
                 ctrl_result = CaseResult(
                     case_id=case.id,

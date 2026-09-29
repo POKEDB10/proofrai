@@ -38,6 +38,7 @@ from backend.core.ledger.database import (
     get_db,
     load_results_for_run,
     load_run,
+    override_case_verdict,
     save_review,
 )
 from backend.core.ledger.export import build_evidence_dict, render_report_html
@@ -62,6 +63,14 @@ class StartRunRequest(BaseModel):
 class CreateReviewRequest(BaseModel):
     case_id: str
     decision: str
+    comment: str
+    reviewer: str = "analyst"
+    override_verdict: str | None = None
+
+
+class OverrideVerdictRequest(BaseModel):
+    case_id: str
+    verdict: str
     comment: str
     reviewer: str = "analyst"
 
@@ -201,6 +210,23 @@ def post_run_review(run_id: str, body: CreateReviewRequest) -> dict[str, Any]:
         reviewer=body.reviewer,
         created_at=now_iso,
     )
+
+    if body.override_verdict:
+        if body.override_verdict not in ("pass", "fail", "needs_review"):
+            conn.close()
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid override verdict '{body.override_verdict}'. Fix: must be 'pass', 'fail', or 'needs_review'.",
+            )
+        override_case_verdict(
+            conn=conn,
+            run_id=run_id,
+            case_id=body.case_id,
+            new_verdict=body.override_verdict,
+            comment=body.comment,
+            reviewer=body.reviewer,
+        )
+
     conn.close()
 
     return {
@@ -211,6 +237,49 @@ def post_run_review(run_id: str, body: CreateReviewRequest) -> dict[str, Any]:
         "comment": body.comment,
         "reviewer": body.reviewer,
         "created_at": now_iso,
+    }
+
+
+@router.post("/runs/{run_id}/override")
+def post_override_verdict(run_id: str, body: OverrideVerdictRequest) -> dict[str, Any]:
+    if body.verdict not in ("pass", "fail", "needs_review"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid verdict '{body.verdict}'. Fix: verdict must be 'pass', 'fail', or 'needs_review'.",
+        )
+
+    conn = get_db(DEFAULT_LEDGER_PATH)
+    run_meta = load_run(conn, run_id)
+    if not run_meta and run_id not in active_trackers:
+        conn.close()
+        raise HTTPException(
+            status_code=404,
+            detail=f"Run '{run_id}' not found. Fix: provide an existing run ID.",
+        )
+
+    updated_result = override_case_verdict(
+        conn=conn,
+        run_id=run_id,
+        case_id=body.case_id,
+        new_verdict=body.verdict,
+        comment=body.comment,
+        reviewer=body.reviewer,
+    )
+    conn.close()
+
+    if updated_result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Case '{body.case_id}' in run '{run_id}' not found. Fix: verify case ID and run ID.",
+        )
+
+    return {
+        "status": "overridden",
+        "run_id": run_id,
+        "case_id": body.case_id,
+        "verdict": updated_result.verdict,
+        "verdict_source": updated_result.verdict_source,
+        "judge_reason": updated_result.judge_reason,
     }
 
 

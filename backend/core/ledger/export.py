@@ -435,8 +435,13 @@ td {
     else:
         html_parts.append("<div class=\"empty-note\">No human reviewer decisions logged for this run.</div>\n")
 
-    # Section 7: Model and suite versions with hashes
+    # Section 7: Judge evaluation and human override
     html_parts.append("""
+<h2>Judge evaluation and human override</h2>
+<div class="prose">
+Automated model judges exhibit documented systematic biases, including length preference, self-enhancement, position sensitivity, and superficial refusal detection. A judge cannot verify factual truth, internal reasoning, or subtle policy edge cases. A reviewer can override any judged verdict directly from the Evidence screen. When an override is applied, the stored verdict is updated, the verdict source becomes human, and the original judge assessment and rationale are retained for audit inspection.
+</div>
+
 <h2>Model and suite versions with hashes</h2>
 <table style="width: auto;">
   <tr><th>Provider</th><td class="mono">""" + run_meta["provider"] + """</td></tr>

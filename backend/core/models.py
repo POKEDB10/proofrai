@@ -22,7 +22,7 @@ class ToolCall(BaseModel):
 
 
 ControlStage = Literal["pre_model", "prompt", "post_model", "tool_gate"]
-ControlAction = Literal["pass", "modify", "block", "queue"]
+ControlAction = Literal["pass", "modify", "block", "queue", "flag"]
 
 
 class ControlEvent(BaseModel):

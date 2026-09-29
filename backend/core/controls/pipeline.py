@@ -3,7 +3,11 @@ from typing import Any
 from backend.core.controls.ctl_01_minimise_fields import MinimiseFieldsControl
 from backend.core.controls.ctl_02_untrusted_documents import UntrustedDocumentsControl
 from backend.core.controls.ctl_03_scan_output import ScanOutputControl
+from backend.core.controls.ctl_04_job_criteria import JobCriteriaControl
 from backend.core.controls.ctl_05_human_approval import HumanApprovalControl
+from backend.core.controls.ctl_06_decline_discrimination import (
+    DeclineDiscriminationControl,
+)
 from backend.core.models import Control, ControlEvent, ToolCall
 from backend.core.target.assistant import HireAssistHooks
 
@@ -16,7 +20,9 @@ class ControlPipeline(HireAssistHooks):
         self.ctl_01: MinimiseFieldsControl | None = None
         self.ctl_02: UntrustedDocumentsControl | None = None
         self.ctl_03: ScanOutputControl | None = None
+        self.ctl_04: JobCriteriaControl | None = None
         self.ctl_05: HumanApprovalControl | None = None
+        self.ctl_06: DeclineDiscriminationControl | None = None
 
         for c in self.approved_controls:
             if c.id == "CTL-01":
@@ -25,8 +31,12 @@ class ControlPipeline(HireAssistHooks):
                 self.ctl_02 = UntrustedDocumentsControl(c)
             elif c.id == "CTL-03":
                 self.ctl_03 = ScanOutputControl(c)
+            elif c.id == "CTL-04":
+                self.ctl_04 = JobCriteriaControl(c)
             elif c.id == "CTL-05":
                 self.ctl_05 = HumanApprovalControl(c)
+            elif c.id == "CTL-06":
+                self.ctl_06 = DeclineDiscriminationControl(c)
 
     def get_events(self) -> list[ControlEvent]:
         return list(self.events)
@@ -40,6 +50,14 @@ class ControlPipeline(HireAssistHooks):
         context: dict[str, Any],
     ) -> list[dict[str, str]]:
         current_messages = messages
+        if self.ctl_06:
+            current_messages, event = self.ctl_06.run_pre_model(
+                current_messages, context
+            )
+            self.events.append(event)
+            if context.get("blocked"):
+                return current_messages
+
         if self.ctl_01:
             current_messages, event = self.ctl_01.run_pre_model(
                 current_messages, context
@@ -60,6 +78,11 @@ class ControlPipeline(HireAssistHooks):
     ) -> tuple[str, list[ToolCall]]:
         current_text = reply_text
         current_calls = tool_calls
+        if self.ctl_04:
+            current_text, current_calls, event = self.ctl_04.run_post_model(
+                current_text, current_calls, context
+            )
+            self.events.append(event)
         if self.ctl_03:
             current_text, current_calls, event = self.ctl_03.run_post_model(
                 current_text, current_calls, context

@@ -51,16 +51,19 @@
   status: proposed
 
 - id: CTL-04
-  title: Scope tool execution to authorised actions
-  risk: Unauthorised or out of scope tool execution
-  rationale: Restrict tool execution to explicitly authorised actions and validate tool arguments.
-  enforcement_point: tool_gate
-  params: {}
+  title: Require job-related rationale
+  risk: Unjustified recommendations and claims
+  rationale: Recommendations must cite job criteria ids from the job description, checked by schema and id matching. Uncited recommendations get a flag event, and the reply is regenerated once before being marked.
+  enforcement_point: post_model
+  params:
+    regenerate_on_missing: true
   references:
-    - OWASP LLM07
-    - NIST AI RMF Manage
+    - Digital Dubai fairness guideline
+    - NIST AI RMF Map
   test_ids:
-    - T-SCOPE-01
+    - B-NOTE-01
+    - B-NOTE-02
+    - B-NOTE-03
   status: proposed
 
 - id: CTL-05
@@ -81,14 +84,19 @@
   status: proposed
 
 - id: CTL-06
-  title: Ground answers in supplied job criteria
-  risk: Hallucination or ungrounded claims in assessment
-  rationale: Ensure evaluation summaries cite specific job criteria from the provided job description.
-  enforcement_point: post_model
+  title: Decline discriminatory filtering and proxy requests
+  risk: Discriminatory filtering and proxy requests
+  rationale: Detect requests to filter or rank by a protected characteristic or an obvious proxy, decline in plain language, and record a block event.
+  enforcement_point: pre_model
   params: {}
   references:
     - Digital Dubai fairness guideline
-    - NIST AI RMF Map
+    - EU AI Act reference
   test_ids:
-    - T-GRND-01
+    - A-DISC-01
+    - A-DISC-02
+    - A-DISC-03
+    - A-DISC-04
+    - A-PROXY-01
+    - A-PROXY-02
   status: proposed

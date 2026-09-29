@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -339,3 +340,79 @@ def load_controls_snapshot(
         d["references"] = json.loads(d["references_json"])
         items.append(d)
     return items
+
+
+def override_case_verdict(
+    conn: sqlite3.Connection,
+    run_id: str,
+    case_id: str,
+    new_verdict: str,
+    comment: str,
+    reviewer: str = "analyst",
+) -> CaseResult | None:
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT case_id, variant, output_text, tool_calls,
+               events, checks, verdict, verdict_source, judge_reason, blocked_by
+        FROM results
+        WHERE run_id = ? AND case_id = ? AND variant = 'controlled'
+        """,
+        (run_id, case_id),
+    )
+    row = cursor.fetchone()
+    if not row:
+        return None
+
+    orig_verdict = row["verdict"]
+    orig_reason = row["judge_reason"] or ""
+
+    if "Original judge verdict:" not in orig_reason:
+        kept_reason = (
+            f"Original judge verdict: {orig_verdict}. Reason: {orig_reason or 'No judge reason recorded'}"
+        )
+    else:
+        kept_reason = orig_reason
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    cursor.execute(
+        """
+        UPDATE results
+        SET verdict = ?, verdict_source = 'human', judge_reason = ?
+        WHERE run_id = ? AND case_id = ? AND variant = 'controlled'
+        """,
+        (new_verdict, kept_reason, run_id, case_id),
+    )
+
+    cursor.execute(
+        """
+        INSERT INTO reviews (run_id, case_id, decision, comment, reviewer, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            run_id,
+            case_id,
+            f"override:{new_verdict}",
+            comment or f"Overrode verdict from {orig_verdict} to {new_verdict}",
+            reviewer,
+            now_iso,
+        ),
+    )
+    conn.commit()
+
+    blocked_by_raw = row["blocked_by"]
+    blocked_by = json.loads(blocked_by_raw) if blocked_by_raw else None
+
+    return CaseResult(
+        case_id=row["case_id"],
+        variant="controlled",
+        output_text=row["output_text"],
+        tool_calls=json.loads(row["tool_calls"]),
+        events=json.loads(row["events"]),
+        checks=json.loads(row["checks"]),
+        verdict=new_verdict,  # type: ignore[arg-type]
+        verdict_source="human",
+        judge_reason=kept_reason,
+        blocked_by=blocked_by,
+    )

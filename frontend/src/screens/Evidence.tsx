@@ -6,6 +6,7 @@ import {
   getRunExport,
   getRunReportUrl,
   getRunResults,
+  overrideCaseVerdict,
   postRunReview,
   ReviewRecord,
   RunSummary,
@@ -35,6 +36,7 @@ export function Evidence() {
   const [reviews, setReviews] = useState<ReviewRecord[]>([]);
   const [selectedCaseId, setSelectedCaseId] = useState<string>('');
   const [decision, setDecision] = useState<'accept' | 'reject' | 'needs_work'>('accept');
+  const [overrideVerdict, setOverrideVerdict] = useState<'none' | 'pass' | 'fail'>('none');
   const [comment, setComment] = useState<string>('');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
@@ -95,6 +97,10 @@ export function Evidence() {
 
   // Identify cases for review queue
   const controlledResults = results.filter((r) => r.variant === 'controlled');
+  const selectedResult = controlledResults.find((r) => r.case_id === selectedCaseId);
+  const isJudgedOrOverridden =
+    selectedResult !== undefined &&
+    (selectedResult.verdict_source === 'judge' || selectedResult.verdict_source === 'human');
   const queueItems: QueueItem[] = [];
 
   for (const ctrl of controlledResults) {
@@ -163,14 +169,28 @@ export function Evidence() {
     setErrorMessage(null);
 
     try {
+      if (selectedResult && overrideVerdict !== 'none') {
+        await overrideCaseVerdict(runId, {
+          case_id: selectedCaseId,
+          verdict: overrideVerdict,
+          comment: comment || `Reviewer changed verdict to ${overrideVerdict}`,
+          reviewer: 'analyst',
+        });
+      }
+
       await postRunReview(runId, {
         case_id: selectedCaseId,
         decision,
-        comment,
+        comment:
+          overrideVerdict !== 'none'
+            ? `[Override: ${overrideVerdict}] ${comment}`.trim()
+            : comment,
         reviewer: 'analyst',
+        override_verdict: overrideVerdict !== 'none' ? overrideVerdict : undefined,
       });
       setSaveMessage('Decision saved');
       setComment('');
+      setOverrideVerdict('none');
       await loadRunData(runId);
       setTimeout(() => {
         setSaveMessage(null);
@@ -390,6 +410,44 @@ export function Evidence() {
               Needs work
             </label>
           </div>
+
+          {isJudgedOrOverridden && (
+            <div className="form-field">
+              <label className="field-label">Override judged verdict</label>
+              <div className="radio-group" role="radiogroup" aria-label="Override judged verdict">
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="overrideVerdict"
+                    value="none"
+                    checked={overrideVerdict === 'none'}
+                    onChange={() => setOverrideVerdict('none')}
+                  />
+                  No override ({selectedResult?.verdict})
+                </label>
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="overrideVerdict"
+                    value="pass"
+                    checked={overrideVerdict === 'pass'}
+                    onChange={() => setOverrideVerdict('pass')}
+                  />
+                  Pass
+                </label>
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="overrideVerdict"
+                    value="fail"
+                    checked={overrideVerdict === 'fail'}
+                    onChange={() => setOverrideVerdict('fail')}
+                  />
+                  Fail
+                </label>
+              </div>
+            </div>
+          )}
 
           <div className="form-field">
             <label htmlFor="decision-comment" className="field-label">

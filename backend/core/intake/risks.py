@@ -29,8 +29,8 @@ RISK_DEFINITIONS: list[dict[str, Any]] = [
     },
     {
         "control_id": "CTL-04",
-        "risk": "Unauthorised or out of scope tool execution",
-        "check": lambda a: any(act != "none" for act in a.actions),
+        "risk": "Unjustified recommendations and claims",
+        "check": lambda a: "draft_screening_notes" in a.tasks or a.decision_impact in ("inform", "determine"),
     },
     {
         "control_id": "CTL-05",
@@ -40,8 +40,10 @@ RISK_DEFINITIONS: list[dict[str, Any]] = [
     },
     {
         "control_id": "CTL-06",
-        "risk": "Hallucination or ungrounded claims in assessment",
-        "check": lambda a: "draft_screening_notes" in a.tasks or a.decision_impact in ("inform", "determine"),
+        "risk": "Discriminatory filtering and proxy requests",
+        "check": lambda a: "summarise_applications" in a.tasks
+        or "answer_candidate_questions" in a.tasks
+        or bool({"protected_characteristics"} & set(a.data_seen)),
     },
 ]
 
