@@ -129,6 +129,12 @@ def test_runs_lifecycle_routes() -> None:
     assert not_found.status_code == 404
     assert "Fix:" in not_found.json()["detail"]
 
+    # 3. Invalid payload type triggers 422 with Fix instruction
+    bad_type = client.post("/api/runs", json={"no_cache": "not_a_bool"})
+    assert bad_type.status_code == 422
+    assert "Fix:" in bad_type.json()["detail"]
+
+
 
 def test_get_run_results_route() -> None:
     _ensure_seed_run()
