@@ -27,3 +27,9 @@ Exposed backend routes under /api prefix with FastAPI BackgroundTasks for suite 
 Returned JSON formatted error responses containing problem and fix instructions across all endpoints and validation handlers.
 
 Mirrored backend data schemas and HTTP methods in frontend/src/api.ts using plain fetch with zero additional dependencies.
+
+Rendered results plate as a unified inline SVG with 18px cell dimensions, 3px grid spacing, and dedicated diagonal hatching patterns for error and over-blocked states.
+
+Filtered review queue table to display cases requiring judge evaluation, cases resulting in execution errors, over-blocked benign runs, or existing reviewer decisions.
+
+Persisted reviewer decisions through POST /api/runs/{id}/reviews with immediate display under the release gate section without altering computed gate verdicts.
