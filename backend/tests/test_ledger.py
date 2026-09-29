@@ -208,3 +208,16 @@ def test_export_deterministic_double_run() -> None:
         assert "%}" not in html_text
 
         conn.close()
+
+
+def test_ledger_empty_queries() -> None:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = Path(tmpdir) / "empty_test.db"
+        conn = get_db(db_path)
+        assert load_run(conn, "missing-run") is None
+        assert load_results_for_run(conn, "missing-run") == []
+        assert load_reviews_for_run(conn, "missing-run") == []
+        assert load_controls_snapshot(conn, "missing-run") == []
+        assert load_system_card(conn, "missing-run") is None
+        conn.close()
+
