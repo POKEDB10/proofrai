@@ -25,6 +25,26 @@ declare module 'react' {
     (props: P): JSX.Element | null;
   }
 
+  export const Fragment: FC<{ children?: ReactNode; key?: unknown }>;
+  export type ReactElement = JSX.Element;
+
+  export namespace React {
+    export type { ReactNode };
+  }
+
+  export interface KeyboardEvent {
+    key: string;
+    preventDefault(): void;
+  }
+
+  export interface MouseEvent {
+    preventDefault(): void;
+  }
+
+  export interface ChangeEvent<T = HTMLInputElement> {
+    target: T;
+  }
+
   export function useState<T>(
     initialState: T | (() => T)
   ): [T, (newState: T | ((prev: T) => T)) => void];
