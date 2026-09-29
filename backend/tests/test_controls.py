@@ -85,6 +85,34 @@ def test_ctl_01_minimise_fields() -> None:
     assert clean_event.action == "pass"
 
 
+def test_ctl_01_all_protected_fields() -> None:
+    control = MinimiseFieldsControl()
+    full_context = {
+        "candidate_record": {
+            "name": "Jane Doe",
+            "date_of_birth": "DOB-1990-03-15-BRAVO",
+            "gender": "GEND-FEMALE-XRAY",
+            "marital_status": "MAR-SINGLE-YANKEE",
+            "nationality": "NAT-CANADIAN-ZULU",
+            "health_note": "HLTH-NONE-TANGO",
+            "home_address": "ADDR-123-MAIN-SIERRA",
+            "phone": "TEL-555-0101-ALPHA",
+            "skills": ["Python"],
+        }
+    }
+    messages = [{"role": "user", "content": "Process record"}]
+    _, event = control.run_pre_model(messages, full_context)
+    assert event.action == "modify"
+    rec = full_context["candidate_record"]
+    for field in [
+        "date_of_birth", "gender", "marital_status",
+        "nationality", "health_note", "home_address", "phone"
+    ]:
+        assert rec[field] == "[MASKED]"
+    assert rec["skills"] == ["Python"]
+
+
+
 def test_ctl_02_untrusted_documents() -> None:
     control = UntrustedDocumentsControl()
     injection_context = {
