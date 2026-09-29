@@ -1,0 +1,34 @@
+:root {
+  --ground: #EEF0F2;
+  --surface: #FFFFFF;
+  --surface-hover: #F3F5F7;
+  --ink: #1E2530;
+  --ink-2: #56606E;
+  --rule: #CBD1D8;
+  --rule-soft: #E1E5E9;
+
+  --pass: #1B6E4F;
+  --fail: #B3261E;
+  --review: #9A6700;
+  --fail-wash: #F6DAD7;
+  --mark: #F3DC8B;
+
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --text-meta: 12px;
+  --text-table: 13px;
+  --text-body: 15px;
+  --text-section: 18px;
+  --text-title: 26px;
+
+  --radius-control: 3px;
+  --radius-cell: 2px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 20px;
+  --space-5: 32px;
+  --space-6: 56px;
+}

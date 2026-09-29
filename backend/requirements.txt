@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+pyyaml
+sqlalchemy
+httpx
+google-genai
+pytest
+ruff
