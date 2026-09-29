@@ -52,7 +52,8 @@ Start the frontend development server in a separate terminal:
 
     make dev-frontend
 
-The interface opens at `http://localhost:5173`.
+The interface opens at `http://localhost:5173`. For access from other devices on the same local network, both servers bind to 0.0.0.0 with automatic API proxying. Open `http://<your-local-ip>:5173` on any device on the same subnet.
+
 
 ## Running the evaluation suite from the command line
 
