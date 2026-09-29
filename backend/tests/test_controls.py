@@ -139,6 +139,23 @@ def test_ctl_02_untrusted_documents() -> None:
     assert clean_event.action == "pass"
 
 
+def test_ctl_02_context_wrapping() -> None:
+    control = UntrustedDocumentsControl()
+    ctx = {
+        "candidate_record": {
+            "resume_text": "Software engineer with 5 years experience.",
+            "name": "Alex Smith",
+        }
+    }
+    messages = [{"role": "user", "content": "Summarise candidate Alex"}]
+    new_messages, event = control.run_pre_model(messages, ctx)
+    assert event.action == "pass"
+    assert "<candidate_untrusted_data>" in new_messages[0]["content"]
+    assert "</candidate_untrusted_data>" in new_messages[0]["content"]
+
+
+
+
 def test_ctl_03_scan_output() -> None:
     control = ScanOutputControl()
     text_with_leak = "Candidate can be reached at TEL-555-0101-ALPHA and DOB-1990-03-15-BRAVO."
