@@ -156,18 +156,23 @@ export interface ReviewRecord {
 
 const API_BASE = '/api';
 
+async function extractErrorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const errJson = (await res.json()) as { detail?: string };
+    if (errJson.detail) {
+      return errJson.detail;
+    }
+  } catch {
+    return fallback;
+  }
+  return fallback;
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    let errorDetail = `Request failed with status ${res.status}`;
-    try {
-      const errJson = (await res.json()) as { detail?: string };
-      if (errJson.detail) {
-        errorDetail = errJson.detail;
-      }
-    } catch {
-      errorDetail = `Request failed with status ${res.status}`;
-    }
-    throw new Error(errorDetail);
+    const fallback = `Request failed with status ${res.status}`;
+    const detail = await extractErrorMessage(res, fallback);
+    throw new Error(detail);
   }
   return (await res.json()) as T;
 }
@@ -249,16 +254,9 @@ export function getRunReportUrl(runId: string): string {
 export async function getRunReport(runId: string): Promise<string> {
   const res = await fetch(getRunReportUrl(runId));
   if (!res.ok) {
-    let errorDetail = `Request failed with status ${res.status}`;
-    try {
-      const errJson = (await res.json()) as { detail?: string };
-      if (errJson.detail) {
-        errorDetail = errJson.detail;
-      }
-    } catch {
-      errorDetail = `Request failed with status ${res.status}`;
-    }
-    throw new Error(errorDetail);
+    const fallback = `Request failed with status ${res.status}`;
+    const detail = await extractErrorMessage(res, fallback);
+    throw new Error(detail);
   }
   return res.text();
 }
