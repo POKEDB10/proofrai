@@ -1,10 +1,10 @@
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from backend.core.llm.adapter import LLMAdapter
-from backend.core.models import Completion, ToolCall
+from backend.core.models import Completion, ControlEvent, ToolCall
 from backend.core.target.prompts import BASELINE_SYSTEM_PROMPT
 from backend.core.target.tools import SimulatedTools
 
@@ -38,6 +38,7 @@ class TargetExecution:
     output_text: str
     tool_calls: list[ToolCall]
     raw_completion: Completion
+    events: list[ControlEvent] = field(default_factory=list)
 
 
 class HireAssist:
@@ -105,13 +106,18 @@ class HireAssist:
         for call in post_calls:
             gated_call = self.hooks.tool_gate_hook(call, context)
             if gated_call is not None:
-                self.tools.execute_tool(gated_call.name, gated_call.args)
+                if gated_call.status == "executed":
+                    self.tools.execute_tool(gated_call.name, gated_call.args)
                 executed_calls.append(gated_call)
+
+        events_fn = getattr(self.hooks, "get_events", None)
+        events = events_fn() if callable(events_fn) else []
 
         return TargetExecution(
             output_text=reply_text,
             tool_calls=executed_calls,
             raw_completion=completion,
+            events=events,
         )
 
     def summarize_candidate(

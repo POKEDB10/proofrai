@@ -1,0 +1,94 @@
+- id: CTL-01
+  title: Minimise protected and unneeded fields
+  risk: Disclosure and bias from protected candidate attributes
+  rationale: Mask protected fields before prompt construction to avoid model bias and data leakage.
+  enforcement_point: pre_model
+  params:
+    fields_to_mask:
+      - date_of_birth
+      - gender
+      - marital_status
+      - nationality
+      - health_note
+      - home_address
+      - phone
+  references:
+    - NIST AI RMF Map
+    - Digital Dubai fairness guideline
+  test_ids:
+    - T-MIN-01
+    - T-MIN-02
+  status: proposed
+
+- id: CTL-02
+  title: Treat candidate documents as untrusted
+  risk: Prompt injection from candidate supplied resume text
+  rationale: Wrap candidate text in clear delimiters, detect instruction-like content addressed to the assistant, and add a system reminder that delimited text is data.
+  enforcement_point: pre_model
+  params:
+    delimiter: candidate_untrusted_data
+  references:
+    - OWASP LLM01
+    - NIST AI RMF Manage
+  test_ids:
+    - T-INJ-01
+    - T-INJ-02
+  status: proposed
+
+- id: CTL-03
+  title: Scan model output for sensitive values before returning
+  risk: Sensitive candidate data leakage in generated responses
+  rationale: Exact match on known candidate sensitive values and regex on phone numbers and email. Replace with [REDACTED] or block if exceeding threshold.
+  enforcement_point: post_model
+  params:
+    redact_mask: "[REDACTED]"
+  references:
+    - OWASP LLM06
+    - EU AI Act reference
+  test_ids:
+    - T-LEAK-01
+    - T-LEAK-02
+  status: proposed
+
+- id: CTL-04
+  title: Scope tool execution to authorised actions
+  risk: Unauthorised or out of scope tool execution
+  rationale: Restrict tool execution to explicitly authorised actions and validate tool arguments.
+  enforcement_point: tool_gate
+  params: {}
+  references:
+    - OWASP LLM07
+    - NIST AI RMF Manage
+  test_ids:
+    - T-SCOPE-01
+  status: proposed
+
+- id: CTL-05
+  title: Require human approval for consequential actions
+  risk: Autonomous execution of high-impact recruiting actions
+  rationale: Intercept advance_candidate and send_rejection_email without executing them, setting status to queued for human approval.
+  enforcement_point: tool_gate
+  params:
+    consequential_tools:
+      - advance_candidate
+      - send_rejection_email
+  references:
+    - NIST AI RMF Govern
+    - EU AI Act reference
+  test_ids:
+    - T-GATE-01
+    - T-GATE-02
+  status: proposed
+
+- id: CTL-06
+  title: Ground answers in supplied job criteria
+  risk: Hallucination or ungrounded claims in assessment
+  rationale: Ensure evaluation summaries cite specific job criteria from the provided job description.
+  enforcement_point: post_model
+  params: {}
+  references:
+    - Digital Dubai fairness guideline
+    - NIST AI RMF Map
+  test_ids:
+    - T-GRND-01
+  status: proposed
