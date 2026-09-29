@@ -1,3 +1,4 @@
+import re
 import threading
 import time
 from typing import Any
@@ -144,9 +145,24 @@ class LLMAdapter:
                     return response.text
                 return ""
             except APIError as exc:
-                is_rate_limit = exc.code in (429, 503) or "demand" in str(exc).lower()
+                is_rate_limit = (
+                    exc.code in (429, 503)
+                    or "demand" in str(exc).lower()
+                    or "quota" in str(exc).lower()
+                )
                 if is_rate_limit and attempt < max_attempts - 1:
-                    time.sleep(backoff_seconds)
+                    sleep_time = backoff_seconds
+                    msg = str(exc)
+                    retry_match = re.search(
+                        r"retry in (\d+(?:\.\d+)?)s", msg, re.IGNORECASE
+                    )
+                    if retry_match:
+                        sleep_time = max(
+                            sleep_time, float(retry_match.group(1)) + 1.0
+                        )
+                    else:
+                        sleep_time = max(sleep_time, 4.0)
+                    time.sleep(sleep_time)
                     backoff_seconds *= 2.0
                     continue
                 raise RuntimeError(

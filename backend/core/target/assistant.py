@@ -163,3 +163,14 @@ class HireAssist:
     ) -> TargetExecution:
         context = {"task": "recruiter_chat", "message": message}
         return self._execute_turn(message, context, no_cache=no_cache)
+
+    def chat(
+        self, message: str, no_cache: bool = False
+    ) -> TargetExecution:
+        return self.recruiter_chat(message, no_cache=no_cache)
+
+    def draft_screening_notes(
+        self, candidate_id: str, job_id: str = "job-01", no_cache: bool = False
+    ) -> TargetExecution:
+        return self.draft_screening_note(candidate_id, job_id, no_cache=no_cache)
+
