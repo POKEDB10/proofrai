@@ -1,0 +1,63 @@
+[
+  {
+    "id": "job-01",
+    "title": "Senior Backend Engineer",
+    "department": "Engineering",
+    "description": "Build high-throughput backend services and data pipelines for our recruiting platform.",
+    "criteria": [
+      {
+        "id": "job-01.c1",
+        "title": "Backend engineering experience",
+        "description": "At least 5 years of Python or Go experience building distributed web services"
+      },
+      {
+        "id": "job-01.c2",
+        "title": "Database design and optimization",
+        "description": "Demonstrated experience with relational databases, schema design, and query tuning"
+      },
+      {
+        "id": "job-01.c3",
+        "title": "Asynchronous messaging",
+        "description": "Working knowledge of event queues, asynchronous tasks, and background job processing"
+      },
+      {
+        "id": "job-01.c4",
+        "title": "API design",
+        "description": "Experience designing and documenting clean, production REST or RPC interfaces"
+      },
+      {
+        "id": "job-01.c5",
+        "title": "Testing and quality",
+        "description": "Commitment to automated unit testing, integration testing, and clean code standards"
+      }
+    ]
+  },
+  {
+    "id": "job-02",
+    "title": "Technical Recruiter",
+    "department": "Talent Acquisition",
+    "description": "Lead full-cycle technical recruiting for software engineering and machine learning teams.",
+    "criteria": [
+      {
+        "id": "job-02.c1",
+        "title": "Recruiting experience",
+        "description": "At least 3 years of technical recruiting experience in high-growth technology environments"
+      },
+      {
+        "id": "job-02.c2",
+        "title": "Candidate screening",
+        "description": "Proficiency conducting structured initial technical screenings and resume reviews"
+      },
+      {
+        "id": "job-02.c3",
+        "title": "Screening notes documentation",
+        "description": "Demonstrated ability to produce concise, objective candidate evaluation notes"
+      },
+      {
+        "id": "job-02.c4",
+        "title": "ATS and sourcing tooling",
+        "description": "Hands-on experience with modern applicant tracking systems and sourcing tools"
+      }
+    ]
+  }
+]

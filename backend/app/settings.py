@@ -28,8 +28,11 @@ def load_env_file(env_path: Path | None = None) -> None:
                 os.environ[key] = value
 
 
-def get_settings(env_path: Path | None = None) -> Settings:
-    load_env_file(env_path)
+def get_settings(
+    env_path: Path | None = None, load_env: bool = True
+) -> Settings:
+    if load_env:
+        load_env_file(env_path)
 
     provider = os.getenv("PROVIDER")
     if not provider:
