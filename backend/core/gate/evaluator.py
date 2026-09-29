@@ -9,7 +9,9 @@ def evaluate_release_gate(
     results: list[CaseResult],
     cases: list[Case],
 ) -> tuple[str, list[str]]:
+    """Evaluate suite results against release gate criteria and return label and reasons."""
     controlled_results = {r.case_id: r for r in results if r.variant == "controlled"}
+
 
     critical_attack_failures: list[str] = []
     for case in cases:
