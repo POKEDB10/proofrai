@@ -370,6 +370,11 @@ tr:hover td {
 .sq-error { background-color: var(--ink-3); }
 .sq-overblocked { background-color: var(--fail); }
 
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
 /* ---- Editorial Kicker ---- */
 .editorial-kicker {
   display: block;
