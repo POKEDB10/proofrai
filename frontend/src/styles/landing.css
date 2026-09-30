@@ -1,23 +1,25 @@
-/* Landing Page & Editorial Hero Styles */
+/* ================================================================
+   ProofRAI Landing Page — Premium Hackathon Presentation
+   ================================================================ */
 
 .landing-screen {
   width: 100%;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 60px);
   background-color: var(--ground);
   color: var(--ink);
   display: flex;
   flex-direction: column;
 }
 
-/* Hero Section */
+/* ---- Hero Section ---- */
 .landing-hero {
-  padding: 56px 32px 40px;
+  padding: 64px 40px 48px;
   background-color: var(--surface);
   border-bottom: 1px solid var(--rule);
 }
 
 .landing-hero-inner {
-  max-width: 1080px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -27,38 +29,45 @@
   gap: 8px;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--primary);
   background-color: var(--primary-wash);
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: var(--radius-control);
   border: 1px solid var(--primary-border);
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .landing-kicker-dot {
   width: 6px;
   height: 6px;
-  border-radius: var(--radius-cell);
+  border-radius: var(--radius-full);
   background-color: var(--primary);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .landing-hero-title {
   font-family: var(--font-sans);
-  font-size: 44px;
-  font-weight: 600;
-  line-height: 1.15;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
   color: var(--ink);
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
+  letter-spacing: -0.02em;
+  max-width: 780px;
 }
 
 .landing-hero-lead {
-  font-family: var(--font-sans);
   font-size: 17px;
-  line-height: 1.55;
+  line-height: 1.65;
   color: var(--ink-2);
-  max-width: 760px;
-  margin: 0 0 32px 0;
+  max-width: 680px;
+  margin: 0 0 36px 0;
 }
 
 .landing-hero-actions {
@@ -66,7 +75,7 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .landing-btn-primary {
@@ -74,39 +83,45 @@
   align-items: center;
   gap: 8px;
   background-color: var(--primary);
-  color: var(--surface);
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
+  color: #FFFFFF;
+  padding: 11px 22px;
+  font-size: var(--text-body);
+  font-weight: 600;
   border-radius: var(--radius-control);
   text-decoration: none;
-  transition: background-color 0.15s ease;
+  border: 1px solid var(--primary);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  font-family: var(--font-sans);
 }
 
 .landing-btn-primary:hover {
   background-color: var(--primary-hover);
-  color: var(--surface);
+  border-color: var(--primary-hover);
+  color: #FFFFFF;
+  text-decoration: none;
 }
 
 .landing-btn-secondary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: var(--ground-secondary);
+  background-color: var(--surface);
   color: var(--ink);
-  padding: 10px 18px;
-  font-size: 14px;
+  padding: 10px 20px;
+  font-size: var(--text-body);
   font-weight: 500;
   border-radius: var(--radius-control);
   border: 1px solid var(--rule);
   text-decoration: none;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  font-family: var(--font-sans);
 }
 
 .landing-btn-secondary:hover {
-  background-color: var(--surface);
-  border-color: var(--ink-3);
+  background-color: var(--surface-hover);
+  border-color: var(--rule-strong);
   color: var(--ink);
+  text-decoration: none;
 }
 
 .landing-btn-tertiary {
@@ -114,11 +129,12 @@
   align-items: center;
   gap: 6px;
   color: var(--ink-2);
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 10px 0;
+  font-size: var(--text-body);
   font-weight: 500;
   text-decoration: none;
-  transition: color 0.15s ease;
+  font-family: var(--font-sans);
+  transition: color var(--transition-fast);
 }
 
 .landing-btn-tertiary:hover {
@@ -126,35 +142,36 @@
   text-decoration: underline;
 }
 
-/* Stats Bar */
+/* ---- Stats Bar ---- */
 .landing-stats-bar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1px;
   background-color: var(--rule);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 
 .landing-stat-cell {
   background-color: var(--surface);
-  padding: 16px 20px;
+  padding: 18px 22px;
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .landing-stat-value {
   font-family: var(--font-mono);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 600;
   color: var(--primary);
-  line-height: 1.1;
+  line-height: 1;
   margin-bottom: 4px;
 }
 
 .landing-stat-label {
-  font-size: 13px;
+  font-size: var(--text-table);
   font-weight: 600;
   color: var(--ink);
   margin-bottom: 2px;
@@ -165,10 +182,10 @@
   color: var(--ink-3);
 }
 
-/* Sections */
+/* ---- Content Sections ---- */
 .landing-section {
-  padding: 48px 32px;
-  max-width: 1080px;
+  padding: 52px 40px;
+  max-width: 1100px;
   margin: 0 auto;
   width: 100%;
 }
@@ -178,116 +195,143 @@
   background-color: var(--surface);
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
+  padding: 52px 40px;
 }
 
 .landing-section-alt > div {
-  max-width: 1080px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 .landing-section-header {
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .landing-section-tag {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 500;
-  color: var(--sky);
-  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--primary);
+  background-color: var(--primary-wash);
+  border: 1px solid var(--primary-border);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
 }
 
 .landing-section-title {
-  font-size: 26px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--ink);
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
 }
 
 .landing-section-subtitle {
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--ink-2);
-  max-width: 720px;
+  max-width: 680px;
   margin: 0;
 }
 
-/* Architecture Loop Grid */
+/* ---- Workflow Steps Grid ---- */
 .landing-loop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 14px;
 }
 
 .landing-step-card {
   background-color: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  padding: 18px;
+  border-radius: var(--radius-card);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-step-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
 }
 
 .landing-step-card:hover {
-  border-color: var(--primary);
-  background-color: var(--surface-hover);
+  border-color: var(--primary-border);
+  background-color: var(--primary-wash);
+  text-decoration: none;
+}
+
+.landing-step-card:hover::before {
+  opacity: 1;
 }
 
 .landing-step-num {
   font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 600;
   color: var(--ink-3);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .landing-step-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-control);
   background-color: var(--primary-wash);
+  border: 1px solid var(--primary-border);
   color: var(--primary);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .landing-step-title {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-body);
+  font-weight: 700;
   color: var(--ink);
   margin: 0 0 6px 0;
 }
 
 .landing-step-desc {
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--ink-2);
-  margin: 0 0 14px 0;
+  margin: 0 0 16px 0;
   flex: 1;
 }
 
 .landing-step-link {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--primary);
 }
 
-/* Red Team vs Defender Showcase */
+/* ---- Red-Team Showcase ---- */
 .landing-showcase {
-  background-color: var(--ground);
+  background-color: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 
 .landing-probe-tabs {
   display: flex;
-  background-color: var(--surface);
+  background-color: var(--ground-secondary);
   border-bottom: 1px solid var(--rule);
   overflow-x: auto;
 }
@@ -301,41 +345,45 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: var(--text-table);
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  font-family: inherit;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  font-family: var(--font-sans);
+  transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .landing-probe-tab:hover {
   color: var(--ink);
+  background-color: var(--surface-hover);
 }
 
 .landing-probe-tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
-  background-color: var(--primary-wash);
-  font-weight: 500;
+  background-color: var(--surface);
+  font-weight: 600;
 }
 
 .landing-tab-id {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 600;
   background-color: var(--ground-secondary);
   padding: 2px 6px;
-  border-radius: var(--radius-cell);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
 }
 
 .landing-probe-body {
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .landing-probe-input-card {
-  background-color: var(--surface);
+  background-color: var(--ground);
   border: 1px solid var(--rule);
   border-radius: var(--radius-control);
   overflow: hidden;
@@ -348,24 +396,25 @@
   padding: 10px 14px;
   background-color: var(--ground-secondary);
   border-bottom: 1px solid var(--rule);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--ink-2);
 }
 
 .landing-code-block {
   padding: 14px;
   font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--text-table);
+  line-height: 1.55;
   color: var(--ink);
-  background-color: var(--surface);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .landing-diff-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
 }
 
 .landing-diff-col {
@@ -374,12 +423,12 @@
   border-radius: var(--radius-control);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .landing-diff-col.unmitigated {
   border-color: var(--fail-border);
 }
-
 .landing-diff-col.defended {
   border-color: var(--pass-border);
 }
@@ -394,32 +443,24 @@
 }
 
 .landing-badge {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
 }
-
-.landing-badge.danger {
-  color: var(--fail);
-}
-
-.landing-badge.success {
-  color: var(--pass);
-}
+.landing-badge.danger { color: var(--fail); }
+.landing-badge.success { color: var(--pass); }
 
 .landing-verdict {
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   padding: 2px 8px;
-  border-radius: var(--radius-cell);
+  border-radius: var(--radius-sm);
 }
-
 .landing-verdict.fail {
   background-color: var(--fail-wash);
   color: var(--fail);
   border: 1px solid var(--fail-border);
 }
-
 .landing-verdict.pass {
   background-color: var(--pass-wash);
   color: var(--pass);
@@ -433,13 +474,14 @@
 
 .landing-col-label {
   font-size: 11px;
+  font-weight: 600;
   color: var(--ink-3);
   margin-bottom: 6px;
 }
 
 .landing-col-text {
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--text-table);
+  line-height: 1.55;
   color: var(--ink);
   margin: 0;
 }
@@ -450,28 +492,29 @@
   gap: 8px;
   padding: 10px 14px;
   font-size: 12px;
+  font-weight: 600;
   border-top: 1px solid var(--rule);
 }
-
 .landing-col-footer.error {
   background-color: var(--fail-wash);
   color: var(--fail);
+  border-color: var(--fail-border);
 }
-
 .landing-col-footer.safe {
   background-color: var(--pass-wash);
   color: var(--pass);
+  border-color: var(--pass-border);
 }
 
-/* Target Assistant Box */
+/* ---- Target Assistant Box ---- */
 .landing-target-box {
   background-color: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  padding: 28px;
+  border-radius: var(--radius-card);
+  padding: 32px;
   display: grid;
   grid-template-columns: 1.8fr 1fr;
-  gap: 28px;
+  gap: 32px;
   align-items: center;
 }
 
@@ -483,39 +526,46 @@
 
 .landing-target-title {
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink);
   margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
 }
 
 .landing-target-desc {
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: var(--text-body);
+  line-height: 1.6;
   color: var(--ink-2);
-  margin: 0 0 20px 0;
+  margin: 0 0 22px 0;
 }
 
 .landing-target-specs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
 }
 
 .landing-spec-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   font-size: 12px;
+  padding: 10px 14px;
+  background-color: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
 }
 
 .landing-spec-name {
   color: var(--ink-3);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 10px;
 }
 
 .landing-spec-val {
   color: var(--ink);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: var(--text-table);
 }
 
 .font-mono {
@@ -523,26 +573,26 @@
 }
 
 .landing-target-action-box {
-  background-color: var(--ground-secondary);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  padding: 20px;
+  background-color: var(--primary-wash);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
   display: flex;
   flex-direction: column;
 }
 
 .landing-action-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--ink);
-  margin: 0 0 6px 0;
+  margin: 0 0 8px 0;
 }
 
 .landing-action-desc {
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: var(--text-table);
+  line-height: 1.5;
   color: var(--ink-2);
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
 }
 
 .landing-action-buttons {
@@ -557,22 +607,22 @@
   box-sizing: border-box;
 }
 
-/* Footer */
+/* ---- Footer ---- */
 .landing-footer {
   margin-top: auto;
   background-color: var(--surface);
   border-top: 1px solid var(--rule);
-  padding: 20px 32px;
+  padding: 22px 40px;
 }
 
 .landing-footer-inner {
-  max-width: 1080px;
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
   font-size: 12px;
   color: var(--ink-3);
 }

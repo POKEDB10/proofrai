@@ -1,151 +1,156 @@
+/* ================================================================
+   ProofRAI Design System — Premium Token Foundation
+   Dual-theme: light (default) + dark [data-theme="dark"]
+   ================================================================ */
+
 :root {
-  /* Editorial Palette (PDF Section 15 & 17: Warm white + Sage mist + Soft sky blue + Muted charcoal) */
-  --ground: #F9FAF7;
-  --ground-secondary: #F0F3EF;
+  /* ---- Ground & Surfaces ---- */
+  --ground: #F4F6F8;
+  --ground-secondary: #EAECEF;
   --surface: #FFFFFF;
   --surface-card: #FFFFFF;
-  --surface-hover: #F4F6F3;
+  --surface-hover: #F8FAFC;
+  --surface-active: #EFF2F5;
   --surface-elevated: #FFFFFF;
   --surface-sage: #EDF3F0;
-  --surface-charcoal: #1E232B;
-  --surface-charcoal-ink: #F9FAF7;
+  --surface-charcoal: #1A2030;
+  --surface-charcoal-ink: #F4F6F8;
 
-  --ink: #191E24;
-  --ink-2: #4B5563;
-  --ink-3: #8B95A5;
-  --rule: #E2E6E1;
-  --rule-soft: #EEF1ED;
-  --rule-strong: #191E24;
+  /* ---- Typography & Ink ---- */
+  --ink: #0F1824;
+  --ink-2: #4A5568;
+  --ink-3: #8896A8;
+  --ink-inverse: #FFFFFF;
 
-  /* Primary Accent: Sage Mist (PDF Section 15) */
-  --primary: #446857;
-  --primary-hover: #365345;
-  --primary-light: #6A8E7D;
-  --primary-wash: #EBF2EE;
-  --primary-border: #C4D9CE;
+  /* ---- Borders & Rules ---- */
+  --rule: #D4DBE4;
+  --rule-soft: #E6EBF0;
+  --rule-strong: #0F1824;
 
-  /* Secondary: Soft Sky Blue (PDF Section 15) */
-  --sky: #3D6684;
-  --sky-wash: #EBF3F8;
-  --sky-border: #BED4E4;
+  /* ---- Primary Accent: Precision Slate-Green ---- */
+  --primary: #2D6A50;
+  --primary-hover: #245640;
+  --primary-light: #5A9A80;
+  --primary-wash: #EAF4EE;
+  --primary-border: #AEDCC5;
 
-  /* Secondary: Lavender Dusk (PDF Section 15) */
-  --lavender: #635A7B;
-  --lavender-wash: #F1EFF6;
-  --lavender-border: #D5CEE3;
+  /* ---- Secondary: Precision Steel Blue ---- */
+  --sky: #1D5F8A;
+  --sky-wash: #E8F4FB;
+  --sky-border: #9BCCE5;
 
-  /* Telemetry: Precision Steel Blue */
-  --telemetry: #2A6E94;
-  --telemetry-wash: #EFF6FA;
-  --telemetry-border: #BBD6E8;
+  /* ---- Telemetry: Technical Cyan ---- */
+  --telemetry: #0F7ABF;
+  --telemetry-wash: #E8F4FF;
+  --telemetry-border: #8FCFEE;
 
-  /* Semantic States (Restrained, Editorial) */
-  --pass: #2D6B50;
-  --pass-hover: #22533E;
-  --pass-wash: #EAF4EE;
-  --pass-border: #B7DFCC;
+  /* ---- Semantic Status ---- */
+  --pass: #1B6E4F;
+  --pass-hover: #155940;
+  --pass-wash: #E8F5EE;
+  --pass-border: #9FDDC0;
 
-  --fail: #A33A44;
-  --fail-hover: #862F38;
-  --fail-wash: #FAECEE;
-  --fail-border: #E8B6BC;
+  --fail: #B91C1C;
+  --fail-hover: #991717;
+  --fail-wash: #FEF2F2;
+  --fail-border: #FBBFBF;
 
-  --review: #856321;
-  --review-wash: #FAF4E8;
-  --review-border: #E8D7B2;
+  --review: #92600A;
+  --review-wash: #FFF8EE;
+  --review-border: #F7CC82;
 
-  --mark: rgba(220, 185, 110, 0.35);
+  --mark: rgba(245, 200, 80, 0.38);
 
-  /* Typography & Scale Contrast (PDF Section 16: tiny label -> huge title -> calm description) */
-  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* ---- Typography ---- */
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
 
   --text-kicker: 11px;
   --text-meta: 12px;
   --text-table: 13px;
   --text-body: 14px;
+  --text-h3: 16px;
+  --text-h2: 20px;
+  --text-h1: 26px;
+  --text-display: 36px;
   --text-section: 18px;
   --text-title: 26px;
-  --text-hero: 34px;
+  --text-hero: 36px;
 
-  /* Restrained Depth & Layering (PDF Section 18: Avoid glassmorphism soup, intentional soft shadows) */
-  --radius-xs: 3px;
+  /* ---- Radius ---- */
+  --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-control: 6px;
-  --radius-card: 8px;
-  --radius-lg: 12px;
+  --radius-card: 10px;
+  --radius-lg: 14px;
   --radius-full: 9999px;
   --radius-cell: 2px;
+  --radius-badge: 3px;
 
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.04), 0 0 0 1px #E2E6E1;
-  --shadow-elevated: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px #E2E6E1;
-
+  /* ---- Spacing ---- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 20px;
   --space-5: 32px;
-  --space-6: 52px;
+  --space-6: 56px;
 
+  /* ---- Transitions ---- */
   --transition-fast: 140ms ease;
   --transition-normal: 200ms ease;
 }
 
-/* Dark Palette (PDF Section 15: Deep slate + Muted charcoal + Dusty blue + Muted rose + Olive green) */
+/* ================================================================
+   Dark Theme
+   ================================================================ */
 [data-theme="dark"] {
-  --ground: #11151C;
-  --ground-secondary: #171C24;
-  --surface: #1B212B;
-  --surface-card: #1B212B;
-  --surface-hover: #222935;
-  --surface-elevated: #222935;
-  --surface-sage: #16201B;
-  --surface-charcoal: #0B0E13;
-  --surface-charcoal-ink: #ECEFF3;
+  --ground: #0D1117;
+  --ground-secondary: #161B22;
+  --surface: #1A2030;
+  --surface-card: #1A2030;
+  --surface-hover: #212835;
+  --surface-active: #28303F;
+  --surface-elevated: #1F2737;
+  --surface-sage: #12201A;
+  --surface-charcoal: #080C12;
+  --surface-charcoal-ink: #E8EDF3;
 
-  --ink: #ECEFF3;
-  --ink-2: #9DA8B8;
-  --ink-3: #657182;
-  --rule: rgba(255, 255, 255, 0.1);
-  --rule-soft: rgba(255, 255, 255, 0.05);
-  --rule-strong: #ECEFF3;
+  --ink: #E8EDF3;
+  --ink-2: #8A9BB5;
+  --ink-3: #556070;
+  --ink-inverse: #0D1117;
 
-  --primary: #729E8C;
-  --primary-hover: #83AE9C;
-  --primary-light: #94BEAC;
-  --primary-wash: rgba(114, 158, 140, 0.14);
-  --primary-border: rgba(114, 158, 140, 0.3);
+  --rule: #2A3444;
+  --rule-soft: #1E2A38;
+  --rule-strong: #E8EDF3;
 
-  --sky: #6B94B3;
-  --sky-wash: rgba(107, 148, 179, 0.14);
-  --sky-border: rgba(107, 148, 179, 0.3);
+  --primary: #5FAE8C;
+  --primary-hover: #73BE9E;
+  --primary-light: #8ECEB0;
+  --primary-wash: rgba(95, 174, 140, 0.12);
+  --primary-border: rgba(95, 174, 140, 0.28);
 
-  --lavender: #9990B0;
-  --lavender-wash: rgba(153, 144, 176, 0.14);
-  --lavender-border: rgba(153, 144, 176, 0.3);
+  --sky: #5A9BBF;
+  --sky-wash: rgba(90, 155, 191, 0.12);
+  --sky-border: rgba(90, 155, 191, 0.28);
 
-  --telemetry: #4EA3D1;
-  --telemetry-wash: rgba(78, 163, 209, 0.14);
-  --telemetry-border: rgba(78, 163, 209, 0.3);
+  --telemetry: #4AADDE;
+  --telemetry-wash: rgba(74, 173, 222, 0.12);
+  --telemetry-border: rgba(74, 173, 222, 0.28);
 
-  --pass: #529E78;
-  --pass-hover: #63AE88;
-  --pass-wash: rgba(82, 158, 120, 0.15);
-  --pass-border: rgba(82, 158, 120, 0.32);
+  --pass: #3DAA74;
+  --pass-hover: #55BB88;
+  --pass-wash: rgba(61, 170, 116, 0.12);
+  --pass-border: rgba(61, 170, 116, 0.3);
 
-  --fail: #C05863;
-  --fail-hover: #CE6974;
-  --fail-wash: rgba(192, 88, 99, 0.16);
-  --fail-border: rgba(192, 88, 99, 0.35);
+  --fail: #DD4848;
+  --fail-hover: #E85C5C;
+  --fail-wash: rgba(221, 72, 72, 0.12);
+  --fail-border: rgba(221, 72, 72, 0.3);
 
-  --review: #B28E46;
-  --review-wash: rgba(178, 142, 70, 0.16);
-  --review-border: rgba(178, 142, 70, 0.35);
+  --review: #C99030;
+  --review-wash: rgba(201, 144, 48, 0.12);
+  --review-border: rgba(201, 144, 48, 0.3);
 
-  --mark: rgba(178, 142, 70, 0.3);
-
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --mark: rgba(201, 144, 48, 0.25);
 }

@@ -1,9 +1,16 @@
-/* Editorial System Card Styles - PDF Section 5 & 16 */
+/* ============================================================
+   card.css — ProofRAI Card / Dossier Screen
+   Design system: Linear/Vercel-grade, token-driven, no hard colors
+   ============================================================ */
 
+/* ── Screen wrapper ────────────────────────────────────────── */
 .card-screen {
   max-width: 1100px;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-5);
 }
 
+/* ── Hero row ───────────────────────────────────────────────── */
 .card-hero {
   display: flex;
   align-items: flex-start;
@@ -15,8 +22,12 @@
 
 .card-hero-left {
   max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
+/* ── Status badge ────────────────────────────────────────────── */
 .card-status-badge {
   display: inline-flex;
   align-items: center;
@@ -25,21 +36,25 @@
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  line-height: 1;
 }
 
 .card-status-badge.confirmed {
   background-color: var(--pass-wash);
   color: var(--pass);
-  border: 1px solid var(--pass-border);
+  border-color: var(--pass-border);
 }
 
 .card-status-badge.draft {
   background-color: var(--review-wash);
   color: var(--review);
-  border: 1px solid var(--review-border);
+  border-color: var(--review-border);
 }
 
-/* Bento Grid */
+/* ── Card grid layout ────────────────────────────────────────── */
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -47,6 +62,7 @@
   margin-bottom: var(--space-5);
 }
 
+/* ── Dossier panel ───────────────────────────────────────────── */
 .card-dossier-panel {
   background-color: var(--surface);
   border: 1px solid var(--rule);
@@ -54,26 +70,29 @@
   padding: var(--space-5);
 }
 
+/* ── Section header ──────────────────────────────────────────── */
 .card-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-3);
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--rule-soft);
-  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
 .card-section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
 }
 
+/* ── Structured metadata grid ────────────────────────────────── */
 .structured-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -94,6 +113,8 @@
   font-size: 10px;
   font-weight: 700;
   color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .structured-val {
@@ -103,7 +124,7 @@
   word-break: break-word;
 }
 
-/* Statements */
+/* ── Statements two-column grid ──────────────────────────────── */
 .statements-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -117,14 +138,15 @@
   }
 }
 
+/* ── Statement card ──────────────────────────────────────────── */
 .statement-card {
-  background-color: var(--ground);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
 }
 
 .statement-header {
@@ -134,14 +156,16 @@
 }
 
 .statement-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
 }
 
+/* ── Card textarea ───────────────────────────────────────────── */
 .card-textarea {
   width: 100%;
   min-height: 120px;
@@ -149,25 +173,36 @@
   font-family: var(--font-sans);
   font-size: var(--text-table);
   line-height: 1.5;
+  color: var(--ink);
+  background-color: var(--surface);
   border: 1px solid var(--rule);
   border-radius: var(--radius-control);
-  background-color: var(--surface);
-  color: var(--ink);
   resize: vertical;
+  outline: none;
+  appearance: none;
+  box-sizing: border-box;
 }
 
-/* Sign-off Card */
+.card-textarea:focus {
+  border-color: var(--primary);
+}
+
+.card-textarea::placeholder {
+  color: var(--ink-3);
+}
+
+/* ── Sign-off card ───────────────────────────────────────────── */
 .signoff-card {
-  background-color: var(--surface-sage);
-  border: 1px solid var(--primary-border);
-  border-radius: var(--radius-control);
-  padding: var(--space-4);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
   margin-top: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--surface-sage);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-control);
 }
 
 .signoff-left {
@@ -182,6 +217,7 @@
   justify-content: center;
   width: 40px;
   height: 40px;
+  flex-shrink: 0;
   border-radius: var(--radius-sm);
   background-color: var(--surface);
   color: var(--primary);
@@ -198,13 +234,16 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--ink);
+  margin: 0;
 }
 
 .signoff-subtitle {
   font-size: 12px;
   color: var(--ink-2);
+  margin: 0;
 }
 
+/* ── Sign-off form row ───────────────────────────────────────── */
 .signoff-form {
   display: flex;
   align-items: center;
@@ -215,15 +254,27 @@
 .reviewer-input {
   height: 34px;
   padding: 0 10px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  background-color: var(--surface);
-  color: var(--ink);
+  min-width: 200px;
   font-family: var(--font-sans);
   font-size: var(--text-table);
-  min-width: 200px;
+  color: var(--ink);
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  outline: none;
+  appearance: none;
+  box-sizing: border-box;
 }
 
+.reviewer-input:focus {
+  border-color: var(--primary);
+}
+
+.reviewer-input::placeholder {
+  color: var(--ink-3);
+}
+
+/* ── Confirmed stamp ─────────────────────────────────────────── */
 .confirmed-stamp {
   display: inline-flex;
   align-items: center;
@@ -235,4 +286,24 @@
   color: var(--pass);
   font-size: var(--text-table);
   font-weight: 600;
+  line-height: 1;
+}
+
+/* ── Describe bottom bar ─────────────────────────────────────── */
+.describe-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+}
+
+.describe-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }

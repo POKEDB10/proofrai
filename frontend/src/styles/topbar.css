@@ -1,13 +1,16 @@
-/* Editorial Navigation Bar - PDF Guidelines */
+/* ============================================================
+   ProofRAI Top Navigation Bar — Premium Edition
+   Shield logo mark + wordmark + step nav + telemetry chips
+   ============================================================ */
 
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 52px;
+  height: 60px;
   background-color: var(--surface);
   border-bottom: 1px solid var(--rule);
   padding: 0 var(--space-4);
@@ -15,22 +18,21 @@
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
+/* ---- Brand ---- */
 .topbar-left {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   min-width: 0;
   flex: 1;
+  overflow: hidden;
 }
 
 .topbar-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--ink);
   flex-shrink: 0;
 }
 
@@ -38,38 +40,74 @@
   text-decoration: none;
 }
 
+/* Logo SVG coloring via CSS classes */
 .topbar-logo-mark {
+  flex-shrink: 0;
+}
+
+.topbar-logo-bg {
+  fill: var(--ink);
+}
+
+.topbar-logo-shield-fill {
+  fill: var(--surface);
+  fill-opacity: 0.12;
+}
+
+.topbar-logo-shield-stroke {
+  stroke: var(--surface);
+}
+
+.topbar-logo-check {
+  stroke: var(--surface);
+}
+
+[data-theme="dark"] .topbar-logo-bg {
+  fill: var(--primary);
+}
+
+/* Wordmark */
+.topbar-wordmark {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background-color: var(--primary);
-  color: var(--surface);
-  flex-shrink: 0;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1;
 }
 
-.topbar-brand-tag {
-  font-size: 10px;
+.topbar-wordmark-name {
+  font-size: 16px;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  background: var(--ground-secondary);
-  color: var(--ink-2);
-  border: 1px solid var(--rule);
-  margin-left: 2px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.topbar-wordmark-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink-3);
+  line-height: 1;
+}
+
+/* Separator between brand and nav */
+.topbar-separator {
+  width: 1px;
+  height: 22px;
+  background-color: var(--rule);
   flex-shrink: 0;
 }
 
+/* ---- Step Navigation ---- */
 .topbar-nav {
   display: flex;
   align-items: center;
   gap: 2px;
-  height: 52px;
-  min-width: 0;
+  height: 60px;
   overflow-x: auto;
   scrollbar-width: none;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .topbar-nav::-webkit-scrollbar {
@@ -79,13 +117,13 @@
 .topbar-step {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 8px;
+  gap: 5px;
+  height: 38px;
+  padding: 0 10px;
   border-radius: var(--radius-control);
   color: var(--ink-2);
   text-decoration: none;
-  font-size: var(--text-table);
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
@@ -102,53 +140,80 @@
 .topbar-step.active {
   color: var(--ink);
   font-weight: 600;
-  background-color: var(--ground-secondary);
+  background-color: var(--primary-wash);
 }
 
+.topbar-step.active::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background-color: var(--primary);
+  border-radius: var(--radius-cell);
+}
+
+/* Step number badge */
 .topbar-step-num {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 18px;
   height: 18px;
   border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--surface);
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: var(--ground-secondary);
   border: 1px solid var(--rule);
-  color: var(--ink-2);
+  color: var(--ink-3);
   flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .topbar-step.active .topbar-step-num {
-  background: var(--ink);
+  background: var(--primary);
   color: var(--surface);
-  border-color: var(--ink);
+  border-color: var(--primary);
 }
 
+.topbar-step-label {
+  /* inherits from parent */
+}
+
+/* Small badge on step (run ID / count) */
 .topbar-step-badge {
+  font-family: var(--font-mono);
   font-size: 10px;
   padding: 1px 6px;
   border-radius: var(--radius-sm);
-  background-color: var(--primary-wash);
-  color: var(--primary);
-  border: 1px solid var(--primary-border);
+  background-color: var(--ground-secondary);
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
   flex-shrink: 0;
 }
 
+.topbar-step.active .topbar-step-badge {
+  background-color: var(--primary-wash);
+  color: var(--primary);
+  border-color: var(--primary-border);
+}
+
+/* ---- Right Telemetry ---- */
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.topbar-telemetry-chip {
+.topbar-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--radius-control);
   background-color: var(--ground-secondary);
   border: 1px solid var(--rule);
   font-family: var(--font-mono);
@@ -158,39 +223,83 @@
   flex-shrink: 0;
 }
 
+.topbar-chip-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--pass);
+  flex-shrink: 0;
+}
+
+.topbar-chip-text {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hide run chip on smaller viewports */
 @media (max-width: 1200px) {
-  .topbar-run-chip {
+  .topbar-chip-run {
     display: none;
   }
 }
 
-.theme-toggle-btn {
+@media (max-width: 900px) {
+  .topbar-wordmark-sub {
+    display: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .topbar-chip-model {
+    display: none;
+  }
+}
+
+/* ---- Theme Toggle Button ---- */
+.topbar-theme-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  min-width: 32px;
-  height: 32px;
-  min-height: 32px;
-  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-control);
   background-color: var(--surface);
   border: 1px solid var(--rule);
   color: var(--ink-2);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.theme-toggle-btn:hover {
+.topbar-theme-btn:hover {
   background-color: var(--surface-hover);
   color: var(--ink);
+  border-color: var(--rule-strong);
 }
 
+/* Legacy compat for any leftover references */
 .topbar-beacon {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: var(--radius-full);
   background-color: var(--pass);
+  flex-shrink: 0;
+}
+
+.topbar-telemetry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-control);
+  background-color: var(--ground-secondary);
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  white-space: nowrap;
   flex-shrink: 0;
 }
