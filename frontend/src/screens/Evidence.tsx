@@ -542,7 +542,7 @@ export function Evidence() {
       {/* Header */}
       <header className="evidence-header">
         <div className="evidence-header-left">
-          <div className="badge badge-accent" style={{ marginBottom: 'var(--space-2)' }}>
+          <div className="phase-badge">
             <IconAward size={12} />
             <span>Phase 5: Audit Dossier</span>
           </div>

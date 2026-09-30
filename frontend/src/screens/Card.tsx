@@ -119,7 +119,7 @@ export function Card() {
       {/* Header */}
       <div className="card-hero">
         <div className="card-hero-left">
-          <div className="badge badge-accent" style={{ marginBottom: 'var(--space-2)' }}>
+          <div className="phase-badge">
             <IconFileCheck size={12} />
             <span>Phase 2: Model Specification</span>
           </div>

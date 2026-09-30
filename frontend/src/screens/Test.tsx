@@ -18,6 +18,7 @@ import {
   IconActivity,
   IconBrain,
   IconCheckCircle,
+  IconCpu,
 } from '../components/Icons';
 import {
   CATEGORIES,
@@ -560,7 +561,10 @@ export function Test() {
       {/* Editorial Header (PDF Section 16 & 17) */}
       <div className="test-hero">
         <div>
-          <span className="editorial-kicker">Product / Evaluation Engine</span>
+          <div className="phase-badge">
+            <IconCpu size={12} />
+            <span>Phase 4: Evaluation Engine</span>
+          </div>
           <h1 className="page-title">Comparative Evaluation Workbench</h1>
           <p className="page-description">
             Dual-variant evaluation comparing an unconstrained baseline model against the controlled assistant across 30 structured adversarial and benign cases.

@@ -143,7 +143,10 @@ export function Controls() {
       {/* Editorial Header */}
       <div className="controls-hero">
         <div className="controls-hero-left">
-          <span className="editorial-kicker">Section 1 &bull; Control Layer</span>
+          <div className="phase-badge">
+            <IconShield size={12} />
+            <span>Phase 3: Safeguard Controls</span>
+          </div>
           <h1 className="page-title">Safeguard Control Library</h1>
           <p className="page-description">
             The Control Engine intercepts model inputs and outputs across four enforcement stages: pre-model input sanitisation, prompt delimiters, post-model disclosure scanners, and tool execution gates.

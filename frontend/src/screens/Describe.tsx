@@ -181,7 +181,7 @@ export function Describe() {
       {/* Hero Header */}
       <div className="describe-hero">
         <div className="describe-hero-left">
-          <div className="describe-hero-badge">
+          <div className="phase-badge">
             <IconSparkles size={12} />
             <span>Phase 1: System Intake</span>
           </div>
