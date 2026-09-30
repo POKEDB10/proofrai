@@ -989,7 +989,17 @@ export function Evidence() {
                           {item.why}
                         </td>
                         <td style={{ whiteSpace: 'nowrap' }}>
-                          <span className="badge badge-accent">
+                          <span className={`badge ${
+                            item.decisionText.toLowerCase().includes('reject')
+                              ? 'badge-fail'
+                              : item.decisionText.toLowerCase().includes('accept')
+                              ? 'badge-pass'
+                              : item.decisionText.toLowerCase().includes('needs_work')
+                              ? 'badge-review'
+                              : item.why.toLowerCase().includes('violation') || item.why.toLowerCase().includes('flagged')
+                              ? 'badge-review'
+                              : 'badge-accent'
+                          }`}>
                             {item.decisionText}
                           </span>
                         </td>
@@ -1017,16 +1027,67 @@ export function Evidence() {
               </span>
             </div>
 
-            {selectedResult && (
-              <div style={{ backgroundColor: 'var(--ground)', padding: '10px 12px', borderRadius: 'var(--radius-control)', border: '1px solid var(--rule-soft)' }}>
-                <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-2)', marginBottom: '4px' }}>
-                  Controlled Model Output:
+            {/* Section: Input Prompt / User Request */}
+            {selectedMeta?.sampleInput && (
+              <div style={{ backgroundColor: 'var(--surface-hover)', padding: '10px 12px', borderRadius: 'var(--radius-control)', border: '1px solid var(--rule)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-2)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--primary)' }} />
+                    Input Prompt / User Query:
+                  </div>
+                  <span style={{ fontSize: '10.5px', color: 'var(--ink-2)', fontFamily: 'var(--font-mono)' }}>
+                    {selectedMeta.category}
+                  </span>
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', maxHeight: '120px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', maxHeight: '110px', overflowY: 'auto', whiteSpace: 'pre-wrap', color: 'var(--ink)', lineHeight: '1.45' }}>
+                  {selectedMeta.sampleInput}
+                </div>
+                {selectedMeta.expectedBehavior && (
+                  <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--ink-2)', borderTop: '1px dashed var(--rule-soft)', paddingTop: '4px' }}>
+                    <strong>Expected Standard:</strong> {selectedMeta.expectedBehavior}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Section: Controlled Model Output */}
+            {selectedResult && (
+              <div style={{
+                backgroundColor: 'var(--ground)',
+                padding: '10px 12px',
+                borderRadius: 'var(--radius-control)',
+                border: selectedResult.verdict === 'fail' || selectedResult.verdict === 'needs_review'
+                  ? '1px solid rgba(239, 68, 68, 0.45)'
+                  : '1px solid var(--rule-soft)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-2)' }}>
+                    Controlled Model Output:
+                  </div>
+                  <span className={`badge ${selectedResult.verdict === 'pass' ? 'badge-pass' : (selectedResult.verdict === 'fail' ? 'badge-fail' : 'badge-review')}`}>
+                    {selectedResult.verdict.toUpperCase()}
+                  </span>
+                </div>
+                <div style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '12px',
+                  maxHeight: '120px',
+                  overflowY: 'auto',
+                  whiteSpace: 'pre-wrap',
+                  color: selectedResult.verdict === 'fail' || selectedResult.verdict === 'needs_review' ? 'var(--fail)' : 'inherit',
+                  lineHeight: '1.45'
+                }}>
                   {selectedResult.output_text || 'No output recorded'}
                 </div>
                 {selectedResult.judge_reason && (
-                  <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--review)' }}>
+                  <div style={{
+                    marginTop: '8px',
+                    fontSize: '11px',
+                    color: selectedResult.verdict === 'fail' || selectedResult.verdict === 'needs_review' ? 'var(--fail)' : 'var(--review)',
+                    backgroundColor: selectedResult.verdict === 'fail' || selectedResult.verdict === 'needs_review' ? 'rgba(239, 68, 68, 0.08)' : 'transparent',
+                    padding: selectedResult.verdict === 'fail' || selectedResult.verdict === 'needs_review' ? '4px 6px' : '0',
+                    borderRadius: '4px'
+                  }}>
                     <strong>Judge Note:</strong> {selectedResult.judge_reason}
                   </div>
                 )}
@@ -1044,8 +1105,16 @@ export function Evidence() {
                 ].map((d) => (
                   <div
                     key={d.id}
-                    className={`radio-chip${decision === d.id ? ' selected' : ''}`}
-                    onClick={() => setDecision(d.id as 'accept' | 'reject' | 'needs_work')}
+                    className={`radio-chip${decision === d.id ? ' selected' : ''}${d.id === 'reject' && decision === 'reject' ? ' chip-reject' : ''}`}
+                    onClick={() => {
+                      const nextDec = d.id as 'accept' | 'reject' | 'needs_work';
+                      setDecision(nextDec);
+                      if (nextDec === 'reject' && overrideVerdict === 'none') {
+                        setOverrideVerdict('fail');
+                      } else if (nextDec === 'accept' && overrideVerdict === 'fail') {
+                        setOverrideVerdict('none');
+                      }
+                    }}
                   >
                     <span>{d.label}</span>
                   </div>

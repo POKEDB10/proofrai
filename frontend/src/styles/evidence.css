@@ -578,6 +578,12 @@
   font-weight: 600;
 }
 
+.radio-chip.selected.chip-reject {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: var(--fail, #EF4444);
+  color: var(--fail, #EF4444);
+}
+
 .form-field {
   display: flex;
   flex-direction: column;
