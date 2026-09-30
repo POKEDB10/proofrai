@@ -155,6 +155,68 @@ export interface ReviewRecord {
 }
 
 const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
+const SESSION_STORAGE_KEY = 'proofai_session_id';
+
+export function getSessionId(): string {
+  try {
+    let id = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!id) {
+      id = 'user_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36).slice(-4);
+      localStorage.setItem(SESSION_STORAGE_KEY, id);
+    }
+    return id;
+  } catch {
+    return 'default_session';
+  }
+}
+
+export function setSessionId(id: string): void {
+  try {
+    localStorage.setItem(SESSION_STORAGE_KEY, id);
+    window.dispatchEvent(new CustomEvent('proofai_session_changed', { detail: id }));
+  } catch {
+    // fallback
+  }
+}
+
+export function createNewSession(): string {
+  const newId = 'user_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36).slice(-4);
+  setSessionId(newId);
+  return newId;
+}
+
+export async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
+  const headers = new Headers(init?.headers);
+  if (!headers.has('X-Session-ID')) {
+    headers.set('X-Session-ID', getSessionId());
+  }
+  return fetch(input, {
+    ...init,
+    headers,
+  });
+}
+
+export interface SessionInfo {
+  session_id: string;
+  is_demo: boolean;
+  runs_count: number;
+  card_status: string;
+}
+
+export async function getSessionInfo(): Promise<SessionInfo> {
+  const res = await apiFetch(`${API_BASE}/session/info`);
+  return handleResponse<SessionInfo>(res);
+}
+
+export async function resetSession(): Promise<{ status: string; message: string }> {
+  const res = await apiFetch(`${API_BASE}/session/reset`, { method: 'POST' });
+  return handleResponse<{ status: string; message: string }>(res);
+}
+
+export async function loadDemoSession(): Promise<{ status: string; message: string }> {
+  const res = await apiFetch(`${API_BASE}/session/load-demo`, { method: 'POST' });
+  return handleResponse<{ status: string; message: string }>(res);
+}
 
 async function extractErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
@@ -178,7 +240,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
 }
 
 export async function getControls(): Promise<Control[]> {
-  const res = await fetch(`${API_BASE}/controls`);
+  const res = await apiFetch(`${API_BASE}/controls`);
   return handleResponse<Control[]>(res);
 }
 
@@ -186,7 +248,7 @@ export async function updateControlStatus(
   controlId: string,
   status: 'approved' | 'rejected'
 ): Promise<Control> {
-  const res = await fetch(`${API_BASE}/controls/${encodeURIComponent(controlId)}`, {
+  const res = await apiFetch(`${API_BASE}/controls/${encodeURIComponent(controlId)}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status }),
@@ -198,7 +260,7 @@ export async function startRun(
   runId?: string,
   noCache: boolean = false
 ): Promise<StartRunResponse> {
-  const res = await fetch(`${API_BASE}/runs`, {
+  const res = await apiFetch(`${API_BASE}/runs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ run_id: runId, no_cache: noCache }),
@@ -214,7 +276,7 @@ export interface RunListItem {
 
 export async function listRuns(): Promise<RunListItem[]> {
   try {
-    const res = await fetch(`${API_BASE}/runs`);
+    const res = await apiFetch(`${API_BASE}/runs`);
     if (!res.ok) return [];
     return (await res.json()) as RunListItem[];
   } catch {
@@ -223,12 +285,12 @@ export async function listRuns(): Promise<RunListItem[]> {
 }
 
 export async function getRun(runId: string): Promise<RunSummary> {
-  const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}`);
+  const res = await apiFetch(`${API_BASE}/runs/${encodeURIComponent(runId)}`);
   return handleResponse<RunSummary>(res);
 }
 
 export async function getRunResults(runId: string): Promise<CaseResult[]> {
-  const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/results`);
+  const res = await apiFetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/results`);
   return handleResponse<CaseResult[]>(res);
 }
 
@@ -236,7 +298,7 @@ export async function postRunReview(
   runId: string,
   review: ReviewRequest
 ): Promise<ReviewRecord> {
-  const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/reviews`, {
+  const res = await apiFetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/reviews`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(review),
@@ -248,7 +310,7 @@ export async function overrideCaseVerdict(
   runId: string,
   override: OverrideRequest
 ): Promise<OverrideResponse> {
-  const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/override`, {
+  const res = await apiFetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/override`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(override),
@@ -259,16 +321,16 @@ export async function overrideCaseVerdict(
 export async function getRunExport(
   runId: string
 ): Promise<Record<string, unknown>> {
-  const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/export`);
+  const res = await apiFetch(`${API_BASE}/runs/${encodeURIComponent(runId)}/export`);
   return handleResponse<Record<string, unknown>>(res);
 }
 
 export function getRunReportUrl(runId: string): string {
-  return `${API_BASE}/runs/${encodeURIComponent(runId)}/report`;
+  return `${API_BASE}/runs/${encodeURIComponent(runId)}/report?session_id=${encodeURIComponent(getSessionId())}`;
 }
 
 export async function getRunReport(runId: string): Promise<string> {
-  const res = await fetch(getRunReportUrl(runId));
+  const res = await apiFetch(getRunReportUrl(runId));
   if (!res.ok) {
     const fallback = `Request failed with status ${res.status}`;
     const detail = await extractErrorMessage(res, fallback);
@@ -311,7 +373,7 @@ export interface SystemCardData {
 }
 
 export async function postInterview(answers: InterviewAnswers): Promise<InterviewResponse> {
-  const res = await fetch(`${API_BASE}/interview`, {
+  const res = await apiFetch(`${API_BASE}/interview`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(answers),
@@ -320,12 +382,12 @@ export async function postInterview(answers: InterviewAnswers): Promise<Intervie
 }
 
 export async function getSystemCard(): Promise<SystemCardData> {
-  const res = await fetch(`${API_BASE}/card`);
+  const res = await apiFetch(`${API_BASE}/card`);
   return handleResponse<SystemCardData>(res);
 }
 
 export async function postCardDrafts(): Promise<SystemCardData> {
-  const res = await fetch(`${API_BASE}/card/drafts`, {
+  const res = await apiFetch(`${API_BASE}/card/drafts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -337,7 +399,7 @@ export async function confirmSystemCard(
   intendedUse: string,
   knownLimits: string
 ): Promise<SystemCardData> {
-  const res = await fetch(`${API_BASE}/card/confirm`, {
+  const res = await apiFetch(`${API_BASE}/card/confirm`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

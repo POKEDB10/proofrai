@@ -24,6 +24,7 @@ __pycache__/
 *.db
 !backend/data/ledger.db
 backend/data/runs/
+backend/data/sessions/
 !backend/data/card.json
 !backend/data/interview.json
 

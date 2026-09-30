@@ -5,8 +5,18 @@ import {
   IconTerminal,
   IconSun,
   IconMoon,
+  IconLayers,
+  IconRotateCcw,
+  IconCheckCircle,
 } from './Icons';
-import { listRuns, RunListItem } from '../api';
+import {
+  listRuns,
+  RunListItem,
+  getSessionId,
+  createNewSession,
+  resetSession,
+  loadDemoSession,
+} from '../api';
 import '../styles/topbar.css';
 
 
@@ -67,8 +77,17 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
     return 'run-01';
   });
 
+  const [sessionId, setSessionIdState] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return getSessionId();
+    }
+    return 'demo';
+  });
+
   const [availableRuns, setAvailableRuns] = useState<RunListItem[]>([]);
   const [isRunMenuOpen, setIsRunMenuOpen] = useState<boolean>(false);
+  const [isInstanceMenuOpen, setIsInstanceMenuOpen] = useState<boolean>(false);
+  const [isResetting, setIsResetting] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -100,9 +119,18 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
       }
     }
 
+    function handleSessionChange(e: Event) {
+      const custom = e as CustomEvent<string>;
+      if (custom.detail) {
+        setSessionIdState(custom.detail);
+      }
+    }
+
     window.addEventListener('proofrai_run_changed', handleRunChange);
+    window.addEventListener('proofrai_session_changed', handleSessionChange);
     return () => {
       window.removeEventListener('proofrai_run_changed', handleRunChange);
+      window.removeEventListener('proofrai_session_changed', handleSessionChange);
     };
   }, []);
 
@@ -117,6 +145,43 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
       window.dispatchEvent(new CustomEvent('proofrai_run_changed', { detail: id }));
     }
     setIsRunMenuOpen(false);
+  }
+
+  function handleStartFresh() {
+    setIsInstanceMenuOpen(false);
+    createNewSession();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('proofrai_run_id');
+      window.location.href = '/describe';
+    }
+  }
+
+  async function handleResetCurrent() {
+    setIsResetting(true);
+    try {
+      await resetSession();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('proofrai_run_id');
+        window.location.reload();
+      }
+    } finally {
+      setIsResetting(false);
+      setIsInstanceMenuOpen(false);
+    }
+  }
+
+  async function handleLoadDemo() {
+    setIsResetting(true);
+    try {
+      await loadDemoSession();
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('proofrai_run_id', 'run-01');
+        window.location.reload();
+      }
+    } finally {
+      setIsResetting(false);
+      setIsInstanceMenuOpen(false);
+    }
   }
 
   const displayModel =
@@ -208,12 +273,92 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
           <span className="topbar-chip-text">{displayModel}</span>
         </div>
 
+        {/* Workspace Instance Isolation Selector */}
+        <div className="topbar-run-container">
+          <button
+            type="button"
+            className="topbar-chip topbar-chip-interactive"
+            onClick={() => {
+              setIsInstanceMenuOpen((prev) => !prev);
+              setIsRunMenuOpen(false);
+            }}
+            title="Workspace Instance: Isolated SQLite and Control Card per user"
+            aria-expanded={isInstanceMenuOpen}
+          >
+            <IconLayers size={12} />
+            <span className="topbar-chip-text">
+              {sessionId === 'demo' ? 'Instance: Demo' : `Instance: ${sessionId.slice(0, 10)}`}
+            </span>
+            <span style={{ fontSize: '9px', opacity: 0.7, marginLeft: '2px' }}>▼</span>
+          </button>
+
+          {isInstanceMenuOpen && (
+            <div className="topbar-run-dropdown" style={{ minWidth: '270px' }}>
+              <div className="topbar-run-dropdown-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Workspace Isolation</span>
+                <span className="font-mono" style={{ fontSize: '10px', color: 'var(--ink-3)' }}>
+                  {sessionId === 'demo' ? 'Shared Demo' : 'Private Instance'}
+                </span>
+              </div>
+              <div style={{ padding: '8px 12px', fontSize: '11px', color: 'var(--ink-3)', borderBottom: '1px solid var(--rule-soft)', background: 'var(--ground)' }}>
+                Session ID: <span className="font-mono" style={{ color: 'var(--ink)', fontWeight: 600 }}>{sessionId}</span>
+              </div>
+              <div className="topbar-run-dropdown-list">
+                <button
+                  type="button"
+                  className="topbar-run-dropdown-item"
+                  onClick={handleStartFresh}
+                  disabled={isResetting}
+                  title="Generate a new isolated session ID and start from Phase 1"
+                >
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '12px', color: 'var(--ink)' }}>New Fresh Instance</div>
+                    <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>Clean slate for a new visitor</div>
+                  </div>
+                  <IconRotateCcw size={14} />
+                </button>
+
+                <button
+                  type="button"
+                  className="topbar-run-dropdown-item"
+                  onClick={handleResetCurrent}
+                  disabled={isResetting}
+                  title="Reset your current instance to clean draft state"
+                >
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '12px', color: 'var(--ink)' }}>Reset Current Instance</div>
+                    <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>Clear runs & draft card in this session</div>
+                  </div>
+                  <IconRotateCcw size={14} />
+                </button>
+
+                <button
+                  type="button"
+                  className="topbar-run-dropdown-item"
+                  onClick={handleLoadDemo}
+                  disabled={isResetting}
+                  title="Load the 4 pre-computed benchmark runs into this instance"
+                >
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '12px', color: 'var(--primary)' }}>Load Demo Benchmark</div>
+                    <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>Populate with 4 benchmark runs</div>
+                  </div>
+                  <IconCheckCircle size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Interactive Run Selector */}
         <div className="topbar-run-container">
           <button
             type="button"
             className="topbar-chip topbar-chip-run topbar-chip-interactive"
-            onClick={() => setIsRunMenuOpen((prev) => !prev)}
+            onClick={() => {
+              setIsRunMenuOpen((prev) => !prev);
+              setIsInstanceMenuOpen(false);
+            }}
             title="Click to view or switch benchmark runs"
             aria-expanded={isRunMenuOpen}
           >

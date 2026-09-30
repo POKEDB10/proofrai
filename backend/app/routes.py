@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Response
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, Response
 from pydantic import BaseModel
 
 from backend.app.state import (
@@ -61,13 +61,25 @@ from backend.core.suite.generator import (
 )
 from backend.core.suite.loader import load_suite
 
-from backend.core.paths import resolve_data_path
+from backend.core.paths import SessionPaths, resolve_data_path
 
 router = APIRouter(prefix="/api")
 control_file_lock = threading.Lock()
 
 CONTROL_LIBRARY_PATH = resolve_data_path("control_library.yaml")
+CARD_FILE_PATH = resolve_data_path("card.json")
 INTERVIEW_FILE_PATH = resolve_data_path("interview.json")
+
+
+def get_session_paths(request: Request) -> SessionPaths:
+    sess_id = request.headers.get("x-session-id") or request.query_params.get("session_id")
+    if not sess_id:
+        paths = SessionPaths("demo")
+        paths.control_library_path = Path(CONTROL_LIBRARY_PATH)
+        paths.card_path = Path(CARD_FILE_PATH)
+        paths.interview_path = Path(INTERVIEW_FILE_PATH)
+        return paths
+    return SessionPaths(sess_id)
 
 
 class UpdateControlStatusRequest(BaseModel):
@@ -124,33 +136,64 @@ class GenerateSyntheticAttacksResponse(BaseModel):
 
 
 
+@router.get("/session/info")
+def get_session_info(request: Request) -> dict[str, Any]:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
+    runs_count = conn.execute("SELECT COUNT(*) FROM runs").fetchone()[0]
+    conn.close()
+    card = load_card_from_file(paths.card_path)
+    return {
+        "session_id": paths.session_id,
+        "is_demo": paths.session_id == "demo",
+        "runs_count": runs_count,
+        "card_status": card.status,
+    }
+
+
+@router.post("/session/reset")
+def post_session_reset(request: Request) -> dict[str, Any]:
+    paths = get_session_paths(request)
+    paths.ensure_initialized(force_reset=True, load_demo=False)
+    return {"status": "ok", "session_id": paths.session_id, "message": "Instance reset to clean draft state"}
+
+
+@router.post("/session/load-demo")
+def post_session_load_demo(request: Request) -> dict[str, Any]:
+    paths = get_session_paths(request)
+    paths.ensure_initialized(force_reset=True, load_demo=True)
+    return {"status": "ok", "session_id": paths.session_id, "message": "Demo benchmark dataset loaded"}
+
+
 @router.get("/controls", response_model=list[Control])
-def get_controls() -> list[Control]:
+def get_controls(request: Request) -> list[Control]:
+    paths = get_session_paths(request)
     try:
-        return load_control_library(CONTROL_LIBRARY_PATH)
+        return load_control_library(paths.control_library_path)
     except (OSError, ValueError, TypeError) as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed loading controls: {exc}. Fix: check backend/data/control_library.yaml syntax.",
+            detail=f"Failed loading controls: {exc}. Fix: check control_library.yaml syntax.",
         ) from exc
 
 
 @router.patch("/controls/{control_id}", response_model=Control)
-def patch_control(control_id: str, body: UpdateControlStatusRequest) -> Control:
+def patch_control(control_id: str, body: UpdateControlStatusRequest, request: Request) -> Control:
     if body.status not in ("approved", "rejected"):
         raise HTTPException(
             status_code=400,
             detail=f"Invalid status '{body.status}'. Fix: status must be 'approved' or 'rejected'.",
         )
 
+    paths = get_session_paths(request)
     with control_file_lock:
-        if not CONTROL_LIBRARY_PATH.is_file():
+        if not paths.control_library_path.is_file():
             raise HTTPException(
                 status_code=500,
-                detail=f"Control file not found at '{CONTROL_LIBRARY_PATH}'. Fix: restore control_library.yaml.",
+                detail=f"Control file not found at '{paths.control_library_path}'. Fix: restore control_library.yaml.",
             )
 
-        with open(CONTROL_LIBRARY_PATH, encoding="utf-8") as f:
+        with open(paths.control_library_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         if not isinstance(data, list):
@@ -172,15 +215,16 @@ def patch_control(control_id: str, body: UpdateControlStatusRequest) -> Control:
             )
 
         data[found_idx]["status"] = body.status
-        with open(CONTROL_LIBRARY_PATH, "w", encoding="utf-8") as f:
+        with open(paths.control_library_path, "w", encoding="utf-8") as f:
             yaml.dump(data, f, sort_keys=False)
 
         return Control.model_validate(data[found_idx])
 
 
 @router.get("/runs")
-def list_runs() -> list[dict[str, Any]]:
-    conn = get_db(DEFAULT_LEDGER_PATH)
+def list_runs(request: Request) -> list[dict[str, Any]]:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     rows = conn.execute("SELECT id, target_model, created_at FROM runs ORDER BY created_at DESC").fetchall()
     conn.close()
     return [{"id": r["id"], "target_model": r["target_model"], "created_at": r["created_at"]} for r in rows]
@@ -188,9 +232,11 @@ def list_runs() -> list[dict[str, Any]]:
 
 @router.post("/runs")
 def start_run(
+    request: Request,
     background_tasks: BackgroundTasks,
     body: StartRunRequest | None = None,
 ) -> dict[str, str]:
+    paths = get_session_paths(request)
     run_req = body or StartRunRequest()
     run_id = run_req.run_id or f"run-{uuid.uuid4().hex[:6]}"
 
@@ -200,13 +246,14 @@ def start_run(
             detail=f"Run '{run_id}' is currently running. Fix: wait for it to complete or use a different run ID.",
         )
 
-    background_tasks.add_task(execute_background_run, run_id, run_req.no_cache)
+    background_tasks.add_task(execute_background_run, run_id, run_req.no_cache, paths.db_path)
     return {"run_id": run_id, "status": "running"}
 
 
 @router.get("/runs/{run_id}")
-def get_run(run_id: str) -> dict[str, Any]:
-    summary = get_run_summary(run_id)
+def get_run(run_id: str, request: Request) -> dict[str, Any]:
+    paths = get_session_paths(request)
+    summary = get_run_summary(run_id, db_path=paths.db_path)
     if summary is None:
         raise HTTPException(
             status_code=404,
@@ -216,8 +263,9 @@ def get_run(run_id: str) -> dict[str, Any]:
 
 
 @router.get("/runs/{run_id}/results", response_model=list[CaseResult])
-def get_run_results(run_id: str) -> list[CaseResult]:
-    conn = get_db(DEFAULT_LEDGER_PATH)
+def get_run_results(run_id: str, request: Request) -> list[CaseResult]:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta and run_id not in active_trackers:
         conn.close()
@@ -231,7 +279,7 @@ def get_run_results(run_id: str) -> list[CaseResult]:
 
 
 @router.post("/runs/{run_id}/reviews")
-def post_run_review(run_id: str, body: CreateReviewRequest) -> dict[str, Any]:
+def post_run_review(run_id: str, body: CreateReviewRequest, request: Request) -> dict[str, Any]:
     valid_decisions = {"accept", "reject", "needs_work"}
     if body.decision not in valid_decisions:
         raise HTTPException(
@@ -239,7 +287,8 @@ def post_run_review(run_id: str, body: CreateReviewRequest) -> dict[str, Any]:
             detail=f"Invalid decision '{body.decision}'. Fix: decision must be 'accept', 'reject', or 'needs_work'.",
         )
 
-    conn = get_db(DEFAULT_LEDGER_PATH)
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta and run_id not in active_trackers:
         conn.close()
@@ -298,14 +347,15 @@ def post_run_review(run_id: str, body: CreateReviewRequest) -> dict[str, Any]:
 
 
 @router.post("/runs/{run_id}/override")
-def post_override_verdict(run_id: str, body: OverrideVerdictRequest) -> dict[str, Any]:
+def post_override_verdict(run_id: str, body: OverrideVerdictRequest, request: Request) -> dict[str, Any]:
     if body.verdict not in ("pass", "fail", "needs_review"):
         raise HTTPException(
             status_code=400,
             detail=f"Invalid verdict '{body.verdict}'. Fix: verdict must be 'pass', 'fail', or 'needs_review'.",
         )
 
-    conn = get_db(DEFAULT_LEDGER_PATH)
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta and run_id not in active_trackers:
         conn.close()
@@ -341,8 +391,9 @@ def post_override_verdict(run_id: str, body: OverrideVerdictRequest) -> dict[str
 
 
 @router.get("/runs/{run_id}/export")
-def get_run_export(run_id: str) -> dict[str, Any]:
-    conn = get_db(DEFAULT_LEDGER_PATH)
+def get_run_export(run_id: str, request: Request) -> dict[str, Any]:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta:
         conn.close()
@@ -356,8 +407,9 @@ def get_run_export(run_id: str) -> dict[str, Any]:
 
 
 @router.get("/runs/{run_id}/report")
-def get_run_report(run_id: str) -> Response:
-    conn = get_db(DEFAULT_LEDGER_PATH)
+def get_run_report(run_id: str, request: Request) -> Response:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta:
         conn.close()
@@ -371,8 +423,9 @@ def get_run_report(run_id: str) -> Response:
 
 
 @router.get("/runs/{run_id}/impact", response_model=list[ControlImpact])
-def get_run_impact(run_id: str) -> list[ControlImpact]:
-    conn = get_db(DEFAULT_LEDGER_PATH)
+def get_run_impact(run_id: str, request: Request) -> list[ControlImpact]:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta and run_id not in active_trackers:
         conn.close()
@@ -382,13 +435,14 @@ def get_run_impact(run_id: str) -> list[ControlImpact]:
         )
     results = load_results_for_run(conn, run_id)
     conn.close()
-    controls = load_control_library(CONTROL_LIBRARY_PATH)
+    controls = load_control_library(paths.control_library_path)
     return compute_control_impact_map(results, controls)
 
 
 @router.get("/runs/{run_id}/recommendations", response_model=list[Recommendation])
-def get_run_recommendations(run_id: str) -> list[Recommendation]:
-    conn = get_db(DEFAULT_LEDGER_PATH)
+def get_run_recommendations(run_id: str, request: Request) -> list[Recommendation]:
+    paths = get_session_paths(request)
+    conn = get_db(paths.db_path)
     run_meta = load_run(conn, run_id)
     if not run_meta and run_id not in active_trackers:
         conn.close()
@@ -398,24 +452,25 @@ def get_run_recommendations(run_id: str) -> list[Recommendation]:
         )
     results = load_results_for_run(conn, run_id)
     conn.close()
-    controls = load_control_library(CONTROL_LIBRARY_PATH)
+    controls = load_control_library(paths.control_library_path)
     return generate_recommendations(results, controls)
 
 
 @router.post("/interview", response_model=InterviewResponse)
-def post_interview(answers: InterviewAnswers) -> InterviewResponse:
+def post_interview(answers: InterviewAnswers, request: Request) -> InterviewResponse:
+    paths = get_session_paths(request)
     with control_file_lock:
         conflicts = evaluate_conflicts(answers)
         risks, proposed_controls = map_risks_and_controls(answers)
-        sync_control_library_with_proposals(proposed_controls, CONTROL_LIBRARY_PATH)
+        sync_control_library_with_proposals(proposed_controls, paths.control_library_path)
 
-        INTERVIEW_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with open(INTERVIEW_FILE_PATH, "w", encoding="utf-8") as f:
+        paths.interview_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(paths.interview_path, "w", encoding="utf-8") as f:
             f.write(answers.model_dump_json(indent=2))
 
-        card = load_card_from_file(CARD_FILE_PATH)
+        card = load_card_from_file(paths.card_path)
         card.structured_fields = build_structured_fields(answers)
-        save_card_to_file(card, CARD_FILE_PATH)
+        save_card_to_file(card, paths.card_path)
 
         return InterviewResponse(
             status="ok",
@@ -426,43 +481,46 @@ def post_interview(answers: InterviewAnswers) -> InterviewResponse:
 
 
 @router.get("/card", response_model=SystemCardData)
-def get_card() -> SystemCardData:
-    return load_card_from_file(CARD_FILE_PATH)
+def get_card(request: Request) -> SystemCardData:
+    paths = get_session_paths(request)
+    return load_card_from_file(paths.card_path)
 
 
 @router.post("/card/drafts", response_model=SystemCardData)
-def post_card_drafts() -> SystemCardData:
-    if INTERVIEW_FILE_PATH.is_file():
-        with open(INTERVIEW_FILE_PATH, encoding="utf-8") as f:
+def post_card_drafts(request: Request) -> SystemCardData:
+    paths = get_session_paths(request)
+    if paths.interview_path.is_file():
+        with open(paths.interview_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         answers = InterviewAnswers.model_validate(data)
     else:
         answers = InterviewAnswers()
 
     intended, limits = draft_card_paragraphs(answers)
-    card = load_card_from_file(CARD_FILE_PATH)
+    card = load_card_from_file(paths.card_path)
     card.structured_fields = build_structured_fields(answers)
     card.intended_use = intended
     card.known_limits = limits
     card.status = "draft"
     card.confirmed_by = None
     card.confirmed_at = None
-    save_card_to_file(card, CARD_FILE_PATH)
+    save_card_to_file(card, paths.card_path)
     return card
 
 
 @router.post("/card/confirm", response_model=SystemCardData)
-def post_card_confirm(body: ConfirmCardRequest) -> SystemCardData:
+def post_card_confirm(body: ConfirmCardRequest, request: Request) -> SystemCardData:
     if not body.confirmed_by.strip():
         raise HTTPException(
             status_code=400,
             detail="Reviewer name is required to confirm card. Fix: provide non-empty confirmed_by string.",
         )
+    paths = get_session_paths(request)
     return confirm_card_in_file(
         confirmed_by=body.confirmed_by,
         intended_use=body.intended_use,
         known_limits=body.known_limits,
-        file_path=CARD_FILE_PATH,
+        file_path=paths.card_path,
     )
 
 

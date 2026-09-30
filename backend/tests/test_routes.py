@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+import uuid
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -331,6 +332,41 @@ def test_post_test_single_prompt_route() -> None:
     assert "controlled" in data
     assert data["baseline"]["variant"] == "baseline"
     assert data["controlled"]["variant"] == "controlled"
+
+
+def test_session_isolation_and_management() -> None:
+    sess_id = f"test-sess-{uuid.uuid4().hex[:8]}"
+    headers = {"X-Session-ID": sess_id}
+
+    # 1. New session starts fresh with 0 runs and draft card
+    info_resp = client.get("/api/session/info", headers=headers)
+    assert info_resp.status_code == 200
+    info = info_resp.json()
+    assert info["session_id"] == sess_id
+    assert info["is_demo"] is False
+    assert info["runs_count"] == 0
+    assert info["card_status"] == "draft"
+
+    # 2. Controls can be retrieved in this session
+    ctl_resp = client.get("/api/controls", headers=headers)
+    assert ctl_resp.status_code == 200
+    assert len(ctl_resp.json()) >= 6
+
+    # 3. Load demo benchmark data into this session
+    demo_resp = client.post("/api/session/load-demo", headers=headers)
+    assert demo_resp.status_code == 200
+
+    info_after_demo = client.get("/api/session/info", headers=headers).json()
+    assert info_after_demo["runs_count"] >= 1
+
+    # 4. Reset this session back to clean draft state
+    reset_resp = client.post("/api/session/reset", headers=headers)
+    assert reset_resp.status_code == 200
+
+    info_after_reset = client.get("/api/session/info", headers=headers).json()
+    assert info_after_reset["runs_count"] == 0
+    assert info_after_reset["card_status"] == "draft"
+
 
 
 
