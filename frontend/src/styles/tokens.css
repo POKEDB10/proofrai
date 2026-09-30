@@ -1,34 +1,156 @@
+/* ================================================================
+   ProofRAI Design System - Premium Token Foundation
+   Dual-theme: light (default) + dark [data-theme="dark"]
+   ================================================================ */
+
 :root {
-  --ground: #EEF0F2;
+  /* ---- Ground & Surfaces ---- */
+  --ground: #F4F6F8;
+  --ground-secondary: #EAECEF;
   --surface: #FFFFFF;
-  --surface-hover: #F3F5F7;
-  --ink: #1E2530;
-  --ink-2: #56606E;
-  --rule: #CBD1D8;
-  --rule-soft: #E1E5E9;
+  --surface-card: #FFFFFF;
+  --surface-hover: #F8FAFC;
+  --surface-active: #EFF2F5;
+  --surface-elevated: #FFFFFF;
+  --surface-sage: #EDF3F0;
+  --surface-charcoal: #1A2030;
+  --surface-charcoal-ink: #F4F6F8;
 
+  /* ---- Typography & Ink ---- */
+  --ink: #0F1824;
+  --ink-2: #4A5568;
+  --ink-3: #8896A8;
+  --ink-inverse: #FFFFFF;
+
+  /* ---- Borders & Rules ---- */
+  --rule: #D4DBE4;
+  --rule-soft: #E6EBF0;
+  --rule-strong: #0F1824;
+
+  /* ---- Primary Accent: Precision Slate-Green ---- */
+  --primary: #2D6A50;
+  --primary-hover: #245640;
+  --primary-light: #5A9A80;
+  --primary-wash: #EAF4EE;
+  --primary-border: #AEDCC5;
+
+  /* ---- Secondary: Precision Steel Blue ---- */
+  --sky: #1D5F8A;
+  --sky-wash: #E8F4FB;
+  --sky-border: #9BCCE5;
+
+  /* ---- Telemetry: Technical Cyan ---- */
+  --telemetry: #0F7ABF;
+  --telemetry-wash: #E8F4FF;
+  --telemetry-border: #8FCFEE;
+
+  /* ---- Semantic Status ---- */
   --pass: #1B6E4F;
-  --fail: #B3261E;
-  --review: #9A6700;
-  --fail-wash: #F6DAD7;
-  --mark: #F3DC8B;
+  --pass-hover: #155940;
+  --pass-wash: #E8F5EE;
+  --pass-border: #9FDDC0;
 
-  --font-sans: "IBM Plex Sans", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --fail: #B91C1C;
+  --fail-hover: #991717;
+  --fail-wash: #FEF2F2;
+  --fail-border: #FBBFBF;
 
+  --review: #92600A;
+  --review-wash: #FFF8EE;
+  --review-border: #F7CC82;
+
+  --mark: rgba(245, 200, 80, 0.38);
+
+  /* ---- Typography ---- */
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+  --text-kicker: 11px;
   --text-meta: 12px;
   --text-table: 13px;
-  --text-body: 15px;
+  --text-body: 14px;
+  --text-h3: 16px;
+  --text-h2: 20px;
+  --text-h1: 26px;
+  --text-display: 36px;
   --text-section: 18px;
   --text-title: 26px;
+  --text-hero: 36px;
 
-  --radius-control: 3px;
+  /* ---- Radius ---- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
   --radius-cell: 2px;
+  --radius-badge: 3px;
 
+  /* ---- Spacing ---- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 20px;
   --space-5: 32px;
   --space-6: 56px;
+
+  /* ---- Transitions ---- */
+  --transition-fast: 140ms ease;
+  --transition-normal: 200ms ease;
+}
+
+/* ================================================================
+   Dark Theme
+   ================================================================ */
+[data-theme="dark"] {
+  --ground: #0D1117;
+  --ground-secondary: #161B22;
+  --surface: #1A2030;
+  --surface-card: #1A2030;
+  --surface-hover: #212835;
+  --surface-active: #28303F;
+  --surface-elevated: #1F2737;
+  --surface-sage: #12201A;
+  --surface-charcoal: #080C12;
+  --surface-charcoal-ink: #E8EDF3;
+
+  --ink: #E8EDF3;
+  --ink-2: #8A9BB5;
+  --ink-3: #556070;
+  --ink-inverse: #0D1117;
+
+  --rule: #2A3444;
+  --rule-soft: #1E2A38;
+  --rule-strong: #E8EDF3;
+
+  --primary: #5FAE8C;
+  --primary-hover: #73BE9E;
+  --primary-light: #8ECEB0;
+  --primary-wash: rgba(95, 174, 140, 0.12);
+  --primary-border: rgba(95, 174, 140, 0.28);
+
+  --sky: #5A9BBF;
+  --sky-wash: rgba(90, 155, 191, 0.12);
+  --sky-border: rgba(90, 155, 191, 0.28);
+
+  --telemetry: #4AADDE;
+  --telemetry-wash: rgba(74, 173, 222, 0.12);
+  --telemetry-border: rgba(74, 173, 222, 0.28);
+
+  --pass: #3DAA74;
+  --pass-hover: #55BB88;
+  --pass-wash: rgba(61, 170, 116, 0.12);
+  --pass-border: rgba(61, 170, 116, 0.3);
+
+  --fail: #DD4848;
+  --fail-hover: #E85C5C;
+  --fail-wash: rgba(221, 72, 72, 0.12);
+  --fail-border: rgba(221, 72, 72, 0.3);
+
+  --review: #C99030;
+  --review-wash: rgba(201, 144, 48, 0.12);
+  --review-border: rgba(201, 144, 48, 0.3);
+
+  --mark: rgba(201, 144, 48, 0.25);
 }

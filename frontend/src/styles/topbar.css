@@ -1,0 +1,378 @@
+/* ============================================================
+   ProofRAI Top Navigation Bar - Premium Edition
+   Shield logo mark + wordmark + step nav + telemetry chips
+   ============================================================ */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 var(--space-4);
+  gap: var(--space-3);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+/* ---- Brand ---- */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.topbar-brand:hover {
+  text-decoration: none;
+}
+
+/* Logo SVG coloring via CSS classes */
+.topbar-logo-mark {
+  flex-shrink: 0;
+}
+
+.topbar-logo-bg {
+  fill: var(--ink);
+}
+
+.topbar-logo-shield-fill {
+  fill: var(--surface);
+  fill-opacity: 0.12;
+}
+
+.topbar-logo-shield-stroke {
+  stroke: var(--surface);
+}
+
+.topbar-logo-check {
+  stroke: var(--surface);
+}
+
+[data-theme="dark"] .topbar-logo-bg {
+  fill: var(--primary);
+}
+
+/* Wordmark */
+.topbar-wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1;
+}
+
+.topbar-wordmark-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.topbar-wordmark-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink-3);
+  line-height: 1;
+}
+
+/* Separator between brand and nav */
+.topbar-separator {
+  width: 1px;
+  height: 22px;
+  background-color: var(--rule);
+  flex-shrink: 0;
+}
+
+/* ---- Step Navigation ---- */
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 60px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.topbar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.topbar-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  position: relative;
+}
+
+.topbar-step:hover {
+  color: var(--ink);
+  background-color: var(--surface-hover);
+  text-decoration: none;
+}
+
+.topbar-step.active {
+  color: var(--ink);
+  font-weight: 600;
+  background-color: var(--primary-wash);
+}
+
+.topbar-step.active::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background-color: var(--primary);
+  border-radius: var(--radius-cell);
+}
+
+/* Step number badge */
+.topbar-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: var(--ground-secondary);
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.topbar-step.active .topbar-step-num {
+  background: var(--primary);
+  color: var(--surface);
+  border-color: var(--primary);
+}
+
+.topbar-step-label {
+  /* inherits from parent */
+}
+
+/* Small badge on step (run ID / count) */
+.topbar-step-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background-color: var(--ground-secondary);
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.topbar-step.active .topbar-step-badge {
+  background-color: var(--primary-wash);
+  color: var(--primary);
+  border-color: var(--primary-border);
+}
+
+/* ---- Right Telemetry ---- */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.topbar-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--radius-control);
+  background-color: var(--ground-secondary);
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.topbar-chip-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--pass);
+  flex-shrink: 0;
+}
+
+.topbar-chip-text {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Interactive Run Selector Container ---- */
+.topbar-run-container {
+  position: relative;
+}
+
+.topbar-chip-interactive {
+  cursor: pointer;
+  background-color: var(--ground-secondary);
+  border: 1px solid var(--rule);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.topbar-chip-interactive:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--rule-strong);
+}
+
+.topbar-run-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  min-width: 240px;
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  z-index: 300;
+  overflow: hidden;
+}
+
+.topbar-run-dropdown-header {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--ground);
+}
+
+.topbar-run-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.topbar-run-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-size: var(--text-table);
+  transition: background-color var(--transition-fast);
+}
+
+.topbar-run-dropdown-item:hover {
+  background-color: var(--surface-hover);
+}
+
+.topbar-run-dropdown-item.selected {
+  background-color: var(--primary-wash);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Responsive viewports */
+@media (max-width: 900px) {
+  .topbar-chip-model {
+    display: none;
+  }
+  .topbar-wordmark-sub {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .topbar-step {
+    padding: 0 6px;
+  }
+  .topbar-step-label {
+    display: none;
+  }
+  .topbar-step-badge {
+    display: none;
+  }
+}
+
+/* ---- Theme Toggle Button ---- */
+.topbar-theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-control);
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.topbar-theme-btn:hover {
+  background-color: var(--surface-hover);
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+
+/* Legacy compat for any leftover references */
+.topbar-beacon {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--pass);
+  flex-shrink: 0;
+}
+
+.topbar-telemetry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-control);
+  background-color: var(--ground-secondary);
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}

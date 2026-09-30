@@ -175,6 +175,14 @@ def patch_control(control_id: str, body: UpdateControlStatusRequest) -> Control:
         return Control.model_validate(data[found_idx])
 
 
+@router.get("/runs")
+def list_runs() -> list[dict[str, Any]]:
+    conn = get_db(DEFAULT_LEDGER_PATH)
+    rows = conn.execute("SELECT id, target_model, created_at FROM runs ORDER BY created_at DESC").fetchall()
+    conn.close()
+    return [{"id": r["id"], "target_model": r["target_model"], "created_at": r["created_at"]} for r in rows]
+
+
 @router.post("/runs")
 def start_run(
     background_tasks: BackgroundTasks,
