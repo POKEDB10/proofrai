@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { TopBar } from './components/TopBar';
+import { Landing } from './screens/Landing';
 import { Card } from './screens/Card';
 import { Controls } from './screens/Controls';
 import { Describe } from './screens/Describe';
@@ -12,7 +13,8 @@ export function App() {
       <TopBar />
       <main>
         <Routes>
-          <Route path="/" element={<Describe />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/overview" element={<Landing />} />
           <Route path="/describe" element={<Describe />} />
           <Route path="/card" element={<Card />} />
           <Route path="/controls" element={<Controls />} />

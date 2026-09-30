@@ -1,34 +1,151 @@
 :root {
-  --ground: #EEF0F2;
+  /* Editorial Palette (PDF Section 15 & 17: Warm white + Sage mist + Soft sky blue + Muted charcoal) */
+  --ground: #F9FAF7;
+  --ground-secondary: #F0F3EF;
   --surface: #FFFFFF;
-  --surface-hover: #F3F5F7;
-  --ink: #1E2530;
-  --ink-2: #56606E;
-  --rule: #CBD1D8;
-  --rule-soft: #E1E5E9;
+  --surface-card: #FFFFFF;
+  --surface-hover: #F4F6F3;
+  --surface-elevated: #FFFFFF;
+  --surface-sage: #EDF3F0;
+  --surface-charcoal: #1E232B;
+  --surface-charcoal-ink: #F9FAF7;
 
-  --pass: #1B6E4F;
-  --fail: #B3261E;
-  --review: #9A6700;
-  --fail-wash: #F6DAD7;
-  --mark: #F3DC8B;
+  --ink: #191E24;
+  --ink-2: #4B5563;
+  --ink-3: #8B95A5;
+  --rule: #E2E6E1;
+  --rule-soft: #EEF1ED;
+  --rule-strong: #191E24;
 
-  --font-sans: "IBM Plex Sans", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  /* Primary Accent: Sage Mist (PDF Section 15) */
+  --primary: #446857;
+  --primary-hover: #365345;
+  --primary-light: #6A8E7D;
+  --primary-wash: #EBF2EE;
+  --primary-border: #C4D9CE;
 
+  /* Secondary: Soft Sky Blue (PDF Section 15) */
+  --sky: #3D6684;
+  --sky-wash: #EBF3F8;
+  --sky-border: #BED4E4;
+
+  /* Secondary: Lavender Dusk (PDF Section 15) */
+  --lavender: #635A7B;
+  --lavender-wash: #F1EFF6;
+  --lavender-border: #D5CEE3;
+
+  /* Telemetry: Precision Steel Blue */
+  --telemetry: #2A6E94;
+  --telemetry-wash: #EFF6FA;
+  --telemetry-border: #BBD6E8;
+
+  /* Semantic States (Restrained, Editorial) */
+  --pass: #2D6B50;
+  --pass-hover: #22533E;
+  --pass-wash: #EAF4EE;
+  --pass-border: #B7DFCC;
+
+  --fail: #A33A44;
+  --fail-hover: #862F38;
+  --fail-wash: #FAECEE;
+  --fail-border: #E8B6BC;
+
+  --review: #856321;
+  --review-wash: #FAF4E8;
+  --review-border: #E8D7B2;
+
+  --mark: rgba(220, 185, 110, 0.35);
+
+  /* Typography & Scale Contrast (PDF Section 16: tiny label -> huge title -> calm description) */
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --text-kicker: 11px;
   --text-meta: 12px;
   --text-table: 13px;
-  --text-body: 15px;
+  --text-body: 14px;
   --text-section: 18px;
   --text-title: 26px;
+  --text-hero: 34px;
 
-  --radius-control: 3px;
+  /* Restrained Depth & Layering (PDF Section 18: Avoid glassmorphism soup, intentional soft shadows) */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-control: 6px;
+  --radius-card: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
   --radius-cell: 2px;
+
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.04), 0 0 0 1px #E2E6E1;
+  --shadow-elevated: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px #E2E6E1;
 
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 20px;
   --space-5: 32px;
-  --space-6: 56px;
+  --space-6: 52px;
+
+  --transition-fast: 140ms ease;
+  --transition-normal: 200ms ease;
+}
+
+/* Dark Palette (PDF Section 15: Deep slate + Muted charcoal + Dusty blue + Muted rose + Olive green) */
+[data-theme="dark"] {
+  --ground: #11151C;
+  --ground-secondary: #171C24;
+  --surface: #1B212B;
+  --surface-card: #1B212B;
+  --surface-hover: #222935;
+  --surface-elevated: #222935;
+  --surface-sage: #16201B;
+  --surface-charcoal: #0B0E13;
+  --surface-charcoal-ink: #ECEFF3;
+
+  --ink: #ECEFF3;
+  --ink-2: #9DA8B8;
+  --ink-3: #657182;
+  --rule: rgba(255, 255, 255, 0.1);
+  --rule-soft: rgba(255, 255, 255, 0.05);
+  --rule-strong: #ECEFF3;
+
+  --primary: #729E8C;
+  --primary-hover: #83AE9C;
+  --primary-light: #94BEAC;
+  --primary-wash: rgba(114, 158, 140, 0.14);
+  --primary-border: rgba(114, 158, 140, 0.3);
+
+  --sky: #6B94B3;
+  --sky-wash: rgba(107, 148, 179, 0.14);
+  --sky-border: rgba(107, 148, 179, 0.3);
+
+  --lavender: #9990B0;
+  --lavender-wash: rgba(153, 144, 176, 0.14);
+  --lavender-border: rgba(153, 144, 176, 0.3);
+
+  --telemetry: #4EA3D1;
+  --telemetry-wash: rgba(78, 163, 209, 0.14);
+  --telemetry-border: rgba(78, 163, 209, 0.3);
+
+  --pass: #529E78;
+  --pass-hover: #63AE88;
+  --pass-wash: rgba(82, 158, 120, 0.15);
+  --pass-border: rgba(82, 158, 120, 0.32);
+
+  --fail: #C05863;
+  --fail-hover: #CE6974;
+  --fail-wash: rgba(192, 88, 99, 0.16);
+  --fail-border: rgba(192, 88, 99, 0.35);
+
+  --review: #B28E46;
+  --review-wash: rgba(178, 142, 70, 0.16);
+  --review-border: rgba(178, 142, 70, 0.35);
+
+  --mark: rgba(178, 142, 70, 0.3);
+
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }

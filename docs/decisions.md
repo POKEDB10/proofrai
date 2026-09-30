@@ -65,3 +65,9 @@ Implemented Level 1 Executive Category Scorecard and Key Findings matrix on the 
 Enhanced differential case inspection with side-by-side prompt and response panes, highlighted check failure spans, and control intervention timelines.
 
 Integrated shareable AI Model Passport into the Evidence screen summarizing model identity, category scores, verified controls, and cryptographic evidence digests.
+
+Implemented an overview landing page with hero introduction and interactive architecture map at the root route per user instruction for hackathon presentation.
+
+Migrated icon usage across all screens to native inline SVG components to eliminate external package dependencies and preserve strict mechanical rule validation.
+
+Enforced dual-theme semantic CSS tokens for light and dark modes with dedicated contrast ratios across all workflow stages.
