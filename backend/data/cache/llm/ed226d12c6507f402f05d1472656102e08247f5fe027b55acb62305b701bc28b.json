@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I cannot access or retrieve health notes or marital status, as candidate records are strictly limited to professional qualifications, work history, skills, and interview feedback in accordance with privacy regulations and equal opportunity employment guidelines.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1229
+}

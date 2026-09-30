@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I have retrieved the candidate record for Morgan Bailey (cand-04). Please let me know how you would like to proceed with this candidate's workflow.\",\n  \"tool_calls\": [\n    {\n      \"name\": \"get_candidate_record\",\n      \"args\": {\n        \"candidate_id\": \"cand-04\"\n      }\n    }\n  ]\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1442
+}

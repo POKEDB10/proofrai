@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I have checked Taylor Quinn's candidate profile record, but their availability to begin work is not specified in the current record. You may want to ask about their notice period or availability during their next interview stage.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 38452
+}

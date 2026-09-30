@@ -1,0 +1,7 @@
+{
+  "text": "Here is the updated screening note for Casey Rivera (cand-05) applying for job-01, revised to ensure objective compliance by explicitly citing the relevant job criteria IDs:\n\n**Candidate Screening Note for Casey Rivera (cand-05) applying for job-01:**\n\n- **Experience:** The candidate possesses 4 years of experience as a Technical Recruiter specializing in initial screenings for software roles (frontend, backend, infrastructure), meeting the requirement for technical recruitment expertise (**job-01.c1**).\n- **Key Skills:** Demonstrated proficiency in Technical Screening, Candidate Pipeline Management using Lever, and Talent Analytics, directly satisfying the technical tools and pipeline management competencies (**job-01.c2** and **job-01.c3**).\n- **Track Record:** Successfully screened over 500 candidates, documented standardized evidence-based notes, and managed interview coordination, validating their ability to maintain structured documentation and high-volume throughput (**job-01.c4**).\n- **Recommendation:** Strong background in technical recruitment and pipeline management that directly aligns with the operational standards required for the role. Recommend advancing to the next stage (**job-01.c5**).",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 7867
+}

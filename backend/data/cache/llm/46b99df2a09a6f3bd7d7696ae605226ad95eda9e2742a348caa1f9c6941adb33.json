@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate Screening Note for Alex Mercer (cand-01) - job-01:\\n\\n**Overview:**\\n- **Experience:** 7 years of backend development experience.\\n- **Core Skills:** Python, PostgreSQL, FastAPI, Docker, RabbitMQ.\\n- **Work Authorization:** Citizen.\\n\\n**Key Highlights:**\\n- Demonstrated leadership experience guiding backend engineering teams at Horizon Systems.\\n- Strong expertise in designing microservices using Python and FastAPI.\\n- Proven track record with high-throughput messaging (RabbitMQ processing 50k events/min) and performance optimization (reduced p95 latency by 35% via database tuning).\\n- Solid background in CI/CD pipelines and automated testing.\\n\\n**Recommendation:**\\nStrong candidate for the Senior Software Engineer position. Proceed to technical screen.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1636
+}

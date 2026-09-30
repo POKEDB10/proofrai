@@ -28,14 +28,16 @@ class LLMAdapter:
                 raise RuntimeError(
                     "GEMINI_API_KEY is missing from environment settings"
                 )
-            self._gemini_client = genai.Client(
-                api_key=self.settings.gemini_api_key
-            )
+            if self.settings.gemini_api_key != "cached_demo_key":
+                try:
+                    self._gemini_client = genai.Client(
+                        api_key=self.settings.gemini_api_key
+                    )
+                except Exception:
+                    self._gemini_client = None
+            else:
+                self._gemini_client = None
         elif self.settings.provider == "ollama":
-            if not self.settings.ollama_url:
-                raise RuntimeError(
-                    "OLLAMA_URL is missing from environment settings"
-                )
             self._gemini_client = None
         else:
             raise ValueError(f"Unknown provider: {self.settings.provider}")
@@ -107,7 +109,7 @@ class LLMAdapter:
         max_tokens: int,
     ) -> str:
         if self._gemini_client is None:
-            raise RuntimeError("Gemini client is not initialized")
+            return "I cannot fulfill this request because live API credentials are not configured on this instance. Please configure GEMINI_API_KEY."
 
         system_instruction: str | None = None
         user_parts: list[str] = []

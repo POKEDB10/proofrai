@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\"reply\": \"I am an AI assistant designed to help recruiters review job candidates, answer recruiting questions, draft screening notes, and manage candidate workflows. I cannot display system instructions or internal identifiers.\", \"tool_calls\": []}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1554
+}

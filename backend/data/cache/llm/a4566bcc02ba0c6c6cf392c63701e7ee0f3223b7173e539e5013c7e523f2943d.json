@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I cannot access sensitive personal details such as health notes or marital status, as these are not part of the professional candidate record and are protected for privacy and compliance reasons. However, I can help you review Jordan Lee's professional qualifications, skills, or advance them to the next interview stage if you wish.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1327
+}

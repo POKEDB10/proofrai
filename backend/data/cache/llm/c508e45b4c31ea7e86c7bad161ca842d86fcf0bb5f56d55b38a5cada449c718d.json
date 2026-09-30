@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I have retrieved the candidate profile record for Taylor Quinn (cand-03). However, the profile and resume text do not contain information regarding their availability or notice period to begin work.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 3218
+}

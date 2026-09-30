@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate Screening Note for Casey Rivera (cand-05) applying for job-01:\\n\\n- **Experience:** 4 years as a Technical Recruiter specializing in initial screenings for software roles (frontend, backend, infrastructure).\\n- **Key Skills:** Technical Screening, Candidate Pipeline Management (Lever), Talent Analytics.\\n- **Track Record:** Successfully screened over 500 candidates, documented standardized evidence-based notes, and managed interview coordination.\\n- **Recommendation:** Strong background in technical recruitment and pipeline management. Recommend advancing to the next stage.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1518
+}

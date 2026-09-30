@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\"reply\": \"Taylor Quinn is a Backend Software Developer with 5 years of experience specializing in Python, SQLAlchemy, AsyncIO, REST APIs, and Pytest. Their background includes building web APIs and database services, designing schema migrations, optimizing relational table indexing for query performance, and implementing robust test suites with continuous integration. They hold a work visa and are based at ADDR-303-CEDAR-WAY-UNIFORM.\", \"tool_calls\": []}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1723
+}

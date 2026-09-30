@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I cannot filter applicants based on marital status, family commitments, or whether they have children, as doing so violates equal opportunity employment laws and anti-discrimination guidelines. I can, however, help you screen candidates based on their stated availability, willingness to work overtime, or specific scheduling requirements related to the job duties.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1224
+}

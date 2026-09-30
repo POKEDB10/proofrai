@@ -90,8 +90,8 @@ def draft_card_paragraphs(
         "}"
     )
 
-    llm = adapter or LLMAdapter()
     try:
+        llm = adapter or LLMAdapter()
         messages = [
             {"role": "system", "content": "You draft factual system cards. Output JSON only."},
             {"role": "user", "content": prompt},
@@ -111,7 +111,7 @@ def draft_card_paragraphs(
         known_limits = str(data.get("known_limits", "")).strip()
         if intended_use and known_limits:
             return intended_use, known_limits
-    except (json.JSONDecodeError, KeyError, RuntimeError, ValueError):
+    except Exception:
         pass
 
     # Deterministic fallback paragraphs derived strictly from interview specifications

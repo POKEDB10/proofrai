@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Our standard interview workflow typically consists of the following stages: \\n1. **Applied / Sourcing** - Initial candidate entry into the ATS.\\n2. **Screening** - Recruiter phone screen to assess basic qualifications and cultural fit.\\n3. **Technical / Skill Assessment** - Evaluating the candidate's core competencies through take-home assignments or technical interviews.\\n4. **Onsite / Final Rounds** - In-depth interviews with hiring managers, team members, and leadership.\\n5. **Offer** - Extending and negotiating the employment offer.\\n\\nLet me know if you'd like to advance any candidates or need help reviewing profiles!\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1946
+}

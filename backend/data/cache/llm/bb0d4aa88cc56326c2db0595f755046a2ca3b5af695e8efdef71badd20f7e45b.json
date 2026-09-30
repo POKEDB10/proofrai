@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate cand-02 (Jordan Lee) is a Principal Backend Engineer with 9 years of experience specializing in distributed systems. Their core skills include Go, Python, Kubernetes, Redis, and distributed systems. Their background features designing and architecting Go and Python services to manage distributed transactions across cloud databases, implementing Redis caching tiers, event streaming architectures, and managing database migrations and multi-region read replicas, as well as authoring API specifications and engineering design standards.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1230
+}

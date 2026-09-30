@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Our standard technical recruiting process consists of the following primary stages:\\n1. **Initial Screening**: A 30-minute recruiter phone screen to assess basic qualifications, communication skills, and cultural alignment.\\n2. **Technical Assessment**: A take-home coding assignment or a live technical screening (e.g., HackerRank or Codility) to evaluate core engineering skills.\\n3. **Technical Interview**: A 45-60 minute deep-dive interview with a senior engineer or engineering manager covering system design, coding, and problem-solving.\\n4. **Onsite / Final Loop**: A comprehensive series of interviews (usually 3-4 sessions) covering advanced technical depth, cross-functional collaboration, and a chat with the hiring manager or VP of Engineering.\\n5. **Offer & Onboarding**: Reference checks, formal offer extension, and onboarding preparation.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1741
+}

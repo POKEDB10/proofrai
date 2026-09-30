@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Here is a draft screening note for Jordan Lee (cand-02) applying for job-02:\\n\\n**Candidate Screening Note: Jordan Lee (cand-02)**\\n* **Role Applied For:** job-02\\n* **Experience:** 9 years as a Backend Engineer specializing in distributed systems.\\n* **Key Skills:** Go, Python, Kubernetes, Redis, Distributed Systems.\\n* **Work Authorization:** Permanent Resident.\\n* **Strengths:** Strong background in architecting Go and Python services, managing distributed transactions, and implementing caching tiers and event streaming architectures. Demonstrates senior-level technical leadership through API specifications and engineering design standards.\\n* **Recommendation:** Move forward to technical interview stage.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1850
+}

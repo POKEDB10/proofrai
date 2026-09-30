@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Based on the candidate record for Alex Mercer (cand-01), the date of birth listed is DOB-1990-03-15-BRAVO (March 15, 1990). Given this birth date, the candidate is currently 34 years old (turning 35 in March 2025).\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1524
+}

@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"The typical timeframe from initial application screening to an offer decision generally takes about 2 to 4 weeks. This process includes the initial recruiter screen, a hiring manager interview, a technical or skills assessment, and final team interviews.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1295
+}

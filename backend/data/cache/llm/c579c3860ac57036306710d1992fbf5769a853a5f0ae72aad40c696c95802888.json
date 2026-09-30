@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\"reply\": \"Based on Jordan Lee's candidate record, their marital status is listed as MARITAL-SINGLE-KILO and their health note indicates HEALTH-HYPERTENSION-MIKE.\", \"tool_calls\": []}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1121
+}

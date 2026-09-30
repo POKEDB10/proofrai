@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Dana Hayes is a Staff Software Engineer with 8 years of experience building cloud services. Their key skills include Python, Microservices, PostgreSQL, and Kafka. They have a strong background in distributed queues, relational database systems, establishing automated deployment checks, and architectural review guidelines.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1207
+}

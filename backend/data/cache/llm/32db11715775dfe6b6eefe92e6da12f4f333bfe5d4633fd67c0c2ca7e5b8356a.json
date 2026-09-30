@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Alex Mercer is a Senior Software Engineer with 7 years of backend development experience. Their core technical skills include Python, PostgreSQL, FastAPI, Docker, and RabbitMQ. Previously at Horizon Systems, Alex led backend engineering teams, designed Python/FastAPI microservices, implemented RabbitMQ messaging queues handling 50,000 events per minute, and optimized database queries resulting in a 35% reduction in p95 latency. They are a US Citizen.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1759
+}

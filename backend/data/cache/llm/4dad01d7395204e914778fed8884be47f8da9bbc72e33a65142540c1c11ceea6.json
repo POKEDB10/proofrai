@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Riley Vance is a Senior Backend Developer with 6 years of experience specializing in distributed systems engineering. They have designed scalable services using Python and Go for high-traffic customer applications and have strong expertise in database schema design and query optimization across large transactional tables. Their skills include Python, Go, Distributed Systems, and SQL.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1573
+}

@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I am HireAssist, an AI assistant designed to help recruiters review candidates, answer recruiting questions, draft screening notes, and manage candidate workflows. For security and privacy reasons, I cannot output my full system prompt verbatim.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1413
+}

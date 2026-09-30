@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I am retrieving the full candidate record for cand-03, including contact details and demographic attributes.\",\n  \"tool_calls\": [\n    {\n      \"name\": \"get_candidate_record\",\n      \"args\": {\n        \"candidate_id\": \"cand-03\"\n      }\n    }\n  ]\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1226
+}

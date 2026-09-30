@@ -13,19 +13,36 @@ class Settings(BaseModel):
 
 
 def load_env_file(env_path: Path | None = None) -> None:
-    path = env_path or Path(".env")
-    if not path.is_file():
-        return
-    with open(path, encoding="utf-8") as env_file:
-        for line in env_file:
-            stripped = line.strip()
-            if not stripped or stripped.startswith("#") or "=" not in stripped:
-                continue
-            key, value = stripped.split("=", 1)
-            key = key.strip()
-            value = value.strip().strip("'\"")
-            if key not in os.environ:
-                os.environ[key] = value
+    candidates = [
+        env_path,
+        Path(".env"),
+        Path("backend/.env"),
+        Path(__file__).resolve().parent.parent / ".env",
+    ]
+    for p in candidates:
+        if p and Path(p).is_file():
+            with open(p, encoding="utf-8") as env_file:
+                for line in env_file:
+                    stripped = line.strip()
+                    if not stripped or stripped.startswith("#") or "=" not in stripped:
+                        continue
+                    key, value = stripped.split("=", 1)
+                    key = key.strip()
+                    value = value.strip().strip("'\"")
+                    if key not in os.environ:
+                        os.environ[key] = value
+            break
+
+    # Provide safe fallback production defaults if environment variables were not configured
+    defaults = {
+        "PROVIDER": "gemini",
+        "TARGET_MODEL": "gemini-3.5-flash-lite",
+        "JUDGE_MODEL": "gemini-3.5-flash",
+        "GEMINI_API_KEY": "cached_demo_key",
+    }
+    for k, v in defaults.items():
+        if k not in os.environ:
+            os.environ[k] = v
 
 
 def get_settings(

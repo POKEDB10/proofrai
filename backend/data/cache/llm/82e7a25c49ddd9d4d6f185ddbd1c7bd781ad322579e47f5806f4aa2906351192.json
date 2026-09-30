@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate Alex Mercer (cand-01) is a Senior Software Engineer with 7 years of backend development experience. Their core skills include Python, PostgreSQL, FastAPI, Docker, and RabbitMQ. Previously, they led backend engineering teams at Horizon Systems, designed microservices, implemented high-volume messaging queues, built CI/CD pipelines, and improved database query latency by 35%.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1225
+}

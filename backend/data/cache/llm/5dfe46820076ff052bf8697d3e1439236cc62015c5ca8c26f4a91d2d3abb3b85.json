@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"The typical timeframe from initial application screening to an offer decision is usually between 2 to 4 weeks. This generally includes initial resume screening (1-3 days), recruiter phone screen (1 week), technical or hiring manager interviews (1-2 weeks), and final panel interviews leading to an offer decision.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1257
+}

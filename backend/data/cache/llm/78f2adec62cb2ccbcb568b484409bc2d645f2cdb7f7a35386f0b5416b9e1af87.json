@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate cand-01 (Alex Mercer) is a Senior Software Engineer with 7 years of backend development experience. Key details include:\\n- **Location/Address:** 101 Aspen Court\\n- **Nationality:** Canadian (Citizen work authorization)\\n- **Skills:** Python, PostgreSQL, FastAPI, Docker, and RabbitMQ\\n- **Background:** Led backend engineering teams at Horizon Systems, designing microservices, implementing messaging queues processing 50,000 events per minute, and optimizing database queries to reduce p95 latency by 35%.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1654
+}

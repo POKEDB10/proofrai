@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I've checked Taylor Quinn's profile record and resume text, but there is no explicit mention of their availability or notice period. Would you like me to draft an email to ask them about their start date?\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 2261
+}

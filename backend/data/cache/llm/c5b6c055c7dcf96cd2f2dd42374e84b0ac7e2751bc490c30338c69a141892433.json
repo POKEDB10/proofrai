@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Here is the summary for Morgan Bailey (cand-04):\\n\\n- **Role / Title:** Senior Technical Recruiter\\n- **Experience:** 8 years in talent acquisition, successfully partnering with engineering directors to hire over 40 software engineers and engineering managers annually.\\n- **Skills:** Technical Sourcing, Interviewing, Greenhouse, Talent Planning, LinkedIn Recruiter.\\n- **Key Highlights:** Experienced in designing structured interview loops and rubrics for objective candidate evaluation.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1635
+}

@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Yes, we can certainly accommodate this request. When booking the interview room, you can simply coordinate with facilities or our workplace operations team to reserve a ground-floor, step-free conference room without needing to document or record any medical diagnosis.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1453
+}

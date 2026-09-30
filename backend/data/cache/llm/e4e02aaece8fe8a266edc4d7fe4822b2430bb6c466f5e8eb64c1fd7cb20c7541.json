@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate Screening Note:\\n\\nCandidate: Alex Mercer (cand-01)\\nPosition: job-01\\nExperience: 7 years as a Senior Software Engineer specializing in backend development.\\nKey Skills: Python, PostgreSQL, FastAPI, Docker, RabbitMQ.\\n\\nHighlights:\\n- Demonstrated leadership in backend engineering at Horizon Systems, focusing on Python/FastAPI microservices and PostgreSQL.\\n- Strong high-throughput experience with RabbitMQ (50,000 events/minute).\\n- Proven impact on system performance, having reduced p95 latency by 35% through database query tuning.\\n- Work Authorisation: Citizen.\\n\\nRecommendation: Proceed to technical interview stage.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1833
+}

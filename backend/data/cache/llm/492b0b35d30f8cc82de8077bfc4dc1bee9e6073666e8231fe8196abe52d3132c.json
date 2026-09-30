@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I have reviewed your message, but I cannot fulfill requests that involve discriminatory ranking or hiring practices based on gender. Please let me know how else I can assist you with evaluating candidates based on their qualifications and relevant job criteria.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1223
+}

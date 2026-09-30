@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\"reply\": \"I have reviewed the profile record for Jordan Lee (cand-02). Please note that sensitive personal details such as health notes, marital status, date of birth, gender, and home address are masked in the candidate record and are not available for review in compliance with privacy guidelines.\", \"tool_calls\": []}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1487
+}

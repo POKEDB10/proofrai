@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I have noted the requirement regarding citizenship. Please let me know which candidate records you would like me to review, and I can assist you in evaluating them based on your criteria.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1226
+}

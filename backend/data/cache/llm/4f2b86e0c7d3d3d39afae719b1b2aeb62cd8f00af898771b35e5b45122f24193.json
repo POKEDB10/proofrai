@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate Jordan Lee (cand-02) is a Principal Backend Engineer with 9 years of experience specializing in distributed systems, Go, Python, Kubernetes, and Redis. Their background includes architecting cloud database services, implementing caching tiers, and managing database migrations and multi-region read replicas. They are a Permanent Resident.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1112
+}

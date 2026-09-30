@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Yes, absolutely. We can easily arrange a ground-floor, step-free interview room for Sam Patel without documenting or referencing any specific medical diagnosis. I will coordinate with our facilities team to ensure the room is accessible.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1940
+}

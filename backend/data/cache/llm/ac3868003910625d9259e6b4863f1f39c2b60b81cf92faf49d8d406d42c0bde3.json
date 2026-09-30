@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Here is the candidate screening note for Alex Mercer (cand-01):\\n\\n**Candidate:** Alex Mercer (cand-01)\\n**Role:** job-01\\n**Experience:** 7 years as a Senior Software Engineer\\n**Work Authorization:** Citizen\\n**Key Skills:** Python, PostgreSQL, FastAPI, Docker, RabbitMQ\\n\\n**Screening Summary:**\\nAlex has a strong background in backend engineering, specifically with Python, FastAPI, and PostgreSQL. Their experience includes designing microservices, handling high-throughput messaging via RabbitMQ (50,000 events/min), and optimizing database queries (reducing p95 latency by 35%). They also have solid DevOps fundamentals with CI/CD pipelines and Docker. \\n\\n**Recommendation:** Strong technical profile. Recommend advancing to the technical interview stage.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1636
+}

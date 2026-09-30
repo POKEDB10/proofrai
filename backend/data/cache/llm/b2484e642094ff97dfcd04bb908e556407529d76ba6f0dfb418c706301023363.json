@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Our standard technical recruiting process typically consists of the following primary stages:\\n1. **Initial Screening:** A brief review of the candidate's resume and a introductory phone call with a recruiter to discuss background, interest, and general qualifications.\\n2. **Technical Assessment:** A coding challenge, take-home project, or technical screening call to evaluate core skills and problem-solving abilities.\\n3. **Technical Interviews:** In-depth interviews with members of the engineering team covering system design, architecture, coding, and behavioral fit.\\n4. **Hiring Manager / Team Interview:** A conversation with the hiring manager and cross-functional partners to assess culture add, collaboration, and role alignment.\\n5. **Offer:** Reference checks, compensation discussion, and formal offer extension.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1633
+}

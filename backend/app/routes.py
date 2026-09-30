@@ -61,7 +61,7 @@ from backend.core.suite.generator import (
 )
 from backend.core.suite.loader import load_suite
 
-from backend.core.paths import SessionPaths, resolve_data_path
+from backend.core.paths import SessionPaths, is_vercel, resolve_data_path
 
 router = APIRouter(prefix="/api")
 control_file_lock = threading.Lock()
@@ -245,6 +245,12 @@ def start_run(
             status_code=409,
             detail=f"Run '{run_id}' is currently running. Fix: wait for it to complete or use a different run ID.",
         )
+
+    # In serverless environments (e.g. Vercel) or when running cached suites, execute synchronously
+    # to guarantee the ledger database is fully populated before the serverless container freezes
+    if is_vercel() or not run_req.no_cache:
+        execute_background_run(run_id, run_req.no_cache, paths.db_path)
+        return {"run_id": run_id, "status": "completed"}
 
     background_tasks.add_task(execute_background_run, run_id, run_req.no_cache, paths.db_path)
     return {"run_id": run_id, "status": "running"}

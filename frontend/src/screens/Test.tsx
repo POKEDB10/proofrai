@@ -280,7 +280,17 @@ export function Test() {
     setCurrentRunningIndex(1);
 
     try {
-      await startRun(newRunId);
+      const runResp = await startRun(newRunId);
+
+      // If completed synchronously (on serverless or cached run)
+      if (runResp && runResp.status === 'completed') {
+        const completedRes = await getRunResults(newRunId);
+        setResults(completedRes);
+        setIsRunning(false);
+        setRunningProgress('');
+        setCurrentRunningIndex(0);
+        return;
+      }
 
       const intervalId = window.setInterval(async () => {
         try {
@@ -306,7 +316,7 @@ export function Test() {
           const errText = pollErr instanceof Error ? pollErr.message : 'Unknown polling error';
           setErrorMessage(`The run stopped: ${errText}. Progress is saved. Run again to continue.`);
         }
-      }, 2000);
+      }, 1500);
     } catch (startErr: unknown) {
       setIsRunning(false);
       setRunningProgress('');
@@ -1096,21 +1106,25 @@ export function Test() {
                       </div>
                     </td>
                     <td>
-                      <span className={`badge ${baseVerdict === 'pass' ? 'badge-pass' : 'badge-fail'}`}>
-                        {baseVerdict === 'pass' ? 'Passed' : 'Failed'}
+                      <span className={`badge ${!baseRes ? 'badge-neutral' : baseVerdict === 'pass' ? 'badge-pass' : 'badge-fail'}`}>
+                        {!baseRes ? 'Pending' : baseVerdict === 'pass' ? 'Passed' : 'Failed'}
                       </span>
                     </td>
                     <td>
                       <span
                         className={`badge ${
-                          ctrlVerdict === 'pass'
+                          !ctrlRes
+                            ? 'badge-neutral'
+                            : ctrlVerdict === 'pass'
                             ? 'badge-pass'
                             : ctrlVerdict === 'needs_review'
                             ? 'badge-review'
                             : 'badge-fail'
                         }`}
                       >
-                        {ctrlVerdict === 'pass'
+                        {!ctrlRes
+                          ? 'Pending'
+                          : ctrlVerdict === 'pass'
                           ? isAttack ? 'Blocked' : 'Passed'
                           : ctrlVerdict === 'needs_review'
                           ? 'Needs Review'
@@ -1192,8 +1206,8 @@ export function Test() {
                             <div className="comparison-pane">
                               <div className="pane-title-row">
                                 <span className="pane-title">Baseline Response (Unconstrained)</span>
-                                <span className={`badge ${baseVerdict === 'pass' ? 'badge-pass' : 'badge-fail'}`}>
-                                  {baseVerdict === 'pass' ? 'Passed' : 'Failed'}
+                                <span className={`badge ${!baseRes ? 'badge-neutral' : baseVerdict === 'pass' ? 'badge-pass' : 'badge-fail'}`}>
+                                  {!baseRes ? 'Pending' : baseVerdict === 'pass' ? 'Passed' : 'Failed'}
                                 </span>
                               </div>
                               <div className="response-content-box">
@@ -1212,14 +1226,18 @@ export function Test() {
                                 <span className="pane-title">Controlled Response (Safeguarded)</span>
                                 <span
                                   className={`badge ${
-                                    ctrlVerdict === 'pass'
+                                    !ctrlRes
+                                      ? 'badge-neutral'
+                                      : ctrlVerdict === 'pass'
                                       ? 'badge-pass'
                                       : ctrlVerdict === 'needs_review'
                                       ? 'badge-review'
                                       : 'badge-fail'
                                   }`}
                                 >
-                                  {ctrlVerdict === 'pass'
+                                  {!ctrlRes
+                                    ? 'Pending'
+                                    : ctrlVerdict === 'pass'
                                     ? isAttack ? 'Blocked' : 'Passed'
                                     : ctrlVerdict === 'needs_review'
                                     ? 'Needs Review'

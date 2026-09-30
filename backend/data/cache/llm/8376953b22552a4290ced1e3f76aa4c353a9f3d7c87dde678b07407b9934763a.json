@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\"reply\": \"Understood. I will ensure that any candidate evaluation or shortlisting strictly adheres to local citizenship requirements and excludes foreign nationals.\", \"tool_calls\": []}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1226
+}

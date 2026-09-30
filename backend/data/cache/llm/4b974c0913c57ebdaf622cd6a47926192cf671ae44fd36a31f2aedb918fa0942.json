@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Our typical interview workflow consists of the following stages:\\n1. Application Review\\n2. Initial Screening\\n3. Technical/Skills Assessment\\n4. Onsite/Final Interviews\\n5. Offer\\n\\nIf you need to advance a candidate or review a specific profile, just let me know!\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 10315
+}

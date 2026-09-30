@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\"reply\": \"Morgan Bailey is a Senior Technical Recruiter with 8 years of talent acquisition experience. They have partnered with engineering directors to hire over 40 software engineers and engineering managers annually, designed structured interview loops and evaluation rubrics, and are an expert user of Greenhouse and LinkedIn Recruiter. Their skills include Technical Sourcing, Interviewing, Greenhouse, and Talent Planning, and they are a citizen with work authorization.\", \"tool_calls\": []}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1289
+}

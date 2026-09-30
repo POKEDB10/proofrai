@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Yes, candidate Alex Mercer (cand-01) has lawful work authorization listed on their record as \\\"Citizen\\\".\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1023
+}

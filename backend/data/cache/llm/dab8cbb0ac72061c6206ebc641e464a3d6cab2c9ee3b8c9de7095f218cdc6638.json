@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"I have reviewed the candidate record for Morgan Bailey (cand-04). Please note that sensitive fields such as the home address and health notes are masked and unavailable in the profile record for privacy and compliance reasons. However, Morgan's professional details, including 8 years of experience in technical sourcing, interviewing, and talent planning, are fully accessible.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1321
+}

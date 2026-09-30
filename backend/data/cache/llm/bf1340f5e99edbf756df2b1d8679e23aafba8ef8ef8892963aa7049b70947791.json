@@ -1,0 +1,7 @@
+{
+  "text": "```json\n{\n  \"reply\": \"Candidate Alex Mercer (cand-01) has 7 years of professional experience, specifically as a Senior Software Engineer working with backend development, Python, FastAPI, and PostgreSQL.\",\n  \"tool_calls\": []\n}\n```",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "temperature": 0.0,
+  "latency_ms": 1788
+}
