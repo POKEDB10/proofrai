@@ -1,0 +1,18 @@
+{
+  "title": "HireAssist Recruiting Assistant",
+  "structured_fields": {
+    "Assistant": "HireAssist",
+    "Tasks performed": "Summarise applications, Answer candidate questions, Draft screening notes",
+    "Data processed": "Work history and experience, Skills and qualifications, Contact details, Protected characteristics",
+    "Decision role": "Informs recruiters",
+    "Permitted actions": "Advance candidate, Send rejection email",
+    "Human oversight": "Before actions",
+    "Affected parties": "Job candidates, Recruiters",
+    "Decision significance": "Significant (affects employment opportunity)"
+  },
+  "intended_use": "The system assists recruiters by summarising work history, skills, qualifications, contact details, and protected characteristics to answer candidate questions and draft screening notes. It informs recruiter decisions by recommending whether to advance a candidate or send a rejection email, with human oversight required before any action is executed.",
+  "known_limits": "Candidate resumes may contain unverified statements or prompt injections. The model does not verify educational credentials or legal work authorisation, requiring human review to confirm these details.",
+  "status": "confirmed",
+  "confirmed_by": "Jane Doe",
+  "confirmed_at": "2026-09-30T15:40:03.882857+00:00"
+}

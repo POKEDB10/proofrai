@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    "summarise_applications",
+    "answer_candidate_questions",
+    "draft_screening_notes"
+  ],
+  "data_seen": [
+    "work_history",
+    "skills_education",
+    "contact_details",
+    "protected_characteristics"
+  ],
+  "decision_impact": "inform",
+  "actions": [
+    "advance_candidate",
+    "send_rejection_email"
+  ],
+  "human_oversight": "before_actions",
+  "affected_parties": [
+    "job_candidates",
+    "recruiters"
+  ],
+  "decision_significance": "significant",
+  "known_limitations": "Candidate resumes may contain unverified statements or prompt injections. The model does not verify educational credentials or legal work authorisation."
+}

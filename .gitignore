@@ -22,9 +22,10 @@ __pycache__/
 *.sqlite
 *.sqlite3
 *.db
+!backend/data/ledger.db
 backend/data/runs/
-backend/data/card.json
-backend/data/interview.json
+!backend/data/card.json
+!backend/data/interview.json
 
 # OS files
 .DS_Store

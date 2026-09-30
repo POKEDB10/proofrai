@@ -140,12 +140,27 @@ def load_card_from_file(file_path: Path | str = CARD_FILE_PATH) -> SystemCardDat
             known_limits=limits,
             status="draft",
         )
-        save_card_to_file(card, path)
+        try:
+            save_card_to_file(card, path)
+        except OSError:
+            pass
         return card
 
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
-    return SystemCardData.model_validate(data)
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        return SystemCardData.model_validate(data)
+    except Exception:
+        default_answers = InterviewAnswers()
+        structured = build_structured_fields(default_answers)
+        intended, limits = draft_card_paragraphs(default_answers)
+        return SystemCardData(
+            title="HireAssist Recruiting Assistant",
+            structured_fields=structured,
+            intended_use=intended,
+            known_limits=limits,
+            status="draft",
+        )
 
 
 def save_card_to_file(
@@ -153,9 +168,12 @@ def save_card_to_file(
     file_path: Path | str = CARD_FILE_PATH,
 ) -> None:
     path = Path(file_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(card.model_dump(), f, indent=2)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(card.model_dump(), f, indent=2)
+    except OSError:
+        pass
 
 
 def confirm_card_in_file(
