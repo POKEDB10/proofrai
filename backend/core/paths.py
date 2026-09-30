@@ -40,11 +40,13 @@ def resolve_data_path(filename: str) -> Path:
         tmp_file = Path("/tmp/data") / filename
         if not tmp_file.exists():
             tmp_file.parent.mkdir(parents=True, exist_ok=True)
-            if bundled_file.is_file():
-                try:
-                    shutil.copy2(str(bundled_file), str(tmp_file))
-                except Exception:
-                    pass
+            for source in [bundled_file, Path("data") / filename, Path("backend/data") / filename, _DATA_DIR / filename]:
+                if source.is_file():
+                    try:
+                        shutil.copy2(str(source), str(tmp_file))
+                        break
+                    except Exception:
+                        pass
         return tmp_file
 
     if bundled_file.exists():
