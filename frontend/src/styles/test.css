@@ -137,6 +137,127 @@
   color: var(--ink);
 }
 
+/* Executive Category Scorecard: 6 Assurance Pillars */
+.pillar-scorecards-section {
+  margin-bottom: var(--space-4);
+}
+
+.pillar-scorecards-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.pillar-scorecards-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pillar-scorecards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-2);
+}
+
+.pillar-card {
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  user-select: none;
+}
+
+.pillar-card:hover {
+  border-color: var(--rule-strong);
+  background-color: var(--surface-hover);
+}
+
+.pillar-card.active {
+  border-color: var(--primary);
+  background-color: var(--primary-wash);
+}
+
+.pillar-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.pillar-card-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.pillar-card-rate {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.pillar-card-rate.pass {
+  background-color: var(--pass-wash);
+  color: var(--pass);
+  border: 1px solid var(--pass-border);
+}
+
+.pillar-card-rate.fail {
+  background-color: var(--fail-wash);
+  color: var(--fail);
+  border: 1px solid var(--fail-border);
+}
+
+.pillar-card-bar {
+  height: 4px;
+  background-color: var(--rule);
+  border-radius: var(--radius-cell);
+  overflow: hidden;
+}
+
+.pillar-card-fill {
+  height: 100%;
+  border-radius: var(--radius-cell);
+  transition: width 0.3s ease;
+}
+
+.pillar-card-counts {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.pillar-card-scope {
+  font-size: 10px;
+  color: var(--ink-3);
+  line-height: 1.3;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
 /* Section 12: Red Team vs Defender Narrative Story */
 .narrative-strip {
   display: flex;

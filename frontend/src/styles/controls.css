@@ -43,6 +43,58 @@
   white-space: nowrap;
 }
 
+/* ---- Actions Group in Hero ---- */
+.controls-actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ---- Controls Stats Grid ---- */
+.controls-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.controls-stat-card {
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.controls-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+.controls-stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  line-height: 1.2;
+}
+
+.controls-stat-sub {
+  font-size: 11px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
 /* ---- Filter Tabs ---- */
 .controls-filter-bar {
   display: flex;

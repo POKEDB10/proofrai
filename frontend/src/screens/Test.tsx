@@ -12,8 +12,15 @@ import {
   IconArrowRight,
   IconHelpCircle,
   IconFileCheck,
+  IconShieldAlert,
+  IconScale,
+  IconLock,
+  IconActivity,
+  IconBrain,
+  IconCheckCircle,
 } from '../components/Icons';
 import {
+  CATEGORIES,
   CASE_METADATA,
   CaseResult,
   CheckResult,
@@ -23,6 +30,15 @@ import {
   startRun,
 } from '../api';
 import '../styles/test.css';
+
+const CATEGORY_ICONS: Record<EvaluationCategory, typeof IconShieldCheck> = {
+  security: IconShieldAlert,
+  safety: IconScale,
+  privacy: IconLock,
+  reliability: IconActivity,
+  reasoning: IconBrain,
+  stability: IconCheckCircle,
+};
 
 const ATTACK_CASES = [
   'A-DISC-01',
@@ -357,6 +373,27 @@ export function Test() {
     ? 'Review required'
     : 'Unresolved risk';
 
+  // Executive Pillar Scorecard Summary
+  const pillarSummary = CATEGORIES.map((cat) => {
+    let ctrlPass = 0;
+    let basePass = 0;
+    for (const cid of cat.caseIds) {
+      const c = controlledMap.get(cid);
+      if (c && c.verdict === 'pass') ctrlPass++;
+      const b = baselineMap.get(cid);
+      if (b && b.verdict === 'pass') basePass++;
+    }
+    const total = cat.caseIds.length;
+    const rate = total > 0 ? Math.round((ctrlPass / total) * 100) : 0;
+    return {
+      ...cat,
+      total,
+      ctrlPass,
+      basePass,
+      rate,
+    };
+  });
+
   const filteredCases = ALL_CASES.filter((cid) => {
     const ctrl = controlledMap.get(cid);
     const meta = CASE_METADATA[cid];
@@ -506,6 +543,63 @@ export function Test() {
           </div>
         </div>
       </div>
+
+      {/* Level 1: Executive Category Scorecard (6 Assurance Pillars) */}
+      <section className="pillar-scorecards-section" aria-label="Executive Category Scorecard">
+        <div className="pillar-scorecards-header">
+          <div className="pillar-scorecards-title">
+            <IconShieldCheck size={18} />
+            <span>Assurance Pillars Scorecard</span>
+          </div>
+          <span style={{ fontSize: '12px', color: 'var(--ink-2)' }}>
+            Click any pillar to filter the 30-case evaluation matrix below
+          </span>
+        </div>
+
+        <div className="pillar-scorecards-grid">
+          {pillarSummary.map((p) => {
+            const PillarIcon = CATEGORY_ICONS[p.id] || IconShieldCheck;
+            const isPassing = p.rate >= 80;
+            const isActive = filter === p.id;
+
+            return (
+              <div
+                key={p.id}
+                className={`pillar-card${isActive ? ' active' : ''}`}
+                onClick={() => setFilter(isActive ? 'all' : p.id)}
+                title={`Filter cases by ${p.name}`}
+              >
+                <div className="pillar-card-header">
+                  <span className="pillar-card-name">
+                    <PillarIcon size={14} />
+                    <span>{p.name}</span>
+                  </span>
+                  <span className={`pillar-card-rate ${isPassing ? 'pass' : 'fail'}`}>
+                    {p.rate}%
+                  </span>
+                </div>
+
+                <div className="pillar-card-bar">
+                  <div
+                    className="pillar-card-fill"
+                    style={{
+                      width: `${p.rate}%`,
+                      backgroundColor: isPassing ? 'var(--pass)' : 'var(--fail)',
+                    }}
+                  />
+                </div>
+
+                <div className="pillar-card-counts">
+                  <strong>{p.ctrlPass}/{p.total} verified</strong>
+                  <span>Base: {p.basePass}/{p.total}</span>
+                </div>
+
+                <div className="pillar-card-scope">{p.scope}</div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Section 12: Red Team vs Defender Narrative Bar */}
       <div className="narrative-strip">
@@ -704,27 +798,16 @@ export function Test() {
           >
             Needs Review
           </button>
-          <button
-            type="button"
-            className={`filter-btn${filter === 'security' ? ' active' : ''}`}
-            onClick={() => setFilter('security')}
-          >
-            Security
-          </button>
-          <button
-            type="button"
-            className={`filter-btn${filter === 'safety' ? ' active' : ''}`}
-            onClick={() => setFilter('safety')}
-          >
-            Safety
-          </button>
-          <button
-            type="button"
-            className={`filter-btn${filter === 'privacy' ? ' active' : ''}`}
-            onClick={() => setFilter('privacy')}
-          >
-            Privacy
-          </button>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              className={`filter-btn${filter === cat.id ? ' active' : ''}`}
+              onClick={() => setFilter(filter === cat.id ? 'all' : cat.id)}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
 
         <div className="search-input-box">
