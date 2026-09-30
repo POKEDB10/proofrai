@@ -138,65 +138,176 @@ def render_report_html(
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ProofRAI Assurance Report - """ + run_meta["run_id"] + """</title>
 <style>
 :root {
-  --ground: #EEF0F2;
+  --ground: #F3F4F6;
   --surface: #FFFFFF;
-  --surface-hover: #F3F5F7;
-  --ink: #1E2530;
-  --ink-2: #56606E;
-  --rule: #CBD1D8;
-  --rule-soft: #E1E5E9;
-  --pass: #1B6E4F;
-  --fail: #B3261E;
-  --review: #9A6700;
-  --font-sans: "IBM Plex Sans", sans-serif;
+  --surface-hover: #F8FAFC;
+  --ink: #0F172A;
+  --ink-2: #475569;
+  --rule: #E2E8F0;
+  --rule-soft: #EDF2F7;
+  --pass: #16A34A;
+  --fail: #DC2626;
+  --review: #D97706;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
-  --radius-control: 3px;
+  --radius-control: 6px;
+  --btn-bg: #FFFFFF;
+  --btn-border: #CBD5E1;
+  --btn-hover: #F1F5F9;
+  --badge-bg: #F1F5F9;
+  --table-stripe: #F8FAFC;
 }
+
+[data-theme="dark"] {
+  --ground: #090D16;
+  --surface: #0F172A;
+  --surface-hover: #1E293B;
+  --ink: #F8FAFC;
+  --ink-2: #94A3B8;
+  --rule: #1E293B;
+  --rule-soft: #141E33;
+  --pass: #22C55E;
+  --fail: #EF4444;
+  --review: #F59E0B;
+  --btn-bg: #1E293B;
+  --btn-border: #334155;
+  --btn-hover: #293548;
+  --badge-bg: #1E293B;
+  --table-stripe: #111A2E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #090D16;
+    --surface: #0F172A;
+    --surface-hover: #1E293B;
+    --ink: #F8FAFC;
+    --ink-2: #94A3B8;
+    --rule: #1E293B;
+    --rule-soft: #141E33;
+    --pass: #22C55E;
+    --fail: #EF4444;
+    --review: #F59E0B;
+    --btn-bg: #1E293B;
+    --btn-border: #334155;
+    --btn-hover: #293548;
+    --badge-bg: #1E293B;
+    --table-stripe: #111A2E;
+  }
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background-color: var(--ground);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
   padding: 32px 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 .container {
   max-width: 1200px;
   margin: 0 auto;
   background-color: var(--surface);
   border: 1px solid var(--rule);
-  padding: 32px;
+  border-radius: 8px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.report-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+.report-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.report-brand-name {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+.report-brand-sub {
+  font-size: 11px;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  background: var(--badge-bg);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+}
+.report-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background-color: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.report-btn:hover {
+  background-color: var(--btn-hover);
+  border-color: var(--ink-2);
 }
 h1 {
   font-size: 26px;
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 .subtitle {
   color: var(--ink-2);
   font-size: 13px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 .gate-section {
   margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--rule);
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+  background-color: var(--table-stripe);
 }
 .meta-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--ink-2);
 }
 .gate-label {
-  font-size: 26px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   line-height: 1.2;
-  margin: 8px 0 12px;
+  margin: 6px 0 10px;
+  letter-spacing: -0.02em;
 }
 .gate-reasons {
   list-style: square inside;
@@ -206,35 +317,44 @@ h1 {
 h2 {
   font-size: 18px;
   font-weight: 600;
-  margin-top: 32px;
-  margin-bottom: 12px;
+  margin-top: 36px;
+  margin-bottom: 14px;
   border-bottom: 1px solid var(--rule);
-  padding-bottom: 6px;
+  padding-bottom: 8px;
+  letter-spacing: -0.01em;
 }
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 th {
   text-align: left;
   font-size: 12px;
   font-weight: 600;
   color: var(--ink-2);
-  padding: 8px;
-  border-bottom: 1px solid var(--ink);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--table-stripe);
 }
 td {
-  padding: 8px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--rule-soft);
   vertical-align: top;
 }
-.mono { font-family: var(--font-mono); }
+tr:hover td {
+  background-color: var(--surface-hover);
+}
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
 .square {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
   margin-right: 6px;
   vertical-align: middle;
 }
@@ -242,23 +362,55 @@ td {
 .sq-fail { background-color: var(--fail); }
 .sq-review { background-color: var(--review); }
 .prose {
-  max-width: 68ch;
+  max-width: 72ch;
   color: var(--ink);
-  margin-bottom: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 .empty-note {
   color: var(--ink-2);
   font-style: italic;
   font-size: 13px;
+  padding: 12px 0;
 }
 @media print {
-  body { background-color: #FFFFFF; padding: 0; }
-  .container { border: none; padding: 0; max-width: 100%; }
+  body { background-color: #FFFFFF !important; color: #000000 !important; padding: 0 !important; }
+  .container { border: none !important; padding: 0 !important; max-width: 100% !important; box-shadow: none !important; }
+  .report-topbar { display: none !important; }
+  th { border-bottom: 1px solid #333 !important; color: #111 !important; background: none !important; }
+  td { border-bottom: 1px solid #eee !important; color: #000 !important; }
+  .gate-section { background: none !important; border: 1px solid #ccc !important; }
 }
 </style>
 </head>
 <body>
 <div class="container">
+<div class="report-topbar">
+  <div class="report-brand">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <rect width="32" height="32" rx="7" fill="#1E293B"/>
+      <path d="M16 5L24 9.5V17C24 21.5 20.5 25.5 16 27C11.5 25.5 8 21.5 8 17V9.5L16 5Z" fill="#1B6E4F"/>
+      <path d="M12 16.5L15 19.5L20.5 13" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="report-brand-name">ProofRAI</span>
+    <span class="report-brand-sub">Assurance Report</span>
+  </div>
+  <div class="report-actions">
+    <button type="button" id="theme-toggle-btn" class="report-btn" title="Toggle dark/light mode">
+      <span id="theme-icon"></span>
+      <span id="theme-label">Theme</span>
+    </button>
+    <button type="button" onclick="window.print()" class="report-btn" title="Print or save as PDF">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <span>Print / PDF</span>
+    </button>
+    <a href="/evidence" class="report-btn" title="Back to Evidence Dashboard">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span>Dashboard</span>
+    </a>
+  </div>
+</div>
+
 <h1>ProofRAI Assurance Report</h1>
 <div class="subtitle">
   Run ID: <span class="mono">""" + run_meta["run_id"] + """</span> |
@@ -450,6 +602,48 @@ Automated model judges exhibit documented systematic biases, including length pr
 </div>
 
 </div>
+<script>
+  (function() {
+    function getStoredTheme() {
+      try {
+        var saved = localStorage.getItem('proofrai_theme');
+        if (saved === 'dark' || saved === 'light') return saved;
+      } catch (e) {}
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'dark';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      var icon = document.getElementById('theme-icon');
+      var label = document.getElementById('theme-label');
+      if (theme === 'dark') {
+        if (icon) icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+        if (label) label.textContent = 'Light Mode';
+      } else {
+        if (icon) icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        if (label) label.textContent = 'Dark Mode';
+      }
+    }
+
+    var activeTheme = getStoredTheme();
+    applyTheme(activeTheme);
+
+    var toggleBtn = document.getElementById('theme-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme') || 'dark';
+        var next = current === 'dark' ? 'light' : 'dark';
+        try {
+          localStorage.setItem('proofrai_theme', next);
+        } catch (e) {}
+        applyTheme(next);
+      });
+    }
+  })();
+</script>
 </body>
 </html>
 """)
