@@ -17,8 +17,8 @@ export function TopBar({
   const displayModel =
     targetModel ||
     (typeof window !== 'undefined'
-      ? localStorage.getItem('proofrai_target_model') || 'gemini-2.5-flash'
-      : 'gemini-2.5-flash');
+      ? localStorage.getItem('proofrai_target_model') || 'gemini-3.5-flash-lite'
+      : 'gemini-3.5-flash-lite');
   const approvedCount =
     typeof window !== 'undefined'
       ? localStorage.getItem('proofrai_approved_count')

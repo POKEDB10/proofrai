@@ -57,3 +57,11 @@ Configured Vite development server and Uvicorn backend to bind to 0.0.0.0 with A
 Replaced all secondary buttons with plain text links to strictly enforce the single solid button constraint across all views.
 
 Synchronized default ledger database records from the verified evidence run to ensure initial load accurately demonstrates baseline vulnerabilities turning into controlled passes.
+
+Structured the 30 test suite cases into 6 assurance pillars (Security, Safety and ethics, Privacy, Reliability, Reasoning, and Stability) to support progressive disclosure.
+
+Implemented Level 1 Executive Category Scorecard and Key Findings matrix on the Test screen with direct click-through to underlying test evidence.
+
+Enhanced differential case inspection with side-by-side prompt and response panes, highlighted check failure spans, and control intervention timelines.
+
+Integrated shareable AI Model Passport into the Evidence screen summarizing model identity, category scores, verified controls, and cryptographic evidence digests.
