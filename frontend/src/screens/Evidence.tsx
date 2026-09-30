@@ -18,6 +18,9 @@ import {
   IconActivity,
   IconCheckCircle,
   IconArrowLeft,
+  IconFileText,
+  IconChevronDown,
+  IconChevronUp,
 } from '../components/Icons';
 
 import {
@@ -64,6 +67,147 @@ const CATEGORY_ICONS: Record<EvaluationCategory, typeof IconShieldAlert> = {
   stability: IconCheckCircle,
 };
 
+interface ParsedGateReason {
+  raw: string;
+  type: 'critical' | 'review' | 'error' | 'policy' | 'pass';
+  caseId?: string;
+  risk?: string;
+  detail: string;
+}
+
+interface GroupedGateFinding {
+  id: string;
+  type: 'critical' | 'review' | 'error' | 'policy' | 'pass';
+  title: string;
+  detail: string;
+  cases: Array<{ id: string; risk?: string }>;
+}
+
+function parseGateReason(reason: string): ParsedGateReason {
+  const critMatch = reason.match(
+    /^Critical attack case '([^']+)'(?:\s*\(([^)]+)\))?\s*failed in controlled variant(?::\s*(.*))?$/i
+  );
+  if (critMatch) {
+    return {
+      raw: reason,
+      type: 'critical',
+      caseId: critMatch[1],
+      risk: critMatch[2] || undefined,
+      detail: critMatch[3] || 'Critical attack failed validation in controlled assistant',
+    };
+  }
+
+  const revMatch = reason.match(
+    /^Case '([^']+)'(?:\s*\(([^)]+)\))?\s*requires review:\s*(.*)$/i
+  );
+  if (revMatch) {
+    return {
+      raw: reason,
+      type: 'review',
+      caseId: revMatch[1],
+      risk: revMatch[2] || undefined,
+      detail: revMatch[3] || 'Subjective check requires auditor review',
+    };
+  }
+
+  const errMatch = reason.match(
+    /^Case '([^']+)'(?:\s*\(([^)]+)\))?\s*ended in error:\s*(.*)$/i
+  );
+  if (errMatch) {
+    return {
+      raw: reason,
+      type: 'error',
+      caseId: errMatch[1],
+      risk: errMatch[2] || undefined,
+      detail: errMatch[3] || 'Runtime execution fault',
+    };
+  }
+
+  if (reason.toLowerCase().includes('over-block') || reason.toLowerCase().includes('threshold')) {
+    return {
+      raw: reason,
+      type: 'policy',
+      detail: reason,
+    };
+  }
+
+  if (
+    reason.toLowerCase().includes('zero critical') ||
+    reason.toLowerCase().includes('zero unreviewed') ||
+    reason.toLowerCase().includes('allowable threshold')
+  ) {
+    return {
+      raw: reason,
+      type: 'pass',
+      detail: reason,
+    };
+  }
+
+  return {
+    raw: reason,
+    type: 'review',
+    detail: reason,
+  };
+}
+
+function groupGateFindings(reasons: string[]): {
+  groups: GroupedGateFinding[];
+  counts: { critical: number; review: number; error: number; policy: number; pass: number };
+} {
+  const parsed = reasons.map(parseGateReason);
+
+  const counts = {
+    critical: parsed.filter((p) => p.type === 'critical').length,
+    review: parsed.filter((p) => p.type === 'review').length,
+    error: parsed.filter((p) => p.type === 'error').length,
+    policy: parsed.filter((p) => p.type === 'policy').length,
+    pass: parsed.filter((p) => p.type === 'pass').length,
+  };
+
+  const map = new Map<string, GroupedGateFinding>();
+
+  for (const item of parsed) {
+    if (!item.caseId) {
+      const key = `${item.type}:${item.detail}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          id: key,
+          type: item.type,
+          title: item.type === 'pass' ? 'Assurance Requirement Verified' : 'Release Threshold Alert',
+          detail: item.detail,
+          cases: [],
+        });
+      }
+      continue;
+    }
+
+    const normDetail = item.detail.trim();
+    const key = `${item.type}:${normDetail}`;
+
+    if (!map.has(key)) {
+      let title = 'Finding';
+      if (item.type === 'critical') title = 'Critical Attack Failure';
+      else if (item.type === 'review') title = 'Evaluator Review Required';
+      else if (item.type === 'error') title = 'Runtime Execution Error';
+
+      map.set(key, {
+        id: key,
+        type: item.type,
+        title,
+        detail: item.detail,
+        cases: [{ id: item.caseId, risk: item.risk }],
+      });
+    } else {
+      map.get(key)!.cases.push({ id: item.caseId, risk: item.risk });
+    }
+  }
+
+  return {
+    groups: Array.from(map.values()),
+    counts,
+  };
+}
+
 export function Evidence() {
   const [runId] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -98,6 +242,29 @@ export function Evidence() {
   const [queueFilter, setQueueFilter] = useState<'flagged' | 'all'>('flagged');
   const [runMetadata, setRunMetadata] = useState<RunMetadataState | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showRawLogs, setShowRawLogs] = useState<boolean>(false);
+  const [expandedGroupIds, setExpandedGroupIds] = useState<Set<string>>(new Set());
+
+  function toggleGroupExpand(groupId: string) {
+    setExpandedGroupIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) {
+        next.delete(groupId);
+      } else {
+        next.add(groupId);
+      }
+      return next;
+    });
+  }
+
+  function handleSelectCaseFromGate(cid: string) {
+    setQueueFilter('all');
+    setSelectedCaseId(cid);
+    const element = document.getElementById(`case-row-${cid}`) || document.getElementById('review-queue-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
 
   async function loadRunData(id: string) {
     try {
@@ -279,6 +446,9 @@ export function Evidence() {
 
   const { label: gateLabel, className: gateClass } = getReleaseGateLabel();
 
+  const rawReasons = runSummary?.release_gate?.reasons || [];
+  const { groups: gateGroups, counts: gateCounts } = groupGateFindings(rawReasons);
+
   // Assurance Pillars Summary for Passport
   const pillarSummary = CATEGORIES.map((cat) => {
     const catCases = Object.entries(CASE_METADATA)
@@ -433,17 +603,142 @@ export function Evidence() {
             </div>
           </div>
 
-          {runSummary?.release_gate?.reasons && runSummary.release_gate.reasons.length > 0 ? (
+          {rawReasons.length > 0 ? (
             <div className="gate-reasons-container">
-              <div className="gate-reasons-title">Determination Criteria & Findings:</div>
-              <ul className="gate-reasons-list">
-                {runSummary.release_gate.reasons.map((r, i) => (
-                  <li key={i} className="gate-reason-item">
-                    <span className="badge-dot" style={{ backgroundColor: gateClass === 'ready' ? 'var(--pass)' : 'var(--fail)' }} />
-                    <span>{r}</span>
-                  </li>
-                ))}
-              </ul>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                <div className="gate-reasons-title">
+                  Determination Findings & Criteria ({rawReasons.length}):
+                </div>
+                {rawReasons.length > 3 && (
+                  <button
+                    type="button"
+                    className="gate-raw-toggle-btn"
+                    onClick={() => setShowRawLogs(!showRawLogs)}
+                  >
+                    <IconFileText size={12} />
+                    <span>{showRawLogs ? 'Hide raw lines' : `Raw lines (${rawReasons.length})`}</span>
+                    {showRawLogs ? <IconChevronUp size={12} /> : <IconChevronDown size={12} />}
+                  </button>
+                )}
+              </div>
+
+              {/* Status Metric Strip */}
+              {(gateCounts.critical > 0 || gateCounts.review > 0 || gateCounts.error > 0 || gateCounts.policy > 0) && (
+                <div className="gate-metrics-strip">
+                  <div className="gate-metric-chip">
+                    <span
+                      className="gate-metric-dot"
+                      style={{ backgroundColor: gateCounts.critical > 0 ? 'var(--fail)' : 'var(--pass)' }}
+                    />
+                    <span className="gate-metric-num">{gateCounts.critical}</span>
+                    <span className="gate-metric-label">Critical Failures</span>
+                  </div>
+                  <div className="gate-metric-chip">
+                    <span
+                      className="gate-metric-dot"
+                      style={{ backgroundColor: gateCounts.review > 0 ? 'var(--review)' : 'var(--pass)' }}
+                    />
+                    <span className="gate-metric-num">{gateCounts.review}</span>
+                    <span className="gate-metric-label">Review Flags</span>
+                  </div>
+                  <div className="gate-metric-chip">
+                    <span
+                      className="gate-metric-dot"
+                      style={{ backgroundColor: gateCounts.error > 0 ? 'var(--fail)' : 'var(--pass)' }}
+                    />
+                    <span className="gate-metric-num">{gateCounts.error}</span>
+                    <span className="gate-metric-label">Execution Errors</span>
+                  </div>
+                  {gateCounts.policy > 0 && (
+                    <div className="gate-metric-chip">
+                      <span className="gate-metric-dot" style={{ backgroundColor: 'var(--review)' }} />
+                      <span className="gate-metric-num">{gateCounts.policy}</span>
+                      <span className="gate-metric-label">Policy Alerts</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Structured Findings Grid */}
+              <div className="gate-findings-grid">
+                {gateGroups.map((group) => {
+                  const isExpanded = expandedGroupIds.has(group.id);
+                  const displayedCases = isExpanded ? group.cases : group.cases.slice(0, 8);
+                  const hasMore = group.cases.length > 8;
+
+                  return (
+                    <div key={group.id} className={`gate-finding-card ${group.type}`}>
+                      <div className="gate-finding-header">
+                        <div className="gate-finding-title-wrap">
+                          <span
+                            className={`badge ${
+                              group.type === 'critical' || group.type === 'error'
+                                ? 'badge-fail'
+                                : group.type === 'review' || group.type === 'policy'
+                                ? 'badge-review'
+                                : 'badge-pass'
+                            }`}
+                          >
+                            {group.title}
+                          </span>
+                          <span className="gate-finding-count">
+                            {group.cases.length > 0
+                              ? `${group.cases.length} case${group.cases.length > 1 ? 's' : ''} affected`
+                              : 'Evaluation Rule'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="gate-finding-detail">{group.detail}</div>
+
+                      {group.cases.length > 0 && (
+                        <div className="gate-finding-cases-box">
+                          <span className="gate-finding-cases-label">Impacted Cases:</span>
+                          <div className="gate-finding-pills">
+                            {displayedCases.map((c) => (
+                              <button
+                                key={c.id}
+                                type="button"
+                                className="gate-case-pill"
+                                onClick={() => handleSelectCaseFromGate(c.id)}
+                                title={c.risk ? `${c.id}: ${c.risk} (Click to inspect)` : `Inspect case ${c.id}`}
+                              >
+                                {c.id}
+                              </button>
+                            ))}
+                            {hasMore && (
+                              <button
+                                type="button"
+                                className="gate-case-pill-more"
+                                onClick={() => toggleGroupExpand(group.id)}
+                              >
+                                {isExpanded ? 'Show fewer' : `+${group.cases.length - 8} more`}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Progressive Disclosure Raw Logs */}
+              {showRawLogs && (
+                <div className="gate-raw-logs-box">
+                  <ul className="gate-reasons-list">
+                    {rawReasons.map((r, i) => (
+                      <li key={i} className="gate-reason-item">
+                        <span
+                          className="badge-dot"
+                          style={{ backgroundColor: gateClass === 'ready' ? 'var(--pass)' : 'var(--fail)' }}
+                        />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px' }}>{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           ) : (
             <div className="gate-reasons-container">
@@ -615,7 +910,7 @@ export function Evidence() {
       </section>
 
       {/* Human Review Queue & Decision Console */}
-      <section className="evidence-section" aria-label="Human Review Queue">
+      <section id="review-queue-section" className="evidence-section" aria-label="Human Review Queue">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-3)', flexWrap: 'wrap', gap: '8px' }}>
           <h2 className="section-title" style={{ marginBottom: 0 }}>
             <IconUserCheck size={20} />
@@ -683,6 +978,7 @@ export function Evidence() {
                     return (
                       <tr
                         key={item.case_id}
+                        id={`case-row-${item.case_id}`}
                         className={`queue-row${isSelected ? ' selected' : ''}`}
                         onClick={() => setSelectedCaseId(item.case_id)}
                       >
