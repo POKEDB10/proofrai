@@ -68,7 +68,7 @@ a:hover {
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-5) var(--space-4);
+  padding: 36px 32px 64px 32px;
   width: 100%;
 }
 
@@ -85,7 +85,8 @@ a:hover {
   font-size: var(--text-body);
   color: var(--ink-2);
   line-height: 1.6;
-  max-width: 640px;
+  max-width: 680px;
+  margin-bottom: var(--space-4);
 }
 
 /* ---- Buttons ---- */
@@ -215,13 +216,13 @@ button {
 .next-step-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: var(--text-table);
   font-weight: 600;
   color: var(--primary);
   text-decoration: none;
   border-radius: var(--radius-control);
-  padding: 6px 14px;
+  padding: 8px 16px;
   border: 1px solid var(--primary-border);
   background-color: var(--primary-wash);
   transition: background-color var(--transition-fast), border-color var(--transition-fast);
@@ -339,13 +340,13 @@ th {
   font-weight: 700;
   color: var(--ink-2);
   text-align: left;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--rule);
   white-space: nowrap;
 }
 
 td {
-  padding: 10px 12px;
+  padding: 12px 14px;
   color: var(--ink);
   border-bottom: 1px solid var(--rule-soft);
   vertical-align: middle;

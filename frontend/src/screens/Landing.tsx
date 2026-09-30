@@ -232,6 +232,8 @@ export function Landing() {
           <h2 className="landing-section-title">Red Team Attack vs. Defender Control</h2>
           <p className="landing-section-subtitle">
             Observe the real-time contrast between an unmitigated foundation model and ProofRAI's controlled pipeline.
+          </p>
+          <p className="landing-probe-instruction">
             Select a probe to inspect verbatim inputs and outcomes.
           </p>
         </div>

@@ -204,16 +204,21 @@
   background-color: var(--surface);
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
-  padding: 52px 40px;
+  padding: 56px 40px;
 }
 
 .landing-section-alt > div {
   max-width: 1100px;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .landing-section-header {
-  margin-bottom: 32px;
+  margin-bottom: 38px;
+}
+
+.landing-section-alt .landing-section-header {
+  margin-bottom: 38px;
 }
 
 .landing-section-tag {
@@ -245,18 +250,26 @@
   margin: 0;
 }
 
+.landing-probe-instruction {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
 /* ---- Workflow Steps Grid ---- */
 .landing-loop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 16px;
 }
 
 .landing-step-card {
   background-color: var(--surface);
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
-  padding: 20px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -332,6 +345,7 @@
 
 /* ---- Red-Team Showcase ---- */
 .landing-showcase {
+  margin-top: 10px;
   background-color: var(--surface);
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
@@ -343,6 +357,8 @@
   background-color: var(--ground-secondary);
   border-bottom: 1px solid var(--rule);
   overflow-x: auto;
+  padding: 4px 6px 0 6px;
+  gap: 4px;
 }
 
 .landing-probe-tab {
@@ -353,6 +369,8 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
   color: var(--ink-2);
   font-size: var(--text-table);
   font-weight: 500;
@@ -385,10 +403,10 @@
 }
 
 .landing-probe-body {
-  padding: 22px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .landing-probe-input-card {
@@ -402,7 +420,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 11px 16px;
   background-color: var(--ground-secondary);
   border-bottom: 1px solid var(--rule);
   font-size: 11px;
@@ -411,7 +429,7 @@
 }
 
 .landing-code-block {
-  padding: 14px;
+  padding: 16px;
   font-family: var(--font-mono);
   font-size: var(--text-table);
   line-height: 1.55;
@@ -422,8 +440,8 @@
 
 .landing-diff-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
 }
 
 .landing-diff-col {
@@ -477,7 +495,7 @@
 }
 
 .landing-col-body {
-  padding: 14px;
+  padding: 16px 18px;
   flex: 1;
 }
 
@@ -485,7 +503,7 @@
   font-size: 11px;
   font-weight: 600;
   color: var(--ink-3);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .landing-col-text {
@@ -499,7 +517,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 11px 16px;
   font-size: 12px;
   font-weight: 600;
   border-top: 1px solid var(--rule);
@@ -519,11 +537,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
+  padding: 14px 20px;
   background-color: var(--ground-secondary);
-  border-top: 1px solid var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
   gap: var(--space-3);
   flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .landing-probe-footer-info {
@@ -541,7 +561,7 @@
   text-decoration: none;
   background-color: var(--primary-wash);
   border: 1px solid var(--primary-border);
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: var(--radius-control);
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
@@ -557,10 +577,10 @@
   background-color: var(--surface);
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
-  padding: 32px;
+  padding: 36px;
   display: grid;
   grid-template-columns: 1.8fr 1fr;
-  gap: 32px;
+  gap: 36px;
   align-items: center;
 }
 

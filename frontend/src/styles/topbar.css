@@ -102,7 +102,7 @@
 .topbar-nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   height: 60px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -117,9 +117,9 @@
 .topbar-step {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   height: 38px;
-  padding: 0 10px;
+  padding: 0 12px;
   border-radius: var(--radius-control);
   color: var(--ink-2);
   text-decoration: none;
