@@ -1013,13 +1013,23 @@ export function Test() {
         </div>
 
         <div className="search-input-box">
-          <IconSearch size={13} style={{ color: 'var(--ink-3)' }} />
+          <IconSearch size={13} style={{ color: 'var(--ink-3)', flexShrink: 0 }} />
           <input
             type="text"
             placeholder="Search cases by ID or risk..."
             value={searchQuery}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
           />
+          {searchQuery && (
+            <button
+              type="button"
+              className="search-clear-btn"
+              onClick={() => setSearchQuery('')}
+              title="Clear search"
+            >
+              &times;
+            </button>
+          )}
         </div>
       </div>
 

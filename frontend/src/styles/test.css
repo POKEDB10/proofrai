@@ -527,21 +527,63 @@
 .search-input-box {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background-color: var(--surface);
-  border: 1px solid var(--rule);
+  gap: 8px;
+  background-color: var(--ground-secondary);
+  border: 1px solid var(--rule-soft);
   border-radius: var(--radius-control);
-  padding: 0 10px;
+  padding: 0 12px;
   height: 32px;
-  min-width: 220px;
+  min-width: 280px;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.search-input-box:hover {
+  border-color: var(--rule);
+}
+
+.search-input-box:focus-within {
+  border-color: var(--primary);
+  background-color: var(--surface);
 }
 
 .search-input-box input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
   border: 0;
   padding: 0;
   height: 100%;
   background: transparent;
+  font-family: var(--font-sans);
   font-size: 12px;
+  color: var(--ink);
+  outline: none;
+}
+
+.search-input-box input::placeholder {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.search-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background-color: var(--rule-soft);
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.search-clear-btn:hover {
+  background-color: var(--rule);
+  color: var(--ink);
 }
 
 /* Cases Table */
