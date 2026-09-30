@@ -620,3 +620,91 @@
   color: var(--ink-2);
   word-break: break-all;
 }
+
+.passport-hash-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.passport-hash-label {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.passport-framework-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.passport-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.queue-filter-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background-color: var(--ground-secondary);
+  padding: 3px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--rule-soft);
+}
+
+.queue-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.queue-filter-tab:hover {
+  color: var(--ink);
+  background-color: var(--surface-hover);
+}
+
+.queue-filter-tab.active {
+  background-color: var(--surface);
+  border-color: var(--rule);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.icon-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  color: var(--ink-2);
+  cursor: pointer;
+  font-size: 11px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.icon-action-btn:hover {
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+

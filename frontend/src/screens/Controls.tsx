@@ -126,6 +126,13 @@ export function Controls() {
   const approvedCount = controls.filter((c) => c.status === 'approved').length;
   const coveragePercent = controls.length > 0 ? Math.round((approvedCount / controls.length) * 100) : 0;
 
+  const stageCounts = {
+    all: controls.length,
+    pre_model: controls.filter((c) => c.enforcement_point === 'pre_model').length,
+    post_model: controls.filter((c) => c.enforcement_point === 'post_model').length,
+    tool_gate: controls.filter((c) => c.enforcement_point === 'tool_gate').length,
+  };
+
   const filteredControls = controls.filter((c) => {
     if (activeStage === 'all') return true;
     return c.enforcement_point === activeStage;
@@ -244,7 +251,7 @@ export function Controls() {
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px' }}>
           <div style={{ padding: '10px 14px', backgroundColor: 'var(--ground-secondary)', borderRadius: 'var(--radius-control)', border: '1px solid var(--rule-soft)', fontSize: '12px' }}>
             <div style={{ color: 'var(--fail)', fontWeight: 700, marginBottom: '2px' }}>PII Leakage Vector</div>
             <div style={{ color: 'var(--ink-2)' }}>&darr; Output PII Scanner (CTL-03)</div>
@@ -256,41 +263,59 @@ export function Controls() {
             <div style={{ color: 'var(--fail)', fontWeight: 700, marginBottom: '2px' }}>Prompt Injection Vector</div>
             <div style={{ color: 'var(--ink-2)' }}>&darr; Input Sanitisation & Delimiters (CTL-02)</div>
             <div style={{ color: 'var(--ink-2)' }}>&darr; Adversarial instruction pattern identified</div>
-            <div style={{ color: 'var(--pass)', fontWeight: 600, marginTop: '2px' }}>&check; Delimited as passive data &bull; Assistant continues safely</div>
+            <div style={{ color: 'var(--pass)', fontWeight: 600, marginTop: '2px' }}>&check; Delimited as passive data / Assistant continues safely</div>
+          </div>
+
+          <div style={{ padding: '10px 14px', backgroundColor: 'var(--ground-secondary)', borderRadius: 'var(--radius-control)', border: '1px solid var(--rule-soft)', fontSize: '12px' }}>
+            <div style={{ color: 'var(--fail)', fontWeight: 700, marginBottom: '2px' }}>Tool Hijack Vector</div>
+            <div style={{ color: 'var(--ink-2)' }}>&darr; Consequential Action Gate (CTL-05)</div>
+            <div style={{ color: 'var(--ink-2)' }}>&darr; High-impact tool invocation attempted</div>
+            <div style={{ color: 'var(--pass)', fontWeight: 600, marginTop: '2px' }}>&check; Execution intercepted / Queued for human approval</div>
+          </div>
+
+          <div style={{ padding: '10px 14px', backgroundColor: 'var(--ground-secondary)', borderRadius: 'var(--radius-control)', border: '1px solid var(--rule-soft)', fontSize: '12px' }}>
+            <div style={{ color: 'var(--fail)', fontWeight: 700, marginBottom: '2px' }}>Proxy Bias Vector</div>
+            <div style={{ color: 'var(--ink-2)' }}>&darr; Pre-Model Policy Filter (CTL-06)</div>
+            <div style={{ color: 'var(--ink-2)' }}>&darr; Inferred demographic characteristic</div>
+            <div style={{ color: 'var(--pass)', fontWeight: 600, marginTop: '2px' }}>&check; Prompt declined before model invocation</div>
           </div>
         </div>
       </div>
 
       {/* Filter Tabs */}
       <div className="controls-filter-bar">
-        <div className="controls-tabs">
+        <div className="controls-filter-tabs controls-tabs">
           <button
             type="button"
-            className={`controls-tab${activeStage === 'all' ? ' active' : ''}`}
+            className={`controls-filter-tab controls-tab${activeStage === 'all' ? ' active' : ''}`}
             onClick={() => setActiveStage('all')}
           >
-            All Controls ({controls.length})
+            <span>All Controls</span>
+            <span className="controls-count-badge">{stageCounts.all}</span>
           </button>
           <button
             type="button"
-            className={`controls-tab${activeStage === 'pre_model' ? ' active' : ''}`}
+            className={`controls-filter-tab controls-tab${activeStage === 'pre_model' ? ' active' : ''}`}
             onClick={() => setActiveStage('pre_model')}
           >
-            Pre-Model
+            <span>Pre-Model</span>
+            <span className="controls-count-badge">{stageCounts.pre_model}</span>
           </button>
           <button
             type="button"
-            className={`controls-tab${activeStage === 'post_model' ? ' active' : ''}`}
+            className={`controls-filter-tab controls-tab${activeStage === 'post_model' ? ' active' : ''}`}
             onClick={() => setActiveStage('post_model')}
           >
-            Post-Model
+            <span>Post-Model</span>
+            <span className="controls-count-badge">{stageCounts.post_model}</span>
           </button>
           <button
             type="button"
-            className={`controls-tab${activeStage === 'tool_gate' ? ' active' : ''}`}
+            className={`controls-filter-tab controls-tab${activeStage === 'tool_gate' ? ' active' : ''}`}
             onClick={() => setActiveStage('tool_gate')}
           >
-            Tool Gate
+            <span>Tool Gate</span>
+            <span className="controls-count-badge">{stageCounts.tool_gate}</span>
           </button>
         </div>
       </div>
@@ -301,7 +326,7 @@ export function Controls() {
           <p style={{ color: 'var(--ink-2)' }}>Loading control safeguards...</p>
         </div>
       ) : (
-        <div className="controls-card-grid">
+        <div className="controls-card-grid controls-grid">
           {filteredControls.map((c) => {
             const isApproved = c.status === 'approved';
             const isExpanded = expandedIds.has(c.id);
@@ -315,7 +340,7 @@ export function Controls() {
             return (
               <div
                 key={c.id}
-                className={`control-item-card ${isApproved ? 'is-approved' : 'is-rejected'}`}
+                className={`control-item-card ${isApproved ? 'is-approved approved' : 'is-rejected rejected'}`}
               >
                 <div>
                   <div className="control-card-header">
@@ -383,11 +408,24 @@ export function Controls() {
                       <span style={{ fontSize: '10px', color: 'var(--ink-3)', fontWeight: 600 }}>
                         Tests:
                       </span>
-                      {c.test_ids.map((tid) => (
-                        <span key={tid} className="test-pill">
-                          {tid}
-                        </span>
-                      ))}
+                      {c.test_ids.map((tid) => {
+                        const isSuiteCase = tid.startsWith('A-') || tid.startsWith('B-');
+                        return isSuiteCase ? (
+                          <span key={tid}>
+                            <Link
+                              to={`/test?case=${encodeURIComponent(tid)}`}
+                              className="test-pill test-pill-interactive"
+                            >
+                              {tid}
+                            </Link>
+                          </span>
+                        ) : (
+                          <span key={tid} className="test-pill">
+                            {tid}
+                          </span>
+                        );
+                      })}
+
                     </div>
                   )}
 

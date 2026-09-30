@@ -6,9 +6,11 @@ import {
   IconSun,
   IconMoon,
 } from './Icons';
+import { listRuns, RunListItem } from '../api';
 import '../styles/topbar.css';
 
-/* ProofRAI shield+check logo mark — inline SVG, zero external deps */
+
+/* ProofRAI shield+check logo mark - inline SVG, zero external deps */
 function LogoMark() {
   return (
     <svg
@@ -57,6 +59,17 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
     return 'dark';
   });
 
+  const [activeRunId, setActiveRunId] = useState<string>(() => {
+    if (runId) return runId;
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('proofrai_run_id') || 'run-01';
+    }
+    return 'run-01';
+  });
+
+  const [availableRuns, setAvailableRuns] = useState<RunListItem[]>([]);
+  const [isRunMenuOpen, setIsRunMenuOpen] = useState<boolean>(false);
+
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', theme);
@@ -64,15 +77,47 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
     }
   }, [theme]);
 
+  useEffect(() => {
+    async function fetchRuns() {
+      try {
+        const runs = await listRuns();
+        if (runs.length > 0) {
+          setAvailableRuns(runs);
+        }
+      } catch {
+        // keep default
+      }
+    }
+    fetchRuns();
+
+    function handleRunChange(e: Event) {
+      const custom = e as CustomEvent<string>;
+      if (custom.detail) {
+        setActiveRunId(custom.detail);
+      } else {
+        const stored = localStorage.getItem('proofrai_run_id');
+        if (stored) setActiveRunId(stored);
+      }
+    }
+
+    window.addEventListener('proofrai_run_changed', handleRunChange);
+    return () => {
+      window.removeEventListener('proofrai_run_changed', handleRunChange);
+    };
+  }, []);
+
   function toggleTheme() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }
 
-  const displayRunId =
-    runId ||
-    (typeof window !== 'undefined'
-      ? localStorage.getItem('proofrai_run_id') || 'run-01'
-      : 'run-01');
+  function handleSelectRun(id: string) {
+    setActiveRunId(id);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('proofrai_run_id', id);
+      window.dispatchEvent(new CustomEvent('proofrai_run_changed', { detail: id }));
+    }
+    setIsRunMenuOpen(false);
+  }
 
   const displayModel =
     targetModel ||
@@ -142,7 +187,7 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
           >
             <span className="topbar-step-num">4</span>
             <span className="topbar-step-label">Test</span>
-            <span className="topbar-step-badge">{displayRunId}</span>
+            <span className="topbar-step-badge">{activeRunId}</span>
           </NavLink>
 
           <NavLink
@@ -163,9 +208,55 @@ export function TopBar({ runId, targetModel }: TopBarProps) {
           <span className="topbar-chip-text">{displayModel}</span>
         </div>
 
-        <div className="topbar-chip topbar-chip-run" title="Current test run ID">
-          <IconTerminal size={12} />
-          <span className="topbar-chip-text">{displayRunId}</span>
+        {/* Interactive Run Selector */}
+        <div className="topbar-run-container">
+          <button
+            type="button"
+            className="topbar-chip topbar-chip-run topbar-chip-interactive"
+            onClick={() => setIsRunMenuOpen((prev) => !prev)}
+            title="Click to view or switch benchmark runs"
+            aria-expanded={isRunMenuOpen}
+          >
+            <IconTerminal size={12} />
+            <span className="topbar-chip-text">{activeRunId}</span>
+            <span style={{ fontSize: '9px', opacity: 0.7, marginLeft: '2px' }}>▼</span>
+          </button>
+
+          {isRunMenuOpen && (
+            <div className="topbar-run-dropdown">
+              <div className="topbar-run-dropdown-header">
+                <span>Select Evaluation Run</span>
+              </div>
+              <div className="topbar-run-dropdown-list">
+                {availableRuns.length > 0 ? (
+                  availableRuns.map((r) => {
+                    const isSelected = r.id === activeRunId;
+                    return (
+                      <button
+                        key={r.id}
+                        type="button"
+                        className={`topbar-run-dropdown-item${isSelected ? ' selected' : ''}`}
+                        onClick={() => handleSelectRun(r.id)}
+                      >
+                        <span className="font-mono" style={{ fontWeight: 600 }}>{r.id}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
+                          {r.target_model || 'default'}
+                        </span>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <button
+                    type="button"
+                    className="topbar-run-dropdown-item selected"
+                    onClick={() => handleSelectRun('run-01')}
+                  >
+                    <span className="font-mono">run-01 (default benchmark)</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <button

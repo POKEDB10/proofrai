@@ -78,6 +78,25 @@ export const IconArrowRight: FC<IconProps> = ({ size = 16, className, style }) =
   </svg>
 );
 
+export const IconArrowLeft: FC<IconProps> = ({ size = 16, className, style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    style={style}
+  >
+    <line x1="19" y1="12" x2="5" y2="12" />
+    <polyline points="12 19 5 12 12 5" />
+  </svg>
+);
+
+
 export const IconSliders: FC<IconProps> = ({ size = 16, className, style }) => (
   <svg
     width={size}

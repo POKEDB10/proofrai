@@ -1,5 +1,5 @@
 /* ================================================================
-   ProofRAI Base Styles — Global Reset, Typography, Components
+   ProofRAI Base Styles - Global Reset, Typography, Components
    ================================================================ */
 
 *,
@@ -89,6 +89,16 @@ a:hover {
 }
 
 /* ---- Buttons ---- */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -119,20 +129,20 @@ a:hover {
   cursor: not-allowed;
 }
 
-/* Primary — ink-filled solid */
+/* Primary - ink-filled solid */
 .btn-primary {
   background-color: var(--primary);
-  color: #FFFFFF;
+  color: var(--ink-inverse);
   border-color: var(--primary);
 }
 .btn-primary:hover:not(:disabled) {
   background-color: var(--primary-hover);
   border-color: var(--primary-hover);
-  color: #FFFFFF;
+  color: var(--ink-inverse);
   text-decoration: none;
 }
 
-/* Secondary — bordered */
+/* Secondary - bordered */
 .btn-secondary {
   background-color: var(--surface);
   color: var(--ink);
@@ -144,7 +154,7 @@ a:hover {
   text-decoration: none;
 }
 
-/* Ghost — no border or bg */
+/* Ghost - no border or bg */
 .btn-ghost {
   background-color: transparent;
   color: var(--ink-2);
@@ -164,7 +174,7 @@ a:hover {
 }
 .btn-danger:hover:not(:disabled) {
   background-color: var(--fail);
-  color: #FFFFFF;
+  color: var(--ink-inverse);
 }
 
 /* Small variant */
@@ -218,7 +228,7 @@ a:hover {
 }
 .next-step-link:hover {
   background-color: var(--primary);
-  color: #FFFFFF;
+  color: var(--ink-inverse);
   border-color: var(--primary);
   text-decoration: none;
 }

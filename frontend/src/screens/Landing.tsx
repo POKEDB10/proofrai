@@ -93,20 +93,31 @@ export function Landing() {
             and boundary declaration, to automated adversarial evaluation and release gate sign-off.
           </p>
 
+          <div className="landing-pillars-strip">
+            <span className="landing-pillars-label">6 Assurance Pillars:</span>
+            <span className="badge badge-neutral">Security</span>
+            <span className="badge badge-neutral">Safety & Ethics</span>
+            <span className="badge badge-neutral">Privacy</span>
+            <span className="badge badge-neutral">Reliability</span>
+            <span className="badge badge-neutral">Reasoning</span>
+            <span className="badge badge-neutral">Stability</span>
+          </div>
+
           <div className="landing-hero-actions">
-            <Link to="/describe" className="landing-btn-primary">
-              <span>Launch Assurance Loop</span>
+            <Link to="/test" className="landing-btn-primary">
+              <IconFlask size={16} />
+              <span>RUN AI AUDIT ({lastRunId})</span>
               <IconArrowRight size={16} />
             </Link>
 
-            <Link to="/test" className="landing-btn-secondary">
-              <IconFlask size={16} />
-              <span>View Test Matrix ({lastRunId})</span>
+            <Link to="/describe" className="landing-btn-secondary">
+              <IconFileText size={16} />
+              <span>Intake & Policy Setup</span>
             </Link>
 
             <Link to="/evidence" className="landing-btn-tertiary">
               <IconAward size={16} />
-              <span>Evidence Dossier</span>
+              <span>Evidence Dossier & Gate</span>
             </Link>
           </div>
 
@@ -279,6 +290,20 @@ export function Landing() {
                   <span>{currentProbe.action} via <strong>{currentProbe.controlId}</strong></span>
                 </div>
               </div>
+            </div>
+
+            <div className="landing-probe-footer-bar">
+              <span className="landing-probe-footer-info">
+                Empirical test probe #{currentProbe.id} ({currentProbe.category})
+              </span>
+              <Link
+                to={`/test?case=${encodeURIComponent(currentProbe.id)}`}
+                className="landing-probe-evidence-btn"
+              >
+                <span>Inspect Full Experiment & Evidence</span>
+                <IconArrowRight size={13} />
+              </Link>
+
             </div>
           </div>
         </div>

@@ -206,6 +206,22 @@ export async function startRun(
   return handleResponse<StartRunResponse>(res);
 }
 
+export interface RunListItem {
+  id: string;
+  target_model: string;
+  created_at: string;
+}
+
+export async function listRuns(): Promise<RunListItem[]> {
+  try {
+    const res = await fetch(`${API_BASE}/runs`);
+    if (!res.ok) return [];
+    return (await res.json()) as RunListItem[];
+  } catch {
+    return [];
+  }
+}
+
 export async function getRun(runId: string): Promise<RunSummary> {
   const res = await fetch(`${API_BASE}/runs/${encodeURIComponent(runId)}`);
   return handleResponse<RunSummary>(res);

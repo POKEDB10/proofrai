@@ -207,11 +207,13 @@ function renderHighlightedText(text: string, checks: CheckResult[]) {
 
 export function Test() {
   const [runId, setRunId] = useState<string>(() => {
-    return (
-      (typeof window !== 'undefined'
-        ? localStorage.getItem('proofrai_run_id')
-        : null) || 'run-01'
-    );
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const qRun = params.get('run');
+      if (qRun) return qRun;
+      return localStorage.getItem('proofrai_run_id') || 'run-01';
+    }
+    return 'run-01';
   });
   const [results, setResults] = useState<CaseResult[]>([]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -238,6 +240,32 @@ export function Test() {
   useEffect(() => {
     loadExistingRun(runId);
   }, [runId]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const qCase = params.get('case');
+      if (qCase && ALL_CASES.includes(qCase)) {
+        setSelectedCaseId(qCase);
+        setExpandedCases((prev) => new Set(prev).add(qCase));
+        setTimeout(() => {
+          const el = document.getElementById(`case-row-${qCase}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 120);
+      }
+    }
+
+    function handleRunChange(e: Event) {
+      const custom = e as CustomEvent<string>;
+      if (custom.detail) {
+        setRunId(custom.detail);
+      }
+    }
+    window.addEventListener('proofrai_run_changed', handleRunChange);
+    return () => window.removeEventListener('proofrai_run_changed', handleRunChange);
+  }, []);
 
   async function handleRunSuite() {
     setIsRunning(true);
@@ -423,7 +451,80 @@ export function Test() {
     return true;
   });
 
+  // Key Audit Findings (Section 9 & 23 of Directive)
+  interface HighlightFinding {
+    id: string;
+    title: string;
+    description: string;
+    badgeText: string;
+    status: 'pass' | 'fail' | 'review';
+    baseVerdict: string;
+    ctrlVerdict: string;
+  }
+
+  const highlightFindings: HighlightFinding[] = [];
+
+  for (const cid of ALL_CASES) {
+    const ctrl = controlledMap.get(cid);
+    const meta = CASE_METADATA[cid];
+    if (ctrl?.verdict === 'fail' && meta) {
+      const isOverBlocked = BENIGN_CASES.includes(cid) && ctrl.blocked_by && ctrl.blocked_by.length > 0;
+      highlightFindings.push({
+        id: cid,
+        title: meta.taskLabel,
+        description:
+          isOverBlocked && ctrl.blocked_by && ctrl.blocked_by.length > 0
+            ? `Legitimate query over-blocked by ${ctrl.blocked_by.join(', ')}`
+            : meta.riskDescription,
+        badgeText: isOverBlocked ? 'Over-Blocked' : 'Vulnerability',
+        status: 'fail',
+        baseVerdict: baselineMap.get(cid)?.verdict || 'unknown',
+        ctrlVerdict: 'fail',
+      });
+
+    }
+  }
+
+  for (const cid of ALL_CASES) {
+    const ctrl = controlledMap.get(cid);
+    const meta = CASE_METADATA[cid];
+    if (ctrl?.verdict === 'needs_review' && meta) {
+      highlightFindings.push({
+        id: cid,
+        title: meta.taskLabel,
+        description: ctrl.judge_reason || meta.riskDescription,
+        badgeText: 'Review Required',
+        status: 'review',
+        baseVerdict: baselineMap.get(cid)?.verdict || 'unknown',
+        ctrlVerdict: 'needs_review',
+      });
+    }
+  }
+
+  if (highlightFindings.length < 3) {
+    const criticalCandidates = ['A-INJ-01', 'A-DISC-01', 'A-LEAK-01', 'A-TOOL-01'];
+    for (const cid of criticalCandidates) {
+      if (highlightFindings.length >= 3) break;
+      if (highlightFindings.some((h) => h.id === cid)) continue;
+      const base = baselineMap.get(cid);
+      const ctrl = controlledMap.get(cid);
+      const meta = CASE_METADATA[cid];
+      if (meta) {
+        highlightFindings.push({
+          id: cid,
+          title: meta.taskLabel,
+          description: meta.riskDescription,
+          badgeText: ctrl?.verdict === 'pass' ? 'Mitigated' : 'Tested',
+          status: 'pass',
+          baseVerdict: base?.verdict || 'fail',
+          ctrlVerdict: ctrl?.verdict || 'pass',
+        });
+      }
+    }
+  }
+
   /*
+
    * Fixed Results Plate Geometry (PDF Section 14)
    * Prevents any overflow or wrapping bugs by setting precise SVG bounds:
    * ViewBox: 0 0 720 74
@@ -495,13 +596,34 @@ export function Test() {
       {isRunning && (
         <div className="execution-stepper">
           <div className="stepper-header">
-            <span>{runningProgress}</span>
+            <div className="stepper-status-title">
+              <IconActivity size={14} />
+              <span>Stress-Testing Target Model: {runningProgress}</span>
+            </div>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--ink-2)' }}>
-              {Math.round((currentRunningIndex / 30) * 100)}% Complete
+              {Math.round((currentRunningIndex / 30) * 100)}% ({currentRunningIndex}/30 evaluated)
             </span>
           </div>
           <div className="stepper-track">
             <div className="stepper-fill" style={{ width: `${(currentRunningIndex / 30) * 100}%` }} />
+          </div>
+
+          <div className="stepper-categories-checklist">
+            {CATEGORIES.map((cat, idx) => {
+              const startIdx = CATEGORIES.slice(0, idx).reduce((acc, c) => acc + c.caseIds.length, 0);
+              const endIdx = startIdx + cat.caseIds.length;
+              const isDone = currentRunningIndex >= endIdx;
+              const isInProgress = currentRunningIndex > startIdx && currentRunningIndex < endIdx;
+
+              return (
+                <div key={cat.id} className={`stepper-cat-item ${isDone ? 'done' : isInProgress ? 'in-progress' : 'pending'}`}>
+                  <span className={`badge ${isDone ? 'badge-pass' : isInProgress ? 'badge-primary' : 'badge-neutral'}`}>
+                    {isDone ? 'Pass' : isInProgress ? 'Active' : 'Queued'}
+                  </span>
+                  <span className="stepper-cat-name">{cat.name}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -601,6 +723,62 @@ export function Test() {
         </div>
       </section>
 
+      {/* Key Audit Findings & Investigation Highlights (Directive Section 9 & 23) */}
+      <section className="findings-highlights-section" aria-label="Investigation Highlights">
+        <div className="findings-header">
+          <div className="findings-title-group">
+            <IconShieldAlert size={16} />
+            <h2 className="findings-title">Key Audit Findings & Attack Analysis</h2>
+          </div>
+          <span className="findings-caption">
+            {totalFailed > 0
+              ? `${totalFailed} critical failure(s) identified requiring immediate investigation`
+              : 'Empirical differential comparison across baseline vulnerabilities and active safeguard mitigations'}
+          </span>
+        </div>
+
+        <div className="findings-grid">
+          {highlightFindings.map((item) => (
+            <div key={item.id} className={`finding-card ${item.status}`}>
+              <div className="finding-top-row">
+                <span className="control-id-pill">{item.id}</span>
+                <span className={`badge ${item.status === 'fail' ? 'badge-fail' : item.status === 'review' ? 'badge-review' : 'badge-pass'}`}>
+                  {item.badgeText}
+                </span>
+              </div>
+
+              <div className="finding-title">{item.title}</div>
+              <div className="finding-desc">{item.description}</div>
+
+              <div className="finding-comparison-strip">
+                <span className="finding-cmp-item">
+                  <span className="finding-cmp-label">Baseline:</span>
+                  <span className={`finding-cmp-val ${item.baseVerdict === 'pass' ? 'pass' : 'fail'}`}>
+                    {item.baseVerdict === 'pass' ? 'Defended' : 'Breached'}
+                  </span>
+                </span>
+                <span className="finding-cmp-sep">/</span>
+                <span className="finding-cmp-item">
+                  <span className="finding-cmp-label">Controlled:</span>
+                  <span className={`finding-cmp-val ${item.ctrlVerdict === 'pass' ? 'pass' : item.ctrlVerdict === 'needs_review' ? 'review' : 'fail'}`}>
+                    {item.ctrlVerdict === 'pass' ? 'Neutralized' : item.ctrlVerdict === 'needs_review' ? 'Needs Review' : 'Vulnerable'}
+                  </span>
+                </span>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm finding-action-btn"
+                onClick={() => activatePlateCell(item.id)}
+              >
+                <span>Inspect Evidence</span>
+                <IconArrowRight size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Section 12: Red Team vs Defender Narrative Bar */}
       <div className="narrative-strip">
         <span className="narrative-step">
@@ -615,6 +793,7 @@ export function Test() {
           <span>Evidence Record: Attack, Defence, Verdict</span>
         </span>
       </div>
+
 
       {/* Section 14: The Results Plate (Fixed Geometry - PDF Page 14) */}
       <section className="plate-container" aria-label="The Results Plate">
@@ -762,9 +941,32 @@ export function Test() {
             </div>
           </div>
           <span style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-            Designated results plate identity &bull; PDF Specification Section 14
+            Designated results plate identity / Dual-Row Empirical Matrix
           </span>
         </div>
+
+        {selectedCaseId && (
+          <div className="plate-selection-banner">
+            <div className="plate-selection-info">
+              <span className="control-id-pill">{selectedCaseId}</span>
+              <strong>{CASE_METADATA[selectedCaseId]?.taskLabel || selectedCaseId}</strong>
+              <span className="plate-selection-desc">
+                {CASE_METADATA[selectedCaseId]?.riskDescription}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => {
+                const el = document.getElementById(`case-row-${selectedCaseId}`);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }}
+            >
+              <span>Scroll to Full Evidence</span>
+              <IconArrowRight size={12} />
+            </button>
+          </div>
+        )}
       </section>
 
       {/* Filter and Search Bar */}
@@ -913,7 +1115,15 @@ export function Test() {
                         <div className="inspector-card">
                           {/* Case Context Box */}
                           <div className="inspector-context">
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div className="inspector-breadcrumb">
+                              <span className="breadcrumb-root">Assurance Matrix</span>
+                              <span className="breadcrumb-sep">/</span>
+                              <span className="breadcrumb-cat">{meta?.category}</span>
+                              <span className="breadcrumb-sep">/</span>
+                              <span className="breadcrumb-current">Case #{caseId}</span>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
                               <span style={{ fontWeight: 700, fontSize: '14px' }}>
                                 Case #{caseId}: {meta?.riskDescription}
                               </span>
@@ -949,13 +1159,13 @@ export function Test() {
                           {responsibleCtrl && (
                             <div className="impact-map-strip">
                               <span className="impact-node">Risk: {meta?.riskDescription || 'Vulnerability'}</span>
-                              <span className="impact-arrow">&rarr;</span>
+                              <span className="impact-arrow"><IconArrowRight size={11} /></span>
                               <span className="impact-node">{responsibleCtrl}</span>
-                              <span className="impact-arrow">&rarr;</span>
+                              <span className="impact-arrow"><IconArrowRight size={11} /></span>
                               <span className="impact-node">
                                 {isAttack ? 'Enforcement: Blocked / Sanitised' : 'Enforcement: Allowed without tripwire'}
                               </span>
-                              <span className="impact-arrow">&rarr;</span>
+                              <span className="impact-arrow"><IconArrowRight size={11} /></span>
                               <span className="badge badge-pass">
                                 {ctrlVerdict === 'pass' ? 'Safe Outcome' : 'Flagged'}
                               </span>

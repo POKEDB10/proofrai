@@ -1,5 +1,5 @@
 /* ============================================================
-   ProofRAI Top Navigation Bar — Premium Edition
+   ProofRAI Top Navigation Bar - Premium Edition
    Shield logo mark + wordmark + step nav + telemetry chips
    ============================================================ */
 
@@ -238,21 +238,94 @@
   text-overflow: ellipsis;
 }
 
-/* Hide run chip on smaller viewports */
-@media (max-width: 1200px) {
-  .topbar-chip-run {
-    display: none;
-  }
+/* ---- Interactive Run Selector Container ---- */
+.topbar-run-container {
+  position: relative;
 }
 
+.topbar-chip-interactive {
+  cursor: pointer;
+  background-color: var(--ground-secondary);
+  border: 1px solid var(--rule);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.topbar-chip-interactive:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--rule-strong);
+}
+
+.topbar-run-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  min-width: 240px;
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  z-index: 300;
+  overflow: hidden;
+}
+
+.topbar-run-dropdown-header {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+  background-color: var(--ground);
+}
+
+.topbar-run-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.topbar-run-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-size: var(--text-table);
+  transition: background-color var(--transition-fast);
+}
+
+.topbar-run-dropdown-item:hover {
+  background-color: var(--surface-hover);
+}
+
+.topbar-run-dropdown-item.selected {
+  background-color: var(--primary-wash);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Responsive viewports */
 @media (max-width: 900px) {
+  .topbar-chip-model {
+    display: none;
+  }
   .topbar-wordmark-sub {
     display: none;
   }
 }
 
-@media (max-width: 780px) {
-  .topbar-chip-model {
+@media (max-width: 680px) {
+  .topbar-step {
+    padding: 0 6px;
+  }
+  .topbar-step-label {
+    display: none;
+  }
+  .topbar-step-badge {
     display: none;
   }
 }

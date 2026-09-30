@@ -1,5 +1,5 @@
 /* ================================================================
-   ProofRAI Controls Screen — Safeguard Control Library
+   ProofRAI Controls Screen - Safeguard Control Library
    ================================================================ */
 
 .controls-screen {
@@ -104,21 +104,23 @@
   flex-wrap: wrap;
 }
 
-.controls-filter-tabs {
-  display: flex;
+.controls-filter-tabs,
+.controls-tabs {
+  display: inline-flex;
   align-items: center;
   gap: 2px;
-  background-color: var(--surface);
+  background-color: var(--ground-secondary);
   padding: 3px;
   border-radius: var(--radius-control);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-soft);
   flex-wrap: wrap;
 }
 
-.controls-filter-tab {
+.controls-filter-tab,
+.controls-tab {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 5px 12px;
   border-radius: var(--radius-sm);
   font-size: var(--text-meta);
@@ -128,41 +130,60 @@
   border: 1px solid transparent;
   cursor: pointer;
   font-family: var(--font-sans);
+  line-height: 1.4;
   transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
   white-space: nowrap;
+  user-select: none;
 }
 
-.controls-filter-tab:hover {
+.controls-filter-tab:hover,
+.controls-tab:hover {
   color: var(--ink);
   background-color: var(--surface-hover);
 }
 
-.controls-filter-tab.active {
+.controls-filter-tab.active,
+.controls-tab.active {
   color: var(--ink);
-  background-color: var(--surface-hover);
+  background-color: var(--surface);
   border-color: var(--rule);
   font-weight: 600;
 }
 
 .controls-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 10px;
   font-weight: 700;
   font-family: var(--font-mono);
-  padding: 1px 5px;
+  padding: 1px 6px;
+  min-width: 18px;
+  height: 16px;
   border-radius: var(--radius-sm);
-  background-color: var(--ground-secondary);
+  background-color: var(--ground);
   color: var(--ink-3);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-soft);
+  line-height: 1;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.controls-filter-tab.active .controls-count-badge {
+.controls-filter-tab:hover .controls-count-badge,
+.controls-tab:hover .controls-count-badge {
+  color: var(--ink-2);
+  border-color: var(--rule);
+}
+
+.controls-filter-tab.active .controls-count-badge,
+.controls-tab.active .controls-count-badge {
   background-color: var(--primary-wash);
   color: var(--primary);
   border-color: var(--primary-border);
 }
 
 /* ---- Controls Grid ---- */
-.controls-grid {
+.controls-grid,
+.controls-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: var(--space-3);
@@ -170,7 +191,8 @@
 }
 
 @media (max-width: 800px) {
-  .controls-grid {
+  .controls-grid,
+  .controls-card-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -191,12 +213,14 @@
   border-color: var(--rule-strong);
 }
 
-.control-item-card.approved {
+.control-item-card.approved,
+.control-item-card.is-approved {
   border-color: var(--pass-border);
   background-color: var(--pass-wash);
 }
 
-.control-item-card.rejected {
+.control-item-card.rejected,
+.control-item-card.is-rejected {
   opacity: 0.65;
   border-color: var(--rule);
 }
@@ -408,6 +432,19 @@
   color: var(--ink-2);
   border: 1px solid var(--rule);
   white-space: nowrap;
+}
+
+.test-pill-interactive {
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.test-pill-interactive:hover {
+  background-color: var(--primary-wash);
+  color: var(--primary);
+  border-color: var(--primary-border);
+  text-decoration: none;
 }
 
 /* ---- Params toggle ---- */
