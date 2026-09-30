@@ -20,6 +20,16 @@ const RISK_SHORT_LABELS: Record<string, string> = {
   'CTL-06': 'Discrimination',
 };
 
+const REFERENCE_URLS: Record<string, string> = {
+  'NIST AI RMF Map': 'https://airc.nist.gov/',
+  'NIST AI RMF Manage': 'https://airc.nist.gov/',
+  'NIST AI RMF Govern': 'https://airc.nist.gov/',
+  'OWASP LLM01': 'https://genai.owasp.org/llm01-prompt-injection/',
+  'OWASP LLM06': 'https://genai.owasp.org/llm06-sensitive-information-disclosure/',
+  'EU AI Act reference': 'https://artificialintelligenceact.eu/',
+  'Digital Dubai fairness guideline': 'https://www.digitaldubai.ae/',
+};
+
 export function Controls() {
   const [controls, setControls] = useState<Control[]>([]);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -30,6 +40,10 @@ export function Controls() {
     try {
       const data = await getControls();
       setControls(data);
+      const approved = data.filter((c) => c.status === 'approved').length;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('proofrai_approved_count', approved.toString());
+      }
       setErrorMessage(null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Load failed';
@@ -47,9 +61,14 @@ export function Controls() {
     const nextStatus = currentStatus === 'approved' ? 'rejected' : 'approved';
     try {
       const updated = await updateControlStatus(controlId, nextStatus);
-      setControls((prev) =>
-        prev.map((c) => (c.id === controlId ? updated : c))
-      );
+      setControls((prev) => {
+        const next = prev.map((c) => (c.id === controlId ? updated : c));
+        const approved = next.filter((c) => c.status === 'approved').length;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('proofrai_approved_count', approved.toString());
+        }
+        return next;
+      });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Update failed';
       setErrorMessage(`Failed to update control: ${msg}`);
@@ -93,8 +112,8 @@ export function Controls() {
             {approvedCount} of {controls.length} approved
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-          <button type="button" className="btn-secondary" onClick={handleApproveAll}>
+        <div>
+          <button type="button" className="text-link" onClick={handleApproveAll}>
             Approve all
           </button>
         </div>
@@ -161,7 +180,22 @@ export function Controls() {
                           onChange={() => handleToggleStatus(ctl.id, ctl.status)}
                         />
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)' }}>{ctl.id}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            aria-hidden="true"
+                          >
+                            <path d={isExpanded ? 'M4 10l4-4 4 4' : 'M4 6l4 4 4-4'} />
+                          </svg>
+                          {ctl.id}
+                        </span>
+                      </td>
                       <td>{ctl.title}</td>
                       <td>{actsAt}</td>
                       <td>{addresses}</td>
@@ -177,7 +211,39 @@ export function Controls() {
 
                           <div className="detail-line">
                             <span className="detail-label">References:</span>
-                            <span>{ctl.references.join(', ')}</span>
+                            <span style={{ display: 'inline-flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                              {ctl.references.map((ref, idx) => {
+                                const url = REFERENCE_URLS[ref];
+                                return (
+                                  <span key={idx}>
+                                    {url ? (
+                                      <a
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                                      >
+                                        {ref}
+                                        <svg
+                                          width="12"
+                                          height="12"
+                                          viewBox="0 0 16 16"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          aria-hidden="true"
+                                        >
+                                          <path d="M6 3h7v7M13 3L7 9" />
+                                        </svg>
+                                      </a>
+                                    ) : (
+                                      ref
+                                    )}
+                                    {idx < ctl.references.length - 1 ? ',' : ''}
+                                  </span>
+                                );
+                              })}
+                            </span>
                           </div>
 
                           <div className="detail-line">
@@ -204,7 +270,7 @@ export function Controls() {
       <footer className="controls-footer">
         <span className="controls-note">Only approved controls run.</span>
         <Link to="/test" className="btn-primary">
-          Proceed to test run
+          Go to test
         </Link>
       </footer>
     </div>

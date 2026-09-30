@@ -54,3 +54,6 @@ Enabled human reviewer overrides from the Evidence screen, updating stored verdi
 
 Configured Vite development server and Uvicorn backend to bind to 0.0.0.0 with API proxy forwarding, allowing access across the local area network while keeping simulated tools and environment keys local.
 
+Replaced all secondary buttons with plain text links to strictly enforce the single solid button constraint across all views.
+
+Synchronized default ledger database records from the verified evidence run to ensure initial load accurately demonstrates baseline vulnerabilities turning into controlled passes.

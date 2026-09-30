@@ -9,6 +9,13 @@
   line-height: 1.5;
 }
 
+.describe-form {
+  background-color: var(--surface);
+  border: 1px solid var(--rule);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
 .question-block {
   margin-bottom: var(--space-4);
 }

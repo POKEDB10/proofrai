@@ -47,25 +47,27 @@ button:disabled,
   cursor: not-allowed;
 }
 
-.btn-secondary {
+.text-link {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: 32px;
-  padding: 0 12px;
-  background-color: transparent;
+  background: none;
+  border: 0;
+  padding: 0;
   color: var(--ink);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
   font-family: var(--font-sans);
   font-size: var(--text-table);
-  text-decoration: none;
+  text-decoration: underline;
   cursor: pointer;
+  height: auto;
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background-color: var(--surface-hover);
-  border-color: var(--ink);
+.text-link:hover:not(:disabled) {
+  color: var(--ink-2);
+}
+
+.text-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .next-step-link {
@@ -81,23 +83,6 @@ button:disabled,
 
 .next-step-link:hover {
   color: var(--ink-2);
-}
-
-.preset-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-  padding: var(--space-2) var(--space-3);
-  background-color: var(--surface);
-  border: 1px solid var(--rule-soft);
-}
-
-.preset-label {
-  font-size: var(--text-meta);
-  font-weight: 600;
-  color: var(--ink-2);
-  margin-right: var(--space-1);
 }
 
 input[type="text"],
@@ -152,6 +137,39 @@ td {
 tr:hover,
 tr.selected {
   background-color: var(--surface-hover);
+}
+
+.status-square {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.sq-pass {
+  background-color: var(--pass);
+}
+
+.sq-fail {
+  background-color: var(--fail);
+}
+
+.sq-review {
+  background-color: var(--review);
+}
+
+.sq-error {
+  background-color: var(--ink-2);
+}
+
+.sq-overblocked {
+  background-color: var(--fail);
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .topbar {

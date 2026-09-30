@@ -37,6 +37,36 @@ export function Describe() {
   const [saveNote, setSaveNote] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  function computeLiveConflicts(): Conflict[] {
+    const list: Conflict[] = [];
+    if (decisionImpact === 'determine' && humanOversight === 'never') {
+      list.push({
+        field: 'human_oversight',
+        message: 'outputs determine outcomes and no person steps in.',
+      });
+    }
+    const activeActions = actions.filter((a) => a !== 'none');
+    if (activeActions.length > 0 && humanOversight === 'never') {
+      list.push({
+        field: 'actions',
+        message: 'the assistant can take actions and no person steps in.',
+      });
+    }
+    if (dataSeen.includes('protected_characteristics')) {
+      const needKeywords = ['need', 'diversity', 'compliance', 'monitoring', 'audit', 'equal opportunity', 'legal'];
+      const limitLower = knownLimitations.toLowerCase();
+      const taskLower = tasks.join(' ').toLowerCase();
+      const needStated = needKeywords.some((kw) => limitLower.includes(kw) || taskLower.includes(kw));
+      if (!needStated) {
+        list.push({
+          field: 'data_seen',
+          message: 'it sees sensitive fields and no need is stated.',
+        });
+      }
+    }
+    return list;
+  }
+
   function applyCompliantPreset() {
     setTasks(['summarise_applications', 'answer_candidate_questions', 'draft_screening_notes']);
     setDataSeen(['work_history', 'skills_education', 'contact_details', 'protected_characteristics']);
@@ -65,20 +95,19 @@ export function Describe() {
     setConflicts([
       {
         field: 'human_oversight',
-        message: 'Outputs determine decisions but no person steps in.',
+        message: 'outputs determine outcomes and no person steps in.',
       },
       {
         field: 'actions',
-        message: 'The assistant can take consequential actions but no person steps in.',
+        message: 'the assistant can take actions and no person steps in.',
       },
       {
         field: 'data_seen',
-        message: 'The assistant sees sensitive fields and no justification is stated in limitations.',
+        message: 'it sees sensitive fields and no need is stated.',
       },
     ]);
     setSaveNote(null);
   }
-
 
   function toggleItem(list: string[], item: string): string[] {
     return list.includes(item) ? list.filter((i) => i !== item) : [...list, item];
@@ -127,9 +156,10 @@ export function Describe() {
     }
   }
 
-  const oversightConflict = conflicts.find((c) => c.field === 'human_oversight');
-  const actionsConflict = conflicts.find((c) => c.field === 'actions');
-  const dataConflict = conflicts.find((c) => c.field === 'data_seen');
+  const effectiveConflicts = conflicts.length > 0 ? conflicts : computeLiveConflicts();
+  const oversightConflict = effectiveConflicts.find((c) => c.field === 'human_oversight');
+  const actionsConflict = effectiveConflicts.find((c) => c.field === 'actions');
+  const dataConflict = effectiveConflicts.find((c) => c.field === 'data_seen');
 
   return (
     <div className="page-container describe-screen">
@@ -144,15 +174,18 @@ export function Describe() {
         </div>
       )}
 
-      <div className="preset-bar">
-        <span className="preset-label">Demo presets:</span>
-        <button type="button" className="btn-secondary" onClick={applyCompliantPreset}>
-          Compliant recruiting assistant
+      <div style={{ marginBottom: 'var(--space-3)', fontSize: 'var(--text-table)', color: 'var(--ink-2)' }}>
+        Presets:{' '}
+        <button type="button" className="text-link" onClick={applyCompliantPreset}>
+          compliant assistant
         </button>
-        <button type="button" className="btn-secondary" onClick={applyConflictPreset}>
-          Trigger governance conflict
+        {', '}
+        <button type="button" className="text-link" onClick={applyConflictPreset}>
+          governance conflict
         </button>
       </div>
+
+      <div className="describe-form">
 
       {/* Question 1: Tasks */}
       <div className="question-block">
@@ -443,6 +476,7 @@ export function Describe() {
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setKnownLimitations(e.target.value)}
           placeholder="State known limitations, data exclusions, or human verification rules"
         />
+      </div>
       </div>
 
       {/* Actions */}

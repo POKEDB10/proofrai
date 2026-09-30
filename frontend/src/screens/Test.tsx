@@ -128,7 +128,13 @@ function renderHighlightedText(text: string, checks: CheckResult[]) {
     if (m.start > lastIdx) {
       elements.push(text.slice(lastIdx, m.start));
     }
-    const isCanaryOrTool = m.label === 'canary' || m.label === 'tool_call';
+    const labelLower = m.label.toLowerCase();
+    const checkLower = m.checkName.toLowerCase();
+    const isCanaryOrTool =
+      labelLower.includes('canary') ||
+      labelLower.includes('tool') ||
+      checkLower.includes('canary') ||
+      checkLower.includes('tool');
     const markClass = isCanaryOrTool ? 'mark-canary' : 'mark-fail';
     elements.push(
       <mark key={`m-${m.start}-${m.end}`} className={markClass} title={m.checkName}>
@@ -225,6 +231,34 @@ export function Test() {
     });
   }
 
+  function activatePlateCell(caseId: string) {
+    setSelectedCaseId(caseId);
+    setExpandedCases((prev) => {
+      const next = new Set(prev);
+      next.add(caseId);
+      return next;
+    });
+    setFilter((currentFilter) => {
+      if (currentFilter === 'all') return currentFilter;
+      const ctrl = controlledMap.get(caseId);
+      const isOverBlocked =
+        BENIGN_CASES.includes(caseId) &&
+        ctrl?.verdict === 'fail' &&
+        ctrl.blocked_by &&
+        ctrl.blocked_by.length > 0;
+      if (currentFilter === 'failures' && ctrl?.verdict !== 'fail') return 'all';
+      if (currentFilter === 'needs_review' && ctrl?.verdict !== 'needs_review') return 'all';
+      if (currentFilter === 'overblocked' && !isOverBlocked) return 'all';
+      return currentFilter;
+    });
+    setTimeout(() => {
+      const el = document.getElementById(`case-row-${caseId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 50);
+  }
+
   const baselineMap = new Map<string, CaseResult>();
   const controlledMap = new Map<string, CaseResult>();
   for (const r of results) {
@@ -305,9 +339,6 @@ export function Test() {
         </div>
         <div className="test-actions">
           {isRunning && <span className="running-indicator">{runningProgress}</span>}
-          <Link to="/evidence" className="btn-secondary">
-            View evidence
-          </Link>
           <button type="button" onClick={handleRunSuite} disabled={isRunning}>
             Run suite
           </button>
@@ -379,11 +410,11 @@ export function Test() {
                 role="button"
                 tabIndex={0}
                 aria-label={`${cid} baseline ${verdictLabel}`}
-                onClick={() => toggleExpandCase(cid)}
+                onClick={() => activatePlateCell(cid)}
                 onKeyDown={(e: KeyboardEvent) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    toggleExpandCase(cid);
+                    activatePlateCell(cid);
                   }
                 }}
               >
@@ -393,6 +424,8 @@ export function Test() {
                   y={4}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -403,6 +436,8 @@ export function Test() {
                     y={4}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -426,11 +461,11 @@ export function Test() {
                 role="button"
                 tabIndex={0}
                 aria-label={`${cid} baseline ${verdictLabel}`}
-                onClick={() => toggleExpandCase(cid)}
+                onClick={() => activatePlateCell(cid)}
                 onKeyDown={(e: KeyboardEvent) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    toggleExpandCase(cid);
+                    activatePlateCell(cid);
                   }
                 }}
               >
@@ -440,6 +475,8 @@ export function Test() {
                   y={4}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -450,6 +487,8 @@ export function Test() {
                     y={4}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -473,11 +512,11 @@ export function Test() {
                 role="button"
                 tabIndex={0}
                 aria-label={`${cid} controlled ${verdictLabel}`}
-                onClick={() => toggleExpandCase(cid)}
+                onClick={() => activatePlateCell(cid)}
                 onKeyDown={(e: KeyboardEvent) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    toggleExpandCase(cid);
+                    activatePlateCell(cid);
                   }
                 }}
               >
@@ -487,6 +526,8 @@ export function Test() {
                   y={28}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -497,6 +538,8 @@ export function Test() {
                     y={28}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -522,11 +565,11 @@ export function Test() {
                 role="button"
                 tabIndex={0}
                 aria-label={`${cid} controlled ${verdictLabel}`}
-                onClick={() => toggleExpandCase(cid)}
+                onClick={() => activatePlateCell(cid)}
                 onKeyDown={(e: KeyboardEvent) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    toggleExpandCase(cid);
+                    activatePlateCell(cid);
                   }
                 }}
               >
@@ -536,6 +579,8 @@ export function Test() {
                   y={28}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
+                  rx="2"
+                  ry="2"
                   fill={verdictInfo.fill}
                   stroke={isSelected ? 'var(--ink)' : res ? 'none' : 'var(--rule)'}
                   strokeWidth={isSelected ? 2 : 1}
@@ -546,6 +591,8 @@ export function Test() {
                     y={28}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
+                    rx="2"
+                    ry="2"
                     fill={`url(#hatch-${verdictInfo.hatchType})`}
                     stroke={isSelected ? 'var(--ink)' : 'none'}
                     strokeWidth={isSelected ? 2 : 0}
@@ -641,8 +688,18 @@ export function Test() {
               return (
                 <Fragment key={cid}>
                   <tr
+                    id={`case-row-${cid}`}
                     className={`case-row${isSelected ? ' selected' : ''}`}
                     onClick={() => toggleExpandCase(cid)}
+                    onKeyDown={(e: KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleExpandCase(cid);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
+                    aria-expanded={isExpanded}
                   >
                     <td className="mono">
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>

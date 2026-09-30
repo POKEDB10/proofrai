@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
 import {
   CaseResult,
   getRun,
@@ -236,19 +235,6 @@ export function Evidence() {
         <div>
           <h1 className="page-title">Evidence</h1>
           <div className="evidence-run-id">Run {runId}</div>
-        </div>
-        <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
-          <Link to="/test" className="btn-secondary">
-            Test runner
-          </Link>
-          <a
-            href={getRunReportUrl(runId)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary"
-          >
-            Open report
-          </a>
         </div>
       </header>
 
