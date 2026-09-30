@@ -154,7 +154,7 @@ export interface ReviewRecord {
   created_at: string;
 }
 
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
 
 async function extractErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

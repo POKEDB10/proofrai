@@ -9,7 +9,11 @@ from backend.core.models import Control
 def load_control_library(path: Path | str = "backend/data/control_library.yaml") -> list[Control]:
     file_path = Path(path)
     if not file_path.is_file():
-        raise FileNotFoundError(f"Control library file not found: {path}")
+        alt = Path("data/control_library.yaml")
+        if alt.is_file():
+            file_path = alt
+        else:
+            raise FileNotFoundError(f"Control library file not found: {path}")
 
     try:
         with open(file_path, encoding="utf-8") as f:

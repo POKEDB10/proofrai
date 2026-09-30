@@ -2,15 +2,30 @@ import json
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
+import os
 from typing import Any
 
 from backend.core.models import CaseResult, Control
 
-DEFAULT_LEDGER_PATH = Path("backend/data/ledger.db")
+
+def _resolve_default_db_path() -> Path:
+    env_db = os.getenv("LEDGER_PATH")
+    if env_db:
+        return Path(env_db)
+    if os.getenv("VERCEL") or os.getenv("VERCEL_ENV"):
+        return Path("/tmp/ledger.db")
+    if Path("backend/data").exists():
+        return Path("backend/data/ledger.db")
+    if Path("data").exists():
+        return Path("data/ledger.db")
+    return Path("backend/data/ledger.db")
+
+
+DEFAULT_LEDGER_PATH = _resolve_default_db_path()
 
 
 def get_db(db_path: Path | str = DEFAULT_LEDGER_PATH) -> sqlite3.Connection:
-    path = Path(db_path)
+    path = Path(db_path) if db_path else _resolve_default_db_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(path), timeout=30.0)
     conn.row_factory = sqlite3.Row

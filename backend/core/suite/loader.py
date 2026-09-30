@@ -9,7 +9,11 @@ from backend.core.models import Case
 def load_suite(path: Path | str = "backend/data/suite.yaml") -> list[Case]:
     file_path = Path(path)
     if not file_path.is_file():
-        raise FileNotFoundError(f"Suite file not found: {path}")
+        alt = Path("data/suite.yaml")
+        if alt.is_file():
+            file_path = alt
+        else:
+            raise FileNotFoundError(f"Suite file not found: {path}")
 
     try:
         with open(file_path, encoding="utf-8") as f:

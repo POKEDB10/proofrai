@@ -63,8 +63,17 @@ from backend.core.suite.loader import load_suite
 
 router = APIRouter(prefix="/api")
 control_file_lock = threading.Lock()
-CONTROL_LIBRARY_PATH = Path("backend/data/control_library.yaml")
-INTERVIEW_FILE_PATH = Path("backend/data/interview.json")
+def _resolve_data_path(filename: str) -> Path:
+    p = Path(f"backend/data/{filename}")
+    if p.exists() or p.parent.exists():
+        return p
+    alt = Path(f"data/{filename}")
+    if alt.exists() or alt.parent.exists():
+        return alt
+    return p
+
+CONTROL_LIBRARY_PATH = _resolve_data_path("control_library.yaml")
+INTERVIEW_FILE_PATH = _resolve_data_path("interview.json")
 
 
 class UpdateControlStatusRequest(BaseModel):
