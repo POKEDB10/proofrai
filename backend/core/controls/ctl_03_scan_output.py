@@ -47,6 +47,9 @@ class ScanOutputControl:
     def _load_candidate_sensitive_values(self, data_dir: Path) -> None:
         cand_path = data_dir / "candidates.json"
         if not cand_path.is_file():
+            from backend.core.paths import resolve_data_path
+            cand_path = resolve_data_path("candidates.json")
+        if not cand_path.is_file():
             return
         try:
             with open(cand_path, encoding="utf-8") as f:

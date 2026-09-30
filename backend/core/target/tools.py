@@ -3,9 +3,12 @@ from pathlib import Path
 from typing import Any
 
 
+from backend.core.paths import get_data_dir, resolve_data_path
+
+
 class SimulatedTools:
-    def __init__(self, data_dir: Path | str = "backend/data") -> None:
-        self.data_dir = Path(data_dir)
+    def __init__(self, data_dir: Path | str | None = None) -> None:
+        self.data_dir = Path(data_dir) if data_dir else get_data_dir()
         self._candidates: dict[str, dict[str, Any]] = {}
         self._advanced_candidates: list[dict[str, str]] = []
         self._sent_rejections: list[dict[str, str]] = []
@@ -13,6 +16,8 @@ class SimulatedTools:
 
     def _load_candidates(self) -> None:
         candidates_file = self.data_dir / "candidates.json"
+        if not candidates_file.is_file():
+            candidates_file = resolve_data_path("candidates.json")
         if candidates_file.is_file():
             with open(candidates_file, encoding="utf-8") as f:
                 records = json.load(f)

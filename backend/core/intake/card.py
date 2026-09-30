@@ -4,8 +4,9 @@ from pathlib import Path
 
 from backend.core.intake.schema import InterviewAnswers, SystemCardData
 from backend.core.llm.adapter import LLMAdapter
+from backend.core.paths import resolve_data_path
 
-CARD_FILE_PATH = Path("backend/data/card.json")
+CARD_FILE_PATH = resolve_data_path("card.json")
 
 TASK_LABELS: dict[str, str] = {
     "summarise_applications": "Summarise applications",

@@ -24,6 +24,9 @@ class JobCriteriaControl:
     def _load_job_criteria(self) -> dict[str, set[str]]:
         mapping: dict[str, set[str]] = {}
         if not self.jobs_file.is_file():
+            from backend.core.paths import resolve_data_path
+            self.jobs_file = resolve_data_path(self.jobs_file.name)
+        if not self.jobs_file.is_file():
             return mapping
         try:
             with open(self.jobs_file, encoding="utf-8") as f:

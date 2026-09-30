@@ -6,12 +6,15 @@ from pydantic import ValidationError
 from backend.core.models import Control
 
 
+from backend.core.paths import resolve_data_path
+
+
 def load_control_library(path: Path | str = "backend/data/control_library.yaml") -> list[Control]:
     file_path = Path(path)
     if not file_path.is_file():
-        alt = Path("data/control_library.yaml")
-        if alt.is_file():
-            file_path = alt
+        resolved = resolve_data_path(Path(path).name)
+        if resolved.is_file():
+            file_path = resolved
         else:
             raise FileNotFoundError(f"Control library file not found: {path}")
 

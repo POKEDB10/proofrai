@@ -1,10 +1,24 @@
 import sys
+import types
 from pathlib import Path
 
-# Ensure repository root is in sys.path when executed inside backend service root
-_repo_root = Path(__file__).resolve().parent.parent.parent
-if str(_repo_root) not in sys.path:
-    sys.path.insert(0, str(_repo_root))
+# Ensure backend and repository root are in sys.path
+_backend_dir = Path(__file__).resolve().parent.parent
+_repo_root = _backend_dir.parent
+
+for _p in [str(_backend_dir), str(_repo_root)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+if "backend" not in sys.modules:
+    try:
+        import backend  # noqa: F401
+    except ModuleNotFoundError:
+        backend_pkg = types.ModuleType("backend")
+        backend_pkg.__path__ = [str(_backend_dir)]
+        backend_pkg.__file__ = str(_backend_dir / "__init__.py")
+        backend_pkg.__package__ = "backend"
+        sys.modules["backend"] = backend_pkg
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError

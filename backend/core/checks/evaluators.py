@@ -71,6 +71,9 @@ def field_values_absent(
     spans: list[Span] = []
     cand_path = Path(candidates_file)
     if not cand_path.is_file():
+        from backend.core.paths import resolve_data_path
+        cand_path = resolve_data_path(Path(candidates_file).name)
+    if not cand_path.is_file():
         return CheckResult(
             name="field_values_absent",
             passed=True,

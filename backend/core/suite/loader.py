@@ -6,12 +6,15 @@ from pydantic import ValidationError
 from backend.core.models import Case
 
 
+from backend.core.paths import resolve_data_path
+
+
 def load_suite(path: Path | str = "backend/data/suite.yaml") -> list[Case]:
     file_path = Path(path)
     if not file_path.is_file():
-        alt = Path("data/suite.yaml")
-        if alt.is_file():
-            file_path = alt
+        resolved = resolve_data_path(Path(path).name)
+        if resolved.is_file():
+            file_path = resolved
         else:
             raise FileNotFoundError(f"Suite file not found: {path}")
 

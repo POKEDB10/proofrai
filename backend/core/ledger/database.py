@@ -8,17 +8,26 @@ from typing import Any
 from backend.core.models import CaseResult, Control
 
 
+import shutil
+from backend.core.paths import resolve_data_path
+
+
 def _resolve_default_db_path() -> Path:
     env_db = os.getenv("LEDGER_PATH")
     if env_db:
         return Path(env_db)
     if os.getenv("VERCEL") or os.getenv("VERCEL_ENV"):
-        return Path("/tmp/ledger.db")
-    if Path("backend/data").exists():
-        return Path("backend/data/ledger.db")
-    if Path("data").exists():
-        return Path("data/ledger.db")
-    return Path("backend/data/ledger.db")
+        tmp_db = Path("/tmp/ledger.db")
+        if not tmp_db.exists():
+            bundled = resolve_data_path("ledger.db")
+            if bundled.exists() and bundled != tmp_db:
+                try:
+                    tmp_db.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(str(bundled), str(tmp_db))
+                except Exception:
+                    pass
+        return tmp_db
+    return resolve_data_path("ledger.db")
 
 
 DEFAULT_LEDGER_PATH = _resolve_default_db_path()
